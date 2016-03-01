@@ -5,4 +5,7 @@
 Async file read from a JSON file. Illustrates `fs.fileRead` method and the `__dirname` global variable.
 
 ## 02-hello-http-server
-The simplest http server using `http` module.
+The simplest HTTP server using `http` module.
+
+## 03-hello-http-streaming-server
+Illustrates how to stream a local image file to an HTTP response.
