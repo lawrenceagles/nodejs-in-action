@@ -9,3 +9,6 @@ The simplest HTTP server using `http` module.
 
 ## 03-hello-http-streaming-server
 Illustrates how to stream a local image file to an HTTP response.
+
+## 04-hello-stream-chunking
+Demonstrates how to create input streams and how to register event listeners.
