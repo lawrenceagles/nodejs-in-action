@@ -1,7 +1,7 @@
 {
-  "name": "01-hello-async-file-read",
+  "name": "02-hello-http-server",
   "version": "0.0.0",
-  "description": "Performing an async file read using Node",
+  "description": "Simple HTTP server that returns a hardcoded response",
   "engines": {
     "node": "4.3.1"
   },
