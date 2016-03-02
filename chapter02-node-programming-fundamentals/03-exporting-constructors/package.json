@@ -1,0 +1,34 @@
+{
+  "name": "03-exporting-constructors",
+  "version": "0.0.0",
+  "description": "Exporting constructors from a custom module",
+  "engines": {
+    "node": "4.3.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sergiofgonzalez/nodejs-in-action.git"
+  },
+  "keywords": [],
+  "author": {
+    "name": "Sergio F. Gonzalez",
+    "email": "sergio.f.gonzalez@gmail.com"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "grunt": "0.4.5",
+    "grunt-contrib-clean": "0.7.0",
+    "grunt-contrib-copy": "0.8.2",
+    "grunt-contrib-jshint": "0.11.3",
+    "grunt-contrib-watch": "0.6.1",
+    "grunt-tape": "0.0.2",
+    "jshint-stylish": "2.1.0",
+    "tape": "4.4.0"
+  },
+  "dependencies": {
+  },
+  "scripts": {
+    "test": "grunt test",
+    "start": "grunt build; node build/index.js"
+  }
+}

@@ -6,3 +6,6 @@ Implementing and using custom Node.js modules. Illustrates the use of `exports` 
 
 ## 02-hello-exports
 Illustrates how to correctly use `exports` and `module.exports`.
+
+## 03-exporting-constructors
+Illustrates how to export a constructor from a custom module, and how to use it from another module.
