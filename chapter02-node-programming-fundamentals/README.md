@@ -12,3 +12,12 @@ Illustrates how to export a constructor from a custom module, and how to use it 
 
 ## 04-hello-module-system-caveats
 Explores the caveats of Node's module system.
+
+## 05-http-server-with-callbacks-v1
+Illustrates the use of callbacks in a more elaborate example (an HTTP server that builds a dynamic page).
+
+## 06-http-server-with-callbacks-v2
+Same example as [05-http-server-with-callbacks-v1](# 05-http-server-with-callbacks-v1) but with cleaner source code resulting from refactoring and naming functions.
+
+## 07-http-server-with-callbacks-v3
+Illustrates in the same example, the *return early pattern* that prevents further nesting in async programming.
