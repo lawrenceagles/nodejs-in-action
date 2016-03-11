@@ -21,3 +21,6 @@ Same example as [05-http-server-with-callbacks-v1](# 05-http-server-with-callbac
 
 ## 07-http-server-with-callbacks-v3
 Illustrates in the same example, the *return early pattern* that prevents further nesting in async programming.
+
+## 08-echo-server
+Illustrates how to establish a handler to respond to events. In the example, a server that prints whatever is received is implemented.
