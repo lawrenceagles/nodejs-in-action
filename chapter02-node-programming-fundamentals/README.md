@@ -24,3 +24,6 @@ Illustrates in the same example, the *return early pattern* that prevents furthe
 
 ## 08-echo-server
 Illustrates how to establish a handler to respond to events. In the example, a server that prints whatever is received is implemented.
+
+## 09-echo-once
+Illustrates how to establish a handler to respond to the first event it receives. In the example, a server that prints the first chunk of data it receives is used.
