@@ -27,3 +27,8 @@ Illustrates how to establish a handler to respond to events. In the example, a s
 
 ## 09-echo-once
 Illustrates how to establish a handler to respond to the first event it receives. In the example, a server that prints the first chunk of data it receives is used.
+
+## 10-hello-event-emitter
+Illustrates how to use `EventEmitter` to publish your own custom events, and how to subscribe to those custom events.
+
+## 11-chat-server
