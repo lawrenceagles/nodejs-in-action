@@ -11,4 +11,7 @@ It works like this:
   + a handler for the `data` event will be registered &mdash; this event, that is received whenever the client sends some information, will be transformed into a custom `broadcast` event, thus providing decoupling from the TCP server internals. The subscribers of the `broadcast` event will be given the client's id (remote address and port) and the message that was received.
 + The handler for the `join` event is established. The handler will consists in updating local maps of clients and subscriptions with the newly received client, and also establishing the handler for the `broadcast` event, which will consist in sending the data received to all the clients except to the one that originated the message.
 
+**Note:**
+This first version fails if a client ends the session, as the listener is still activated and try to write on an already closed socket.
+
 To run the example, you will have to start the application using `node index.js` and then open *telnet* sessions on port 5000.

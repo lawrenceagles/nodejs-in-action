@@ -33,3 +33,6 @@ Illustrates how to use `EventEmitter` to publish your own custom events, and how
 
 ## 11-chat-server-v0
 Illustrates how to leverage an `EventEmitter` in a more contrived example, that implements a basic chat server.
+
+## 12-chat-server-v1
+The second installment of the chat server, which includes additional capabilties.
