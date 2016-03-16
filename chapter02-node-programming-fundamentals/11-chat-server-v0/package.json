@@ -1,5 +1,5 @@
 {
-  "name": "11-chat-server",
+  "name": "11-chat-server-v0",
   "version": "0.0.0",
   "description": "Illustrates how to emit and subscribe to custom events",
   "engines": {

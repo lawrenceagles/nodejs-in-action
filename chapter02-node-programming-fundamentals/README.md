@@ -31,4 +31,5 @@ Illustrates how to establish a handler to respond to the first event it receives
 ## 10-hello-event-emitter
 Illustrates how to use `EventEmitter` to publish your own custom events, and how to subscribe to those custom events.
 
-## 11-chat-server
+## 11-chat-server-v0
+Illustrates how to leverage an `EventEmitter` in a more contrived example, that implements a basic chat server.
