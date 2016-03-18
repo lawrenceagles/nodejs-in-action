@@ -42,3 +42,6 @@ Illustrates how to build upon the `EventEmitter` class.
 
 ## 14-async-caveats
 Illustrates some caveats of async programming and closures.
+
+## 15-hello-closure
+Refresher of closures.
