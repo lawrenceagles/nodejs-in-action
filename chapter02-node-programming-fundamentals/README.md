@@ -35,4 +35,7 @@ Illustrates how to use `EventEmitter` to publish your own custom events, and how
 Illustrates how to leverage an `EventEmitter` in a more contrived example, that implements a basic chat server.
 
 ## 12-chat-server-v1
-The second installment of the chat server, which includes additional capabilties.
+The second installment of the chat server, which includes additional capabilities.
+
+## 13-file-watcher
+Illustrates how to build upon the `EventEmitter` class.
