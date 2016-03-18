@@ -39,3 +39,6 @@ The second installment of the chat server, which includes additional capabilitie
 
 ## 13-file-watcher
 Illustrates how to build upon the `EventEmitter` class.
+
+## 14-async-caveats
+Illustrates some caveats of async programming and closures.

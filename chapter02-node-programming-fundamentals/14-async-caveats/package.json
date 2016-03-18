@@ -1,7 +1,7 @@
 {
-  "name": "12-chat-server-v1",
+  "name": "14-async-caveats",
   "version": "0.0.0",
-  "description": "Illustrates how to emit and subscribe to custom events",
+  "description": "Illustrates some basic async caveat",
   "engines": {
     "node": "4.3.1"
   },

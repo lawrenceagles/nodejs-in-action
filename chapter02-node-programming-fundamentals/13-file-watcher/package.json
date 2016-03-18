@@ -1,7 +1,7 @@
 {
-  "name": "11-chat-server-v0",
+  "name": "13-file-watcher",
   "version": "0.0.0",
-  "description": "Illustrates how to emit and subscribe to custom events",
+  "description": "Illustrates how to inherit from EventEmitter",
   "engines": {
     "node": "4.3.1"
   },
