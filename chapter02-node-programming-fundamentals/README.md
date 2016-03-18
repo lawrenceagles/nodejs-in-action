@@ -45,3 +45,6 @@ Illustrates some caveats of async programming and closures.
 
 ## 15-hello-closure
 Refresher of closures.
+
+## 16-async-serial-with-callbacks
+Illustrates how to implement async serial control flow with callbacks.
