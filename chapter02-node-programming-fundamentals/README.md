@@ -47,4 +47,10 @@ Illustrates some caveats of async programming and closures.
 Refresher of closures.
 
 ## 16-async-serial-with-callbacks
-Illustrates how to implement async serial control flow with callbacks.
+Illustrates how to implement async serial flow control with callbacks.
+
+## 17-hello-nimble
+Illustrates how to use *nimble* &mdash; a minimalist JavaScript module for flow control &mdash; to implement a serial flow control.
+
+## 18-hello-async
+Illustrates how to use *async* to implement a serial flow control.
