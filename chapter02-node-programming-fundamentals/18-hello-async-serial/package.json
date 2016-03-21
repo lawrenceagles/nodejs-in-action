@@ -1,7 +1,7 @@
 {
-  "name": "16-async-serial-with-callbacks",
+  "name": "18-hello-async-serial",
   "version": "0.0.0",
-  "description": "serial control flow with callbacks",
+  "description": "serial control flow with async module",
   "engines": {
     "node": "4.3.1"
   },

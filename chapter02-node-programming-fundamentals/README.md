@@ -54,3 +54,9 @@ Illustrates how to use *nimble* &mdash; a minimalist JavaScript module for flow 
 
 ## 18-hello-async
 Illustrates how to use *async* to implement a serial flow control.
+
+## 19-custom-async-serial-flow-control
+Illustrates how to implement a simple serial flow control engine.
+
+## 20-custom-sync-serial-flow-control
+Illustrates how to implement a simple parallel flow control engine.

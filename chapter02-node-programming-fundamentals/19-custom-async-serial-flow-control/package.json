@@ -1,7 +1,7 @@
 {
-  "name": "17-nimble-serial",
+  "name": "19-custom-async-serial-flow-control",
   "version": "0.0.0",
-  "description": "serial control flow with nimble",
+  "description": "custom implmentation of serial flow control",
   "engines": {
     "node": "4.3.1"
   },
@@ -26,8 +26,7 @@
     "tape": "4.4.0"
   },
   "dependencies": {
-    "log4js": "0.6.32",
-    "nimble": "0.0.2"
+    "log4js": "0.6.32"
   },
   "scripts": {
     "test": "grunt test",
