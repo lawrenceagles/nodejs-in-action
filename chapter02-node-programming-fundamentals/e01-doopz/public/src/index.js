@@ -4,48 +4,47 @@ var log4js = require("log4js");
 var logger = log4js.getLogger("main");
 logger.setLevel("DEBUG");
 
-var fs = require("fs");
-var path = require("path");
-var async = require("async");
-var crypto = require("crypto");
+//var async = require("async");
+
+//var fileinfo = require("./lib/fileinfo");
+var dups = require("./lib/dups");
+
+var fileInfos = [
+  { name: "file1", path: "path1", size: 10, md5: "aa"},
+  { name: "file2", path: "path2", size: 0, md5: "aa"},
+  { name: "file1", path: "path3", size: 10, md5: "ab"}
+];
 
 
-var files = [];
 
-function getFilenames(fromDir, cb) {
-  fs.readdir(fromDir, function (err, filenames) {
-    async.map(filenames, function (filename, next) {
-      let filePath = path.join(fromDir, filename);
-      fs.stat(filePath, function (err, stats) {
-        if (stats.isFile()) {
-          let stream = fs.createReadStream(filePath);
-          let md5Hash = crypto.createHash("md5");
-          stream.on("data", function (data) {
-            md5Hash.update(data, "utf8");
-          });
-
-          stream.on("end", function () {
-            let md5 = md5Hash.digest("hex");
-            files.push({ name: filename, path: filePath, size: stats.size, md5: md5 });
-            next();
-          });
-
-        } else if (stats.isDirectory()) {
-          getFilenames(filePath, next);
-        }
-      });
-    }, function (err) {
-      if (err) {
-        return cb(err);
-      }
-      cb(null, files);
-    });
-  });
-}
-
-getFilenames("/tmp/test", function done(err, files) {
+/*
+dups.byFilename(fileInfos, function (err, byName) {
   if (err) {
     throw err;
   }
-  console.log(files);
+  console.log(byName);
 });
+*/
+/*
+dups.byFileSize(fileInfos, function (err, bySize) {
+  if (err) {
+    throw err;
+  }
+  console.log(bySize);
+});
+*/
+dups.byFileMD5(fileInfos, function (err, byMD5) {
+  if (err) {
+    throw err;
+  }
+  console.log(byMD5);
+});
+
+/*
+fileinfo("/tmp/test", function done(err, fileInfos) {
+  if (err) {
+    throw err;
+  }
+  console.log(fileInfos);
+});
+*/
