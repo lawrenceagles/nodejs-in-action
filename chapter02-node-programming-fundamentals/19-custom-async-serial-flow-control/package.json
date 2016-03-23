@@ -1,7 +1,7 @@
 {
   "name": "19-custom-async-serial-flow-control",
   "version": "0.0.0",
-  "description": "custom implmentation of serial flow control",
+  "description": "custom implementation of serial flow control",
   "engines": {
     "node": "4.3.1"
   },
