@@ -60,3 +60,9 @@ Illustrates how to implement a simple serial flow control engine.
 
 ## 20-custom-sync-serial-flow-control
 Illustrates how to implement a simple parallel flow control engine.
+
+## 21-sequencing-tasks-with-async
+Illustrates how to leverage *async* to implement a flow that mixes parallel and series flows.
+
+## e01-doopz
+Attempt to implement *Doopz* application in *Node.js*.
