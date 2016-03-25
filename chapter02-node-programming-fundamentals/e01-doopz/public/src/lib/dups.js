@@ -12,6 +12,7 @@ var byMD5 = Object.create(null);
 
 module.exports = {
   byFileName : function (fileInfos, cb) {
+    logger.debug("Looking for duplicates by file name...");
     async.each(fileInfos, function (fileInfo, next) {
       if (fileInfo.name in byName) {
         byName[fileInfo.name].push(fileInfo);
@@ -23,10 +24,12 @@ module.exports = {
       if (err) {
         return cb(err);
       }
+      logger.debug("Completed duplicates by file name");
       cb(null, byName);
     });
   },
   byFileSize : function (fileInfos, cb) {
+    logger.debug("Looking for duplicates by file size...");
     async.each(fileInfos, function (fileInfo, next) {
       if (fileInfo.size in bySize) {
         bySize[fileInfo.size].push(fileInfo);
@@ -38,10 +41,12 @@ module.exports = {
       if (err) {
         return cb(err);
       }
+      logger.debug("Completed duplicates by file size");
       cb(null, bySize);
     });
   },
   byFileMD5 : function (fileInfos, cb) {
+    logger.debug("Looking for duplicates by MD5");
     async.each(fileInfos, function (fileInfo, next) {
       if (fileInfo.md5 in byMD5) {
         byMD5[fileInfo.md5].push(fileInfo);
@@ -53,6 +58,7 @@ module.exports = {
       if (err) {
         return cb(err);
       }
+      logger.debug("Completed duplicates by MD5");
       cb(null, byMD5);
     });
   }

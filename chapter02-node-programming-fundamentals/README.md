@@ -65,4 +65,4 @@ Illustrates how to implement a simple parallel flow control engine.
 Illustrates how to leverage *async* to implement a flow that mixes parallel and series flows.
 
 ## e01-doopz
-Attempt to implement *Doopz* application in *Node.js*.
+An implementation of *Doopz* application in *Node.js*.

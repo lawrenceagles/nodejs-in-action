@@ -4,47 +4,45 @@ var log4js = require("log4js");
 var logger = log4js.getLogger("main");
 logger.setLevel("DEBUG");
 
-//var async = require("async");
+var async = require("async");
 
-//var fileinfo = require("./lib/fileinfo");
+var fileinfo = require("./lib/fileinfo");
+
 var dups = require("./lib/dups");
+var report = require("./lib/report");
 
-var fileInfos = [
-  { name: "file1", path: "path1", size: 10, md5: "aa"},
-  { name: "file2", path: "path2", size: 0, md5: "aa"},
-  { name: "file1", path: "path3", size: 10, md5: "ab"}
-];
+var fromDir = "/tmp/test";
 
-
-
-/*
-dups.byFilename(fileInfos, function (err, byName) {
+async.waterfall([
+  function readDirectory(cb) {
+    logger.debug("reading files from directory", fromDir);
+    fileinfo(fromDir, cb);
+  },
+  function getDups(fileInfos, cb) {
+    logger.debug("Looking for duplicates on files retrieved");
+    async.parallel([
+      async.apply(function dupsByName(fileInfos, cb) {
+        logger.debug("Looking for duplicates by file name");
+        dups.byFileName(fileInfos, cb);
+      }, fileInfos),
+      async.apply(function dupsBySize(fileInfos, cb) {
+        logger.debug("Looking for duplicates by file size");
+        dups.byFileSize(fileInfos, cb);
+      }, fileInfos),
+      async.apply(function dupsByMD5(fileInfos, cb) {
+        logger.debug("Looking for duplicates by file hash (MD5)");
+        dups.byFileMD5(fileInfos, cb);
+      }, fileInfos)
+    ], cb);
+  }
+], function done(err, duplicates) {
   if (err) {
+    logger.error("Error looking for duplicates in `" + fromDir + "`: " + err);
     throw err;
   }
-  console.log(byName);
-});
-*/
-/*
-dups.byFileSize(fileInfos, function (err, bySize) {
-  if (err) {
-    throw err;
-  }
-  console.log(bySize);
-});
-*/
-dups.byFileMD5(fileInfos, function (err, byMD5) {
-  if (err) {
-    throw err;
-  }
-  console.log(byMD5);
-});
+  logger.debug("Results completed, printing report");
 
-/*
-fileinfo("/tmp/test", function done(err, fileInfos) {
-  if (err) {
-    throw err;
-  }
-  console.log(fileInfos);
+  report(duplicates[0], "Duplicates by Name", "path");
+  report(duplicates[1], "Duplicates by Size", "path");
+  report(duplicates[2], "Duplicates by MD5", "path");
 });
-*/

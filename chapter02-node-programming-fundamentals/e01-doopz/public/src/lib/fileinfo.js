@@ -13,6 +13,7 @@ var crypto = require("crypto");
 var files = [];
 
 module.exports = function getFileInfos(fromDir, cb) {
+  logger.debug("Obtaining files from ", fromDir);
   fs.readdir(fromDir, function (err, filenames) {
     async.map(filenames, function (filename, next) {
       let filePath = path.join(fromDir, filename);
@@ -38,6 +39,7 @@ module.exports = function getFileInfos(fromDir, cb) {
       if (err) {
         return cb(err);
       }
+      logger.debug("Completed file retrieval for", fromDir);
       cb(null, files);
     });
   });
