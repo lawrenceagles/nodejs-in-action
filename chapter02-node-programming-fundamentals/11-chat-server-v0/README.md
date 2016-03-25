@@ -1,4 +1,4 @@
-# Chapter 1: Getting started &mdash; 11-chat-server-v0
+# Chapter 2: Node Programming Fundamentals &mdash; 11-chat-server-v0
 > a simple chat server that illustrates how to emit and consume events
 
 ## Description

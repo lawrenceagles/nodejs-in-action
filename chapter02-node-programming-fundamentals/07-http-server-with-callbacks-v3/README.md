@@ -1,4 +1,4 @@
-# Chapter 1: Getting started &mdash; 07-http-server-with-callbacks-v3
+# Chapter 2: Node Programming Fundamentals &mdash; 07-http-server-with-callbacks-v3
 > returning early to prevent further nesting
 
 ## Description

@@ -1,4 +1,4 @@
-# Chapter 1: Getting started &mdash; 19-custom-async-serial-flow-control
+# Chapter 2: Node Programming Fundamentals &mdash; 19-custom-async-serial-flow-control
 > illustrates how to make a custom implementation of an async serial flow control
 
 ## Description

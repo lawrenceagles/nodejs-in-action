@@ -1,4 +1,4 @@
-# Chapter 1: Getting started &mdash; 17-hello-nimble-serial
+# Chapter 2: Node Programming Fundamentals &mdash; 17-hello-nimble-serial
 > illustrates how to leverage the `nimble` module for serial control
 
 ## Description

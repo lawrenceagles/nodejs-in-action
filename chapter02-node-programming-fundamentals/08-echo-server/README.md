@@ -1,4 +1,4 @@
-# Chapter 1: Getting started &mdash; 08-echo-server
+# Chapter 2: Node Programming Fundamentals &mdash; 08-echo-server
 > registering an event handler on an TCP server
 
 ## Description

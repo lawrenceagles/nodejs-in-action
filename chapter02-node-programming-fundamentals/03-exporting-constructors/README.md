@@ -1,4 +1,4 @@
-# Chapter 1: Getting started &mdash; 03-exporting-constructors
+# Chapter 2: Node Programming Fundamentals &mdash; 03-exporting-constructors
 > simple example leveraging a module that exports a constructor
 
 ## Description

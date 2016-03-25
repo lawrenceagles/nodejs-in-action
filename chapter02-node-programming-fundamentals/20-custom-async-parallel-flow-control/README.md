@@ -1,4 +1,4 @@
-# Chapter 1: Getting started &mdash; 20-custom-async-parallel-flow-control
+# Chapter 2: Node Programming Fundamentals &mdash; 20-custom-async-parallel-flow-control
 > illustrates how to make a custom implementation of an async parallel flow control
 
 ## Description

@@ -1,4 +1,4 @@
-# Chapter 1: Getting started &mdash; 09-echo-once
+# Chapter 2: Node Programming Fundamentals &mdash; 09-echo-once
 > registering an event handler for the first event on an TCP server
 
 ## Description

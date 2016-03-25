@@ -1,4 +1,4 @@
-# Chapter 1: Getting started &mdash; 21-sequencing-tasks-with-async
+# Chapter 2: Node Programming Fundamentals &mdash; 21-sequencing-tasks-with-async
 > illustrates how to leverage async module for a complex flow
 
 ## Description

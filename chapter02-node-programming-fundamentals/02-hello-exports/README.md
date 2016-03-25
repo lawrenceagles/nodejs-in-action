@@ -1,4 +1,4 @@
-# Chapter 1: Getting started &mdash; 02-hello-exports
+# Chapter 2: Node Programming Fundamentals &mdash; 02-hello-exports
 > `exports` and `module.exports` explained
 
 ## Description

@@ -1,4 +1,4 @@
-# Chapter 1: Getting started &mdash; 18-hello-async-serial
+# Chapter 2: Node Programming Fundamentals &mdash; 18-hello-async-serial
 > illustrates how to leverage the `async` module for serial control
 
 ## Description

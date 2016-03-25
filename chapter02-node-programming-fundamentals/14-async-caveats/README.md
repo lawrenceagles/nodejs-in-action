@@ -1,4 +1,4 @@
-# Chapter 1: Getting started &mdash; 14-async-caveats
+# Chapter 2: Node Programming Fundamentals &mdash; 14-async-caveats
 > illustrates how to freeze a global variable using closures
 
 ## Description

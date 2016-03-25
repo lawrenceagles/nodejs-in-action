@@ -1,4 +1,4 @@
-# Chapter 1: Getting started &mdash; 01-hello-node-modules
+# Chapter 2: Node Programming Fundamentals &mdash; 01-hello-node-modules
 > implementing and using custom modules
 
 ## Description

@@ -1,4 +1,4 @@
-# Chapter 1: Getting started &mdash; 06-http-server-with-callbacks-v2
+# Chapter 2: Node Programming Fundamentals &mdash; 06-http-server-with-callbacks-v2
 > refactoring and naming functions to improve readability in async programming with callbacks
 
 ## Description

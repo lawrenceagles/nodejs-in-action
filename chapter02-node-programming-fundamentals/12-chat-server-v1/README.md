@@ -1,4 +1,4 @@
-# Chapter 1: Getting started &mdash; 11-chat-server-v1
+# Chapter 2: Node Programming Fundamentals &mdash; 11-chat-server-v1
 > the second installment of the chat server with enhanced functionality
 
 ## Description

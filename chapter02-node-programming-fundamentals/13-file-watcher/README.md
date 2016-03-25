@@ -1,4 +1,4 @@
-# Chapter 1: Getting started &mdash; 13-file-watcher
+# Chapter 2: Node Programming Fundamentals &mdash; 13-file-watcher
 > illustrates how to extend the `EventEmitter`
 
 ## Description

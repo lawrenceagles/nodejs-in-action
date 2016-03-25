@@ -1,4 +1,4 @@
-# Chapter 1: Getting started &mdash; 15-hello-closure
+# Chapter 2: Node Programming Fundamentals &mdash; 15-hello-closure
 > a refresher of the closures
 
 ## Description

@@ -1,4 +1,4 @@
-# Chapter 1: Getting started &mdash; 04-hello-module-system-caveats
+# Chapter 2: Node Programming Fundamentals &mdash; 04-hello-module-system-caveats
 > caveats of the module system
 
 ## Description

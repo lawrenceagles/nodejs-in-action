@@ -1,4 +1,4 @@
-# Chapter 1: Getting started &mdash; e01-doopz
+# Chapter 2: Node Programming Fundamentals &mdash; e01-doopz
 > find duplicate files recursively
 
 ## Description
