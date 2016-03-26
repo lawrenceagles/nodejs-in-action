@@ -3,3 +3,6 @@
 
 ## 01-hello-express
 The most basic *Express* web app, which defines a single router handler for the root.
+
+## 02-express-restful-ws
+Illustrates how to manage a resource using RESTful web services with *Express*.
