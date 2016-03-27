@@ -9,3 +9,6 @@ Illustrates how to manage a resource using RESTful web services with *Express*.
 
 ## 03-express-body-parsing
 Illustrates how to parse information in the body of requests using *body-parser* in *Express* applications.
+
+## 04-express-persistence
+Illustrates how to persist information in an *SQLite* database from an *Express* web application.
