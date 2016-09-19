@@ -28,6 +28,6 @@
     "prebuild": "npm run clean",
     "postbuild": "npm run copy",
     "debug": "node-debug build/index.js",
-    "dev": "nodemon --ext js,json --watch public/src --exec 'npm run build --silent && npm start'"
+    "dev": "nodemon --ext js,json,yml --watch public/src --watch .eslintrc.yml --exec 'npm run build --silent && npm start'"
   }
 }
