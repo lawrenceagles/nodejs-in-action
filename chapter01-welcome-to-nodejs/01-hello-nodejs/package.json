@@ -21,7 +21,7 @@
   "dependencies": {},
   "scripts": {
     "start": "node build/index.js",
-    "lint": "eslint public/src/**",
+    "lint": "eslint public/src/",
     "clean": "rm -rf build/",
     "copy": "cp -r public/src/ build/",
     "build": "npm run lint",
