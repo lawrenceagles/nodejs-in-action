@@ -23,6 +23,7 @@
     "grunt-contrib-watch": "1.0.0",
     "grunt-tape": "0.0.2",
     "jshint-stylish": "2.1.0",
+    "proxyquire": "1.7.4",
     "tape": "4.5.1"
   },
   "dependencies": {

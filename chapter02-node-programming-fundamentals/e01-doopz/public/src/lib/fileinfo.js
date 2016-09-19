@@ -1,7 +1,7 @@
 "use strict";
 
 var log4js = require("log4js");
-var logger = log4js.getLogger("main");
+var logger = log4js.getLogger("fileinfo");
 logger.setLevel("DEBUG");
 
 var fs = require("fs");
