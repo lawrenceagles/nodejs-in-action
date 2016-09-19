@@ -3,3 +3,6 @@
 
 ## 01-hello-nodejs
 Verifies that the project template works as expected. This will also serve as the starting project template for most of the examples.
+
+## 02-hello-node-io
+Demonstrates the non-blocking nature of Node.js I/O operations in an example involving reading a JSON file from the project.
