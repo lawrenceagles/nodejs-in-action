@@ -9,3 +9,6 @@ Demonstrates the non-blocking nature of Node.js I/O operations in an example inv
 
 ## 03-hello-http-server
 Demonstrates how to create the simplest HTTP server that returns *hello, world* as a `text/plain` response to the browser.
+
+## 04-hello-node-streaming
+Illustrates the basics of Node.js streaming that lets you consume data as it is being read/received instead of waiting for the whole contents to be available.
