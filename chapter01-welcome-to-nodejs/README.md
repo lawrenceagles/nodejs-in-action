@@ -12,3 +12,6 @@ Demonstrates how to create the simplest HTTP server that returns *hello, world* 
 
 ## 04-hello-node-streaming
 Illustrates the basics of Node.js streaming that lets you consume data as it is being read/received instead of waiting for the whole contents to be available.
+
+## 05-hello-http-streaming
+Illustrates how to stream an image from a Node.js HTTP server to the client using Readable and Writable streams.
