@@ -1,9 +1,9 @@
 {
   "name": "01-hello-node-modules",
   "version": "0.0.1",
-  "description": "The basics of Node.js module system.",
+  "description": "Using exports to publish several modules",
   "engines": {
-    "node": "4.5.0"
+    "node": "4.6.0"
   },
   "repository": {
     "type": "git",

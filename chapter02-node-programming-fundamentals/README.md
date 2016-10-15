@@ -9,3 +9,9 @@ Illustrates how to use `module.exports` to export a single object. In the exampl
 
 ## 03-hello-module-directory
 Illustrates how to create modules in directories. In the example, a module is created in the directory, and the directory code is written in a file different from the default one (`index.js`).
+
+## 04-module-caching
+A very simple example of Node.js module caching. The application includes a main program which requires some modules, which in turn require a common shared module. The example illustrates that the internal state of the shared module is the same for all the modules because of Node.js caching for modules.
+
+## 05-hello-callbacks
+Illustrate the use of callbacks to handle one-off events. In the example, a very simple HTTP server that asynchronously reads some data from a JSON file and some HTML template is implemented. All async operations are handled with callbacks.
