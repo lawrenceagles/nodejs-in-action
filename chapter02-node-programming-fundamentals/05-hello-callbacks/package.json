@@ -1,5 +1,5 @@
 {
-  "name": "00-prj-template",
+  "name": "05-hello-callbacks",
   "version": "0.0.1",
   "description": "The basic project template for nodejs-in-action examples.",
   "engines": {
