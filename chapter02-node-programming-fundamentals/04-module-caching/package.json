@@ -1,9 +1,9 @@
 {
-  "name": "01-hello-node-modules",
+  "name": "04-module-caching",
   "version": "0.0.1",
-  "description": "The basics of Node.js module system.",
+  "description": "Exploring Node.js module caching caveats.",
   "engines": {
-    "node": "4.5.0"
+    "node": "4.6.0"
   },
   "repository": {
     "type": "git",
