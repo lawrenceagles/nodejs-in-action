@@ -1,4 +1,4 @@
-# 01-hello-node-modules
+# 02-hello-module-exports
 > exposing a single object with module.exports
 
 ## Description
