@@ -1,5 +1,5 @@
 # Chapter 1 &mdash; Welcome to Node.js
-> Node.js first examples from 1st edition
+> Node.js first examples from 2nd edition
 
 ## 01-hello-nodejs
 Verifies that the project template works as expected. This will also serve as the starting project template for most of the examples.
@@ -15,3 +15,6 @@ Illustrates the basics of Node.js streaming that lets you consume data as it is 
 
 ## 05-hello-http-streaming
 Illustrates how to stream an image from a Node.js HTTP server to the client using Readable and Writable streams.
+
+## 06-ecmascript6-classes-node
+Compares the syntax of prototype classes and the new ES6 class syntax.

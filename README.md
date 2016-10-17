@@ -3,5 +3,5 @@
 
 ## Contents
 + Part 1 &mdash; Node Fundamentals
-  + Chapter 1 &mdash; Welcome to Node.js (1st Edition)
-  + Chapter 2 &mdash; Node Programming Fundamentals (2nd Edition)
+  + Chapter 1 &mdash; Welcome to Node.js
+  + Chapter 2 &mdash; Node Programming Fundamentals
