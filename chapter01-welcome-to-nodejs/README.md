@@ -18,3 +18,15 @@ Illustrates how to stream an image from a Node.js HTTP server to the client usin
 
 ## 06-ecmascript6-classes-node
 Compares the syntax of prototype classes and the new ES6 class syntax.
+
+## 07-ecmascript6-const-let
+Illustrates the use of const and let.
+
+## 08-ecmascript6-hello-promises
+Illustrates the most basic example of promises in Node.
+
+## 09-ecmascript6-promise-chaining
+Illustrates how to do a *waterfall* sequence of Promise calls.
+
+## 10-ecmascript6-promise-parallel
+Ill
