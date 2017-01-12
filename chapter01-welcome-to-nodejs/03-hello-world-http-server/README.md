@@ -2,7 +2,4 @@
 > creating an HTTP server that responds with a "Hello, world!" message
 
 ## Description
-Detailed description of the example. May include implementation details of concepts covered.
-
-### Additional info
-Add additional comments in h3 sections as required.
+The example demonstrates how easy it is in Node.js to build an HTTP server that responds with the "Hello, world!" message.

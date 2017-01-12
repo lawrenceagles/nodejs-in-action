@@ -16,7 +16,7 @@ The Watcher module exports a class `Watcher` with the following API:
 
 **Usage:**
 ```javascript
-const Watcher = require("./lib/watcher);
+const Watcher = require("./lib/watcher");
 const watcher = new Watcher(dirToWatch, targetDir);
 ```
 The client application *must* register a listener for the `"process"` event that receives the filename to be processed.
