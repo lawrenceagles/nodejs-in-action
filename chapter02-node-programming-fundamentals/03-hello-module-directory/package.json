@@ -1,9 +1,10 @@
 {
   "name": "03-hello-module-directory",
   "version": "0.0.1",
-  "description": "Implementing a Node.js module in a directory",
+  "description": "Creating and consuming an application specific Node.js modules defined in its own directory.",
   "engines": {
-    "node": "4.6.0"
+    "node": "6.9.2",
+    "npm": "3.10.9"
   },
   "repository": {
     "type": "git",
@@ -16,10 +17,9 @@
   },
   "license": "ISC",
   "devDependencies": {
-    "eslint": "3.5.0"
+    "eslint": "3.13.0"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "scripts": {
     "start": "node build/index.js",
     "lint": "eslint public/src/",
@@ -28,7 +28,7 @@
     "build": "npm run lint",
     "prebuild": "npm run clean",
     "postbuild": "npm run copy",
-    "debug": "node-debug build/index.js",
-    "dev": "nodemon --ext js,json,yml --watch public/src --watch .eslintrc.yml --exec 'npm run build --silent && npm start'"
+    "debug": "node --inspect --debug-brk build/index.js",
+    "dev": "nodemon --ext js,json,yml --watch public/src --watch .eslintrc.yml --exec 'npm run build --silent && npm start --silent'"
   }
 }

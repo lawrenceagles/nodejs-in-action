@@ -1,20 +1,25 @@
 "use strict";
 
-function Currency(eurToRupeesConversionRate) {
-  this.eurToRupeesConversionRate = eurToRupeesConversionRate;
-}
-
-Currency.prototype.eurToRupees = function (eurAmount) {
-  return roundTwoDecimals(eurAmount * this.eurToRupeesConversionRate);
-};
-
-Currency.prototype.rupeesToEur = function (rupeesAmount) {
-  return roundTwoDecimals(rupeesAmount * (1 / this.eurToRupeesConversionRate));
-};
-
 function roundTwoDecimals(amount) {
   return Math.round(amount * 100) / 100;
 }
 
-/* exporting a single object */
+class Currency {
+  constructor(eurToRupeesConversionRate) {
+    this.eurToRupeesConversionRate = eurToRupeesConversionRate;
+  }
+
+  eurToRupees(eurAmount) {
+    return roundTwoDecimals(eurAmount * this.eurToRupeesConversionRate);
+  }
+
+  rupeesToEur(rupeesAmount) {
+    return roundTwoDecimals(rupeesAmount * (1 / this.eurToRupeesConversionRate));
+  }
+}
+
+/* 
+  Exporting a single object
+  As exports cannot be reassigned, you cannot do exports = Currency
+ */
 module.exports = Currency;

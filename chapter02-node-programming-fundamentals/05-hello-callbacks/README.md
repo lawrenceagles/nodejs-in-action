@@ -2,9 +2,9 @@
 > Node.js async programming using callbacks
 
 ## Description
-Illustrates how to use callbacks to handle *one-off* events. In the example a simple HTTP server that does the following is implemented:
-+ Pulls the titles of recent posts stored as a JSON file asynchronously
-+ Pulls a basic HTML template asynchronously
+Illustrates how to use callbacks to handle *one-off* events. In the example, a simple HTTP server that does the following is implemented:
++ Reads a JSON file in the local filesystem containing the titles of recent posts
++ Reads a basic HTML template asynchronously from the local filesystem
 + Assembles an HTML page containing the titles
 + Sends the HTML page to the user
 

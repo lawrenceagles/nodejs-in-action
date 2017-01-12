@@ -19,7 +19,7 @@ http.createServer(function (req, res) {
             res.end("Server Error (2)");
           } else {
             var tmpl = data.toString();
-            var html = tmpl.replace("%", titles.join("</li><li>"));
+            var html = tmpl.replace("%", titles.join("</li><li>")); // Replace "%" with the titles joined by "</li><li>" as separator
             res.writeHead(200, {"Content-Type": "text/html"});
             res.end(html);
           }
@@ -31,6 +31,6 @@ http.createServer(function (req, res) {
     res.writeHead(404);
     res.end("Not Found");
   }
-}).listen(5000, "127.0.0.1");
+}).listen(5000, "127.0.0.1");  // The second parameter is used to prevent binding from outside localhost
 
 console.log("Server established on port 5000 and only accessible from localhost");

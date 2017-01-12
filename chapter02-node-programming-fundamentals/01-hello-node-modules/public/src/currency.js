@@ -9,6 +9,8 @@ function roundToTwoDecimals(amount) {
 /*
  * We need to return two functions, so we use `exports` object to make them
  * available to the consumers.
+ * 
+ * exports cannot be reassigned, but you can add functions, objects and values to it
 */
 
 exports.eurToRupees = function (eurAmount) {

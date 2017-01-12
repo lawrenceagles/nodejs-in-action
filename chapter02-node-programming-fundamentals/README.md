@@ -15,3 +15,39 @@ A very simple example of Node.js module caching. The application includes a main
 
 ## 05-hello-callbacks
 Illustrate the use of callbacks to handle one-off events. In the example, a very simple HTTP server that asynchronously reads some data from a JSON file and some HTML template is implemented. All async operations are handled with callbacks.
+
+## 06-hello-callbacks-refactored
+Illustrate the use of callbacks to handle one-off events. In the example, a very simple HTTP server that asynchronously reads some data from a JSON file and some HTML template is implemented. All async operations are handled with callbacks.
+
+## 07-hello-events-echo-server
+Implements a very simple TCP server that returns whatever it receives as an example of how to handle events.
+
+## 08-hello-events-only-once
+Illustrates how to handle a one-time event in Node.js.
+
+## 09-hello-event-emitter
+Illustrates the basics of `EventEmitter`: registering listeners and emitting events.
+
+## 10-events-chat-server-v0
+Illustrates the use of *events* in a complete application that implements a TCP chat server that allows client to communicate using *telnet*.
+
+## 11-events-chat-server-v1
+Illustrates the use of *events* in a complete application that implements a TCP chat server that allows client to communicate using *telnet*.
+
+## 12-events-file-watcher
+Illustrates how to extend the standard `events.EventEmitter` to provide custom functionality. In the example, a watcher is established in a configured directory and the client code can provide a listener for a custom event and do some custom processing.
+
+## 13-async-caveat
+Demonstrates why mixing async and sync code may lead to unexpected results in a very simple example that displays some app internal state.
+
+## 14-closures
+Illustrates how a closure can be used to bind state into an async function call. The fat arrow syntax is used for the closure definition.
+
+## 15-serial-flow-custom
+Illustrates how to implement a simple custom serial flow control in a rather intricate application. The application selects a random RSS feed from a local file system and then downloads, parses and prints some of the information from the RSS.
+
+## 16-parallel-flow-custom
+Illustrates how to implement parallel flow control for tasks that are discovered dynamically in a somewhat intricate example. The application performs a wordcount asynchronously and dynamically for all the files in a configured directory.
+
+## e01-async-waterfall-rss-feed
+An example consisting in rewriting the *serial-flow-custom* example, but using the *async* module instead of doing it custom.
