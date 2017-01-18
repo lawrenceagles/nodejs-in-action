@@ -3,3 +3,6 @@
 
 ## 01-hello-cheerio-web-scraping
 Illustrates how to extract information from a web page and build a JavaScript object using the `cheerio` module.
+
+## 02-hello-cheerio-web-scraping-on-quirky-site
+
