@@ -15,7 +15,12 @@ $(".book")                                // locate class=book
     console.log({                     
       title: $el.find("h2").text(),       // find the contents of element h2
       author: $el.find("h3").text(),      // find the contents of element h3
-      description: $el.find("p").text()   // find the contents of element p
+      description: $el.find(".card-text").text()   // find the contents of element with class = card-text
     });
   });
 ```
+
+### Additional info
+The example relies on two Node.js modules:
++ *jsdom* &mdash; powerful HTML manipulation library
++ *jquery* &mdash; JavaScript library for DOM operations

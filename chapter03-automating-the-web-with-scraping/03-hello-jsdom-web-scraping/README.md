@@ -19,3 +19,8 @@ $(".book")                                // locate class=book
     });
   });
 ```
+
+### Additional info
+The example relies on two Node.js modules:
++ *jsdom* &mdash; powerful HTML manipulation library
++ *jquery* &mdash; JavaScript library for DOM operations

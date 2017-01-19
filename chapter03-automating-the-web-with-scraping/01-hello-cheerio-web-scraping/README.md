@@ -23,3 +23,8 @@ const book = {
   description: $(".book p").text()    // class=book, element p
 };
 ```
+
+### Additional info
+The example relies on two Node.js modules:
++ *cheerio* &mdash; simple and flexible HTML parsing
++ *moment* &mdash; date manipulation library

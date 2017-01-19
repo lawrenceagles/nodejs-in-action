@@ -26,3 +26,8 @@ const book = {
   description: $("table tr td").eq(2).text()      // navigate to table >> tr >> td, get third elem contents
 };
 ```
+
+### Additional info
+The example relies on two Node.js modules:
++ *cheerio* &mdash; simple and flexible HTML parsing
++ *moment* &mdash; date manipulation library

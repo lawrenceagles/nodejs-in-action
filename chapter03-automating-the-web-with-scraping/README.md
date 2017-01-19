@@ -14,5 +14,6 @@ An example of web scraping using `jsdom` module. Interaction with the web page i
 Illustrates how to perform web scraping on dynamic HTML pages (pages with placeholders that are populated via JavaScript) using `jsdom` and then `jquery` to find and extract the HTML elements.
 
 ## 05-cheerio-web-scraping-and-date-transformation
+Illustrates how to create CSV data out of the contents of an HTML page using `cheerio` and `moment` for the HTML and date manipulation respectively.
 
 
