@@ -7,5 +7,6 @@ Illustrates how to use the `express` framework to create the most basic HTTP ser
 ## 02-restful-express
 Illustrates how to use the `express` framework to create the scaffolding for a RESTful service layer. The application responds to `POST` but do not support information in the body.
 
-
+## 03-restful-express-with-body-parsing
+An `express` based RESTful service layer with body parsing support for JSON and form encoded data.
 

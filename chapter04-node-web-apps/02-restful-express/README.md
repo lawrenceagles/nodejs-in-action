@@ -18,3 +18,21 @@ The application responds to `POST` messages but does handle the message body.
 ### Additional info
 The project can be used as a template for all *Express* based projects. It includes the `config` custom module and lists `express` and `log4js` as dependencies.
 As the `config` module is not published in *NPM*, config dependencies `nconf` and `js-yaml` are also added in the `package.json`.
+
+### Testing the application with curl
+You can test the application with curl:
+
+```bash
+# Test create a new article
+$ curl -X "POST" http://localhost:port/articles
+
+# Test retrieve the given article 1
+$ curl http://localhost:port/articles/1
+
+# Test retrieve all the articles
+$ curl http://localhost:port/articles
+
+# Test delete article
+$ curl -X "DELETE" http://localhost:port/articles/1
+
+```

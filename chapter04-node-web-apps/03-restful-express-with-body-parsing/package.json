@@ -1,7 +1,7 @@
 {
-  "name": "02-restful-express",
+  "name": "02-restful-express-with-body-parsing",
   "version": "0.0.1",
-  "description": "Simple RESTful layer based in Express",
+  "description": "RESTful service layer with body parsing support",
   "engines": {
     "node": "6.9.2",
     "npm": "3.10.9"
@@ -20,6 +20,7 @@
     "eslint": "3.13.0"
   },
   "dependencies": {
+    "body-parser": "1.16.0",
     "express": "4.14.0",
     "js-yaml": "3.7.0",
     "log4js": "1.1.0",
