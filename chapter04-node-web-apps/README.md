@@ -4,4 +4,8 @@
 ## 01-hello-express
 Illustrates how to use the `express` framework to create the most basic HTTP server that is established on the configure port and returns the message "Hello, World!!!" when the root is is hit.
 
+## 02-restful-express
+Illustrates how to use the `express` framework to create the scaffolding for a RESTful service layer. The application responds to `POST` but do not support information in the body.
+
+
 
