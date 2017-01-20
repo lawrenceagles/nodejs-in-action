@@ -10,3 +10,5 @@ Illustrates how to use the `express` framework to create the scaffolding for a R
 ## 03-restful-express-with-body-parsing
 An `express` based RESTful service layer with body parsing support for JSON and form encoded data.
 
+## 04-restful-express-with-persistence-layer
+An `express` based RESTful service layer with body parsing support for JSON and form encoded data and a model persistence layer using *SQLite* database and `sqlite3` module.
