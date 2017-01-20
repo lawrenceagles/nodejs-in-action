@@ -6,3 +6,4 @@
   + Chapter 1 &mdash; Welcome to Node.js
   + Chapter 2 &mdash; Node Programming Fundamentals
   + Chapter 3 &mdash; Automating the Web with Scraping
+  + Chapter 4 &mdash; What is a Node Web Application?
