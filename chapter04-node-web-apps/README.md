@@ -15,3 +15,6 @@ An `express` based RESTful service layer with body parsing support for JSON and 
 
 ## 05-restful-express-with-readability-module
 An `express` based RESTful service layer with body parsing support for JSON and form encoded data, a model persistence layer and a readability module that simplifies web pages representation.
+
+## 06-restful-express-with-ui
+An `express` based RESTful service layer with body parsing support for JSON and form encoded data, a model persistence layer, a readability module that simplifies web pages representation, and a basic server side rendered UI.
