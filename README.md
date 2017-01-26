@@ -7,3 +7,4 @@
   + Chapter 2 &mdash; Node Programming Fundamentals
   + Chapter 3 &mdash; Automating the Web with Scraping
   + Chapter 4 &mdash; What is a Node Web Application?
+  + Chapter 5 &mdash; Front-end Build Systems
