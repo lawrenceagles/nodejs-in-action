@@ -111,10 +111,10 @@ As the application includes a UI for GET operations you can test the functionali
 ### Testing the application with curl
 You can use `curl` to test the application
 ```bash
-# Test create a new article using form encodied bodies 
+# Test create a new article using form encoded bodies 
 $ curl --data "url=http://www.imdb.com/title/tt0436992/" http://localhost:port/articles
 
-# Test create a new article using form encodied bodies 
+# Test create a new article using JSON encoded bodies 
 $ curl curl --header "Content-Type: application/json" \
 --data '{"url": "http://www.imdb.com/title/tt0436992/"}' \
 http://localhost:port/articles
