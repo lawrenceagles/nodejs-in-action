@@ -24,6 +24,7 @@
     "gulp-babel": "6.1.2",
     "gulp-concat": "2.6.1",
     "gulp-sourcemaps": "2.4.0",
+    "gulp-watch": "4.3.11",
     "react": "15.4.2",
     "react-dom": "15.4.2"
   },

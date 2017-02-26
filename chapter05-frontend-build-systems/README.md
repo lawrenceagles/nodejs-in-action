@@ -5,4 +5,7 @@
 Illustrates how to invoke client side tools from *NPM*.
 
 ## 02-hello-gulp
-Illustrates how to build a very simple pipeline for a React application using *Gulp* as task runner.
+Illustrates how to build a very simple pipeline for a React application using *Gulp* as task runner. It also demonstrates how to integrate a watch task.
+
+## 03-scalable-gulp
+

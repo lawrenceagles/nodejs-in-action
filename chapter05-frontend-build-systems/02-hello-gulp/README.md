@@ -11,6 +11,8 @@ Illustrates how to execute a simple pipeline of tasks with *Gulp* consisting in:
 
 The task is built as a Node.js program in the `gulpfile.js` file.
 
+Additionally, a `watch` task has been added to trigger the `default` build pipeline whenever a change in the application files is detected.
+
 **Note**
 If *Gulp* is not installed globally, you will have to pick it up from `./node_modules/.bin` as in:
 ```bash
