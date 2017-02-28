@@ -22,14 +22,26 @@ Illustrates the use of const and let.
 ## 06-ecmascript6-hello-promises
 Illustrates the most basic example of promises in Node.
 
-## 07-ecmascript6-promise-chaining
-Illustrates how to do a *waterfall* sequence of Promise calls.
+## 07-ecmascript6-promise-chaining-simple
+Illustrates how to do a simple *waterfall* sequence of Promise calls.
 
-## 08-ecmascript6-promise-parallel
+## 08-ecmascript6-promise-chaining-complex
+Illustrates how to do a more complex sequence of Promise calls.
+
+## 09-ecmascript6-promise-parallel
 Illustrates how to do a *parallel* sequence of Promise calls using `Promise.all` and `Promise.race`.
 
-## 11-ecmascript6-template-strings
+## 10-ecmascript6-template-strings
 Illustrates how to use *ES6 template strings* to insert values in strings without using concatenation.
 
-## 12-ecmascript6-arrow-functions
+## 11-ecmascript6-arrow-functions
 Illustrates how to use *ES6 arrow functions* to simplify the syntax of functions taking functions as parameters.
+
+## 12-ecmascript6-property-value-shorthands
+Illustrates how to use *ES6 property value shorthands* to simplify the assignments of properties to objects when the variables holding those objects already have the desired name.
+
+## 13-ecmascript6-computed-properties
+Illustrates how to use *ES6 computed properties* to define object properties that don't have a fixed value until runtime.
+
+## 14-ecmascript6-computed-properties
+Illustrates how to use *ES6 computed properties* to define object properties that don't have a fixed value until runtime.
