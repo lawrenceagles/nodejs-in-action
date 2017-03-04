@@ -43,5 +43,14 @@ Illustrates how to use *ES6 property value shorthands* to simplify the assignmen
 ## 13-ecmascript6-computed-properties
 Illustrates how to use *ES6 computed properties* to define object properties that don't have a fixed value until runtime.
 
-## 14-ecmascript6-computed-properties
-Illustrates how to use *ES6 computed properties* to define object properties that don't have a fixed value until runtime.
+## 14-ecmascript6-method-definitions
+Illustrates how to use *ES6 method definitions* to define functions in JavaScript objects.
+
+## 15-ecmascript6-assignment-destructuring-objects
+Illustrates how to use *ES6 destructuring* in JavaScript objects as a shorthand notation when extratcting specific properties from objects.
+
+## 16-ecmascript6-assignment-destructuring-arrays
+Illustrates how to use *ES6 destructuring* in JavaScript arrays as a shorthand notation when extratcting specific properties from objects.
+
+## 17-ecmascript6-assignment-destructuring-function-params
+Illustrates how to use *ES6 destructuring* in function parameters.

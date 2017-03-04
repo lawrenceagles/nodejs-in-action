@@ -5,11 +5,22 @@
 Illustrates how to use *ES6 computed properties* which let you define object properties whose key is not fixed until runtime as if they were static using the syntax `[key]: value`
 
 ```javascript
-const numbers = [1, 2, 3, 4, 5];
-const names = ["uno", "dos", "tres", "catorce"];
+const instance1 = {
+  id: "rg0ODgpizbfsqQ",
+  name: "instance1",
+  value: 10,
+  createdAt: new Date()
+};
 
-const namesAndNumbers = { numbers, names };
+const instance2 = {
+  id: "0MsC0nwal5FhTQ",
+  name: "instance2",
+  value: 20,
+  createdAt: new Date()
+};
 
-/* this is effectively the same as */
-const namesAndNumbers = { numbers: numbers, names: names };
+const instancesMap = {
+  [instance1.id]: instance1,
+  [instance2.id]: instance2
+};
 ```

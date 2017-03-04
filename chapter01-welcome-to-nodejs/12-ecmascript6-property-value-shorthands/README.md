@@ -3,6 +3,7 @@
 
 ## Description
 Illustrates how to use ES6 property value shorthands when we declare one or more properties whose values are references to variables by the same name.
+
 ```javascript
 const numbers = [1, 2, 3, 4, 5];
 const names = ["uno", "dos", "tres", "catorce"];
