@@ -54,3 +54,6 @@ Illustrates how to use *ES6 destructuring* in JavaScript arrays as a shorthand n
 
 ## 17-ecmascript6-assignment-destructuring-function-params
 Illustrates how to use *ES6 destructuring* in function parameters.
+
+## 18-ecmascript6-assignment-destructuring-misc
+Illustrates several misc use cases in which assignment destructuring is specially useful.

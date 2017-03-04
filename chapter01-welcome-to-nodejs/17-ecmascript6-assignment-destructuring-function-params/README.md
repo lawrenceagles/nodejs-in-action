@@ -1,4 +1,4 @@
-# 16-ecmascript6-assignment-destructuring-function-params
+# 17-ecmascript6-assignment-destructuring-function-params
 > introducing ES6 assignment destructuring with function parameters
 
 ## Description
@@ -34,7 +34,7 @@ function carFactory({brand = "vw", year = "1990"} = {}) {
 
 
 ### Use Case 2: declaring the contract of a function
-Using assignment destructuring in function parameters you can *declare* the contract of a function &mdash;
+Using assignment destructuring in function parameters you can *declare* the contract of a function &mdash; that is the shape of the object the function is expecting to receive.
 
 ```javascript
 // this function requires an object with `brand`, `make` and `model` properties
