@@ -57,3 +57,9 @@ Illustrates how to use *ES6 destructuring* in function parameters.
 
 ## 18-ecmascript6-assignment-destructuring-misc
 Illustrates several misc use cases in which assignment destructuring is specially useful.
+
+## [19-ecmascript6-rest-parameters](19-ecmascript6-rest-parameters)
+A couple of examples about the usage of the rest `...` parameters for functions with a variable argument list.
+
+## [20-ecmascript6-spread-operator](20-ecmascript6-spread-operator)
+Illustrate use case scenarios for the spread operator `...`.
