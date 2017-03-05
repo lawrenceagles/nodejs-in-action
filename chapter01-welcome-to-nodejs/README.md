@@ -31,7 +31,7 @@ Illustrates how to do a more complex sequence of Promise calls.
 ## 09-ecmascript6-promise-parallel
 Illustrates how to do a *parallel* sequence of Promise calls using `Promise.all` and `Promise.race`.
 
-## 10-ecmascript6-template-strings
+## [10-ecmascript6-template-strings](10-ecmascript6-template-strings)
 Illustrates how to use *ES6 template strings* to insert values in strings without using concatenation.
 
 ## 11-ecmascript6-arrow-functions
