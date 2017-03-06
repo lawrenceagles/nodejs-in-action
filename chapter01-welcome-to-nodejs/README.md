@@ -63,3 +63,6 @@ A couple of examples about the usage of the rest `...` parameters for functions 
 
 ## [20-ecmascript6-spread-operator](20-ecmascript6-spread-operator)
 Illustrate use case scenarios for the spread operator `...`.
+
+## [21-ecmascript6-object-improvements](21-ecmascript6-object-improvements)
+Illustrate `Object.assign` and `Object.is` methods.
