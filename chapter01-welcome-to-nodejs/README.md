@@ -22,7 +22,7 @@ Illustrates the use of const and let.
 ## [06-ecmascript6-hello-promises](06-ecmascript6-hello-promises)
 Illustrates the most basic example of promises in Node.
 
-## 07-ecmascript6-promise-chaining-simple
+## [07-ecmascript6-promise-chaining-simple](07-ecmascript6-promise-chaining-simple)
 Illustrates how to do a simple *waterfall* sequence of Promise calls.
 
 ## 08-ecmascript6-promise-chaining-complex
