@@ -19,7 +19,7 @@ Compares the syntax of prototype classes and the new ES6 class syntax.
 ## 05-ecmascript6-const-let
 Illustrates the use of const and let.
 
-## 06-ecmascript6-hello-promises
+## [06-ecmascript6-hello-promises](06-ecmascript6-hello-promises)
 Illustrates the most basic example of promises in Node.
 
 ## 07-ecmascript6-promise-chaining-simple
