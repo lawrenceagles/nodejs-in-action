@@ -66,3 +66,6 @@ Illustrate use case scenarios for the spread operator `...`.
 
 ## [21-ecmascript6-object-improvements](21-ecmascript6-object-improvements)
 Illustrate `Object.assign` and `Object.is` methods.
+
+## [22-ecmascript6-hello-iterators](22-ecmascript6-hello-iterators)
+Illustrates the basics of the iterabale protocol of ES6 that lets you turn regular JavaScript objects into sequences that can be iterated over.
