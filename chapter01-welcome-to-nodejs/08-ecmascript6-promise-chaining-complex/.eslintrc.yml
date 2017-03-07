@@ -6,15 +6,16 @@ rules:
   indent:
     - error
     - 2
+    - SwitchCase: 1
   linebreak-style:
     - error
     - unix
   no-console:
-    - warn
+    - off # not using logging framework
   quotes:
     - error
     - double
-    - allowTemplateLiterals: true
+    - allowTemplateLiterals: true    
   semi:
     - error
     - always

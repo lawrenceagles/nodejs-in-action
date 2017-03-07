@@ -25,10 +25,10 @@ Illustrates the most basic example of promises in Node.
 ## [07-ecmascript6-promise-chaining-simple](07-ecmascript6-promise-chaining-simple)
 Illustrates how to do a simple *waterfall* sequence of Promise calls.
 
-## 08-ecmascript6-promise-chaining-complex
-Illustrates how to do a more complex sequence of Promise calls.
+## [08-ecmascript6-promise-chaining-complex](08-ecmascript6-promise-chaining-complex)
+Illustrates how to do a more complex chaining of Promise calls.
 
-## 09-ecmascript6-promise-parallel
+## [09-ecmascript6-promise-parallel](09-ecmascript6-promise-parallel)
 Illustrates how to do a *parallel* sequence of Promise calls using `Promise.all` and `Promise.race`.
 
 ## [10-ecmascript6-template-strings](10-ecmascript6-template-strings)

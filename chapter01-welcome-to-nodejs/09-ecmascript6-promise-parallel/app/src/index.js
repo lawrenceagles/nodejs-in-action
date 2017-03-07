@@ -8,7 +8,7 @@
 /*
   Scenario 1:
   getting the results separately
-/*
+*/
 
 /*
 fetch("/products")
@@ -75,6 +75,7 @@ Promise
   Using Promise.race which resolves the promises as soon as one
   of the promises are resolved
 */
+
 /*
 Promise
   .race([
@@ -101,7 +102,6 @@ Promise
   Scenario 5: 
   Using Promise.race is useful to timeout Promises out of our control
 */
-
 function timeout(delay) {
   return new Promise((resolve, reject) => {
     setTimeout(function () {
@@ -120,7 +120,7 @@ Promise
         return data;
       })
       .then(JSON.parse)])
-  .then((products) => {
+  .then(products => {
     products.forEach((product) => {
       console.log(`${product.id} - ${product.name}`);
     });
@@ -151,4 +151,4 @@ function fetch(key) {
   }
 }
 
-console.log("done!!!");
+console.log("No more sync code to run!!!");

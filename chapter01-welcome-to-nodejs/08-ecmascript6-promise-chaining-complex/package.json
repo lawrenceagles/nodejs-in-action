@@ -1,10 +1,10 @@
 {
-  "name": "00-prj-template",
+  "name": "08-ecmascript-promise-chaining-complex",
   "version": "0.0.1",
-  "description": "The basic project template for nodejs-in-action examples.",
+  "description": "A more comprehensive example involving promise chaining",
   "engines": {
-    "node": "6.9.2",
-    "npm": "3.10.9"
+    "node": "6.10.10",
+    "npm": "3.10.10"
   },
   "repository": {
     "type": "git",
@@ -17,18 +17,17 @@
   },
   "license": "ISC",
   "devDependencies": {
-    "eslint": "3.13.0"
+    "eslint": "3.16.1"
   },
   "dependencies": {},
   "scripts": {
-    "start": "node build/index.js",
-    "lint": "eslint public/src/",
-    "clean": "rm -rf build/",
-    "copy": "cp -r public/src/ build/",
-    "build": "npm run lint",
-    "prebuild": "npm run clean",
-    "postbuild": "npm run copy",
-    "debug": "node --inspect --debug-brk build/index.js",
-    "dev": "nodemon --ext js,json,yml --watch public/src --watch .eslintrc.yml --exec 'npm run build --silent && npm start --silent'"
+    "prestart": "npm run lint",
+    "start": "node app/src/index.js",
+    "lint": "eslint app/src/",
+    "predebug": "npm run lint",
+    "debug": "node --inspect --debug-brk app/src/index.js",
+    "dev": "nodemon --ext js,json,yml --watch app/src --watch .eslintrc.yml --exec 'npm start'"
   }
 }
+
+
