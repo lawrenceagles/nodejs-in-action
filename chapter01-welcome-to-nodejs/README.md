@@ -69,3 +69,6 @@ Illustrate `Object.assign` and `Object.is` methods.
 
 ## [22-ecmascript6-hello-iterators](22-ecmascript6-hello-iterators)
 Illustrates the basics of the iterabale protocol of ES6 that lets you turn regular JavaScript objects into sequences that can be iterated over.
+
+## [e01-dice-experiment-infinite-sequences](e01-dice-experiment-infinite-sequences)
+Illustrates a simple use case of infinite iterators modeling the experiment of throwing dice repeateadly and printing the results.
