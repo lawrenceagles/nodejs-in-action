@@ -1,7 +1,7 @@
 {
-  "name": "25-ecmascript6-hello-generators",
+  "name": "26-ecmascript6-generators-returning-generators",
   "version": "0.0.1",
-  "description": "ES6: Basics of generator functions",
+  "description": "ES6: Generator functions yield*ing generators",
   "engines": {
     "node": "6.10.10",
     "npm": "3.10.10"

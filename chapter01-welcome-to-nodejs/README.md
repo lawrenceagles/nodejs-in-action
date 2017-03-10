@@ -79,6 +79,9 @@ Illustrates how to convert a key-value JavaScript object into an iterable sequen
 ## [25-ecmascript6-hello-generators](25-ecmascript6-hello-generators)
 Illustrates the basics of generator functions, how to define them and use them.
 
+## [26-ecmascript6-generators-returning-generators](26-ecmascript6-generators-returning-generators)
+Illustrates how a generator can yield another generator or iterable object using `yield*`.
+
 ## [e01-dice-experiment-infinite-sequences](e01-dice-experiment-infinite-sequences)
 Illustrates a simple use case of infinite iterators modeling the experiment of throwing dice repeateadly and printing the results.
 
