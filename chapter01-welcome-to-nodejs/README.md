@@ -78,3 +78,6 @@ Illustrates how to convert a key-value JavaScript object into an iterable sequen
 
 ## [e01-dice-experiment-infinite-sequences](e01-dice-experiment-infinite-sequences)
 Illustrates a simple use case of infinite iterators modeling the experiment of throwing dice repeateadly and printing the results.
+
+## [e02-playlist-as-iterator](e02-playlist-as-iterator)
+Illustrates a simple use case of ES6 iterators to model a playlist with songs that can be repeated a number of times and with optional shuffle.
