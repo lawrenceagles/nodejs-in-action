@@ -76,6 +76,9 @@ Illustrates the basics of the iterable protocol of ES6 with infinite sequences, 
 ## [24-ecmascript6-iterating-over-object-maps](24-ecmascript6-iterating-over-object-maps)
 Illustrates how to convert a key-value JavaScript object into an iterable sequence.
 
+## [25-ecmascript6-hello-generators](25-ecmascript6-hello-generators)
+Illustrates the basics of generator functions, how to define them and use them.
+
 ## [e01-dice-experiment-infinite-sequences](e01-dice-experiment-infinite-sequences)
 Illustrates a simple use case of infinite iterators modeling the experiment of throwing dice repeateadly and printing the results.
 
