@@ -85,8 +85,15 @@ Illustrates how a generator can yield another generator or iterable object using
 ## [27-ecmascript6-generators-iterating-manually](27-ecmascript6-generators-iterating-manually)
 Basic example illustrating how to iterate manually over the sequence given by a generator function.
 
+## [28-ecmascript6-generators-passing-params](28-ecmascript6-generators-passing-params)
+Exploring what passing arguments to `next()` in generators functions mean.
+
+## [29-ecmascript6-generators-advanced](29-ecmascript6-generators-advanced)
+Explores advanced uses of generators using as example the implementation of the Magic 8-ball.
+
 ## [e01-dice-experiment-infinite-sequences](e01-dice-experiment-infinite-sequences)
 Illustrates a simple use case of infinite iterators modeling the experiment of throwing dice repeateadly and printing the results.
 
 ## [e02-playlist-as-iterator](e02-playlist-as-iterator)
 Illustrates a simple use case of ES6 iterators to model a playlist with songs that can be repeated a number of times and with optional shuffle.
+

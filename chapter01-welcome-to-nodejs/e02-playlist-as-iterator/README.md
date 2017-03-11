@@ -2,7 +2,7 @@
 > using ES6 iterators to build a playlist
 
 ## Description
-Illustrate the use of the ES6 iterator protocol in a sample scenario involving a song playlist.
+Illustrates the use of the ES6 iterator protocol in a sample scenario involving a song playlist.
 
 In the example, we use iterators to provide the following functionality to a playlist:
 + repeat the playlist once done a given number of times
