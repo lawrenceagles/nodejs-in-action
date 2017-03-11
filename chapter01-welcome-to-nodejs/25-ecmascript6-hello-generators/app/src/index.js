@@ -66,3 +66,14 @@ for (let num of numbers()) {
 }
 
 console.log([...numbers()]);
+
+/*
+  Once the end of the generator has been reached the function will signal { done: true }
+  for the subsequent calls asking for the next element in the sequence
+*/
+console.log("================");
+
+const g1 = numbers();
+for (let i = 0; i < 5; i++) {
+  console.log(`g1.mext()=${ util.inspect(g1.next()) }`);
+}

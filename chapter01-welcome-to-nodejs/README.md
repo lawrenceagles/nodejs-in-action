@@ -82,6 +82,9 @@ Illustrates the basics of generator functions, how to define them and use them.
 ## [26-ecmascript6-generators-returning-generators](26-ecmascript6-generators-returning-generators)
 Illustrates how a generator can yield another generator or iterable object using `yield*`.
 
+## [27-ecmascript6-generators-iterating-manually](27-ecmascript6-generators-iterating-manually)
+Basic example illustrating how to iterate manually over the sequence given by a generator function.
+
 ## [e01-dice-experiment-infinite-sequences](e01-dice-experiment-infinite-sequences)
 Illustrates a simple use case of infinite iterators modeling the experiment of throwing dice repeateadly and printing the results.
 
