@@ -91,6 +91,12 @@ Exploring what passing arguments to `next()` in generators functions mean.
 ## [29-ecmascript6-generators-advanced](29-ecmascript6-generators-advanced)
 Explores advanced uses of generators using as example the implementation of the Magic 8-ball.
 
+## [30-ecmascript6-generators-async-flows](30-ecmascript6-generators-async-flows)
+Illustrates how to use generator functions in async flows.
+
+## [31-ecmascript6-generators-throwing-errors](31-ecmascript6-generators-throwing-errors)
+Illustrates how to use `throw` from generators and how to catch those exceptionc from client code.
+
 ## [e01-dice-experiment-infinite-sequences](e01-dice-experiment-infinite-sequences)
 Illustrates a simple use case of infinite iterators modeling the experiment of throwing dice repeateadly and printing the results.
 

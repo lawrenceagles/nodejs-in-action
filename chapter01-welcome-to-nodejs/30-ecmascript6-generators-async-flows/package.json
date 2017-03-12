@@ -1,7 +1,7 @@
 {
-  "name": "29-ecmascript-generators-advanced",
+  "name": "30-ecmascript6-generators-async-flows",
   "version": "0.0.1",
-  "description": "Advanced uses of ES6 generator functions to write a magic 8-ball",
+  "description": "ES6 generator functions and async flows",
   "engines": {
     "node": "6.10.10",
     "npm": "3.10.10"
