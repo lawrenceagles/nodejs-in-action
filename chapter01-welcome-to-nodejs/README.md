@@ -95,7 +95,10 @@ Explores advanced uses of generators using as example the implementation of the 
 Illustrates how to use generator functions in async flows.
 
 ## [31-ecmascript6-generators-throwing-errors](31-ecmascript6-generators-throwing-errors)
-Illustrates how to use `throw` from generators and how to catch those exceptionc from client code.
+Illustrates how to use `throw` from generators and how to catch those exceptions from client code.
+
+## [32-ecmascript6-generators-return](32-ecmascript6-generators-return)
+Illustrates the effect of *returning* from generator sequences and generator functions.
 
 ## [e01-dice-experiment-infinite-sequences](e01-dice-experiment-infinite-sequences)
 Illustrates a simple use case of infinite iterators modeling the experiment of throwing dice repeateadly and printing the results.

@@ -1,7 +1,7 @@
 {
-  "name": "31-ecmascript6-generators-throwing-errors",
+  "name": "32-ecmascript6-generators-return",
   "version": "0.0.1",
-  "description": "ES6 generator functions: throwing errors",
+  "description": "ES6 generator functions: returning from generator functions",
   "engines": {
     "node": "6.10.10",
     "npm": "3.10.10"
