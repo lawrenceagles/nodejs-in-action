@@ -19,19 +19,19 @@ Compares the syntax of prototype classes and the new ES6 class syntax.
 ## 05-ecmascript6-const-let
 Illustrates the use of const and let.
 
-## [06-ecmascript6-hello-promises](06-ecmascript6-hello-promises)
+## [06-ecmascript6-hello-promises](06-ecmascript6-hello-promises/)
 Illustrates the most basic example of promises in Node.
 
-## [07-ecmascript6-promise-chaining-simple](07-ecmascript6-promise-chaining-simple)
+## [07-ecmascript6-promise-chaining-simple](07-ecmascript6-promise-chaining-simple/)
 Illustrates how to do a simple *waterfall* sequence of Promise calls.
 
-## [08-ecmascript6-promise-chaining-complex](08-ecmascript6-promise-chaining-complex)
+## [08-ecmascript6-promise-chaining-complex](08-ecmascript6-promise-chaining-complex/)
 Illustrates how to do a more complex chaining of Promise calls.
 
-## [09-ecmascript6-promise-parallel](09-ecmascript6-promise-parallel)
+## [09-ecmascript6-promise-parallel](09-ecmascript6-promise-parallel/)
 Illustrates how to do a *parallel* sequence of Promise calls using `Promise.all` and `Promise.race`.
 
-## [10-ecmascript6-template-strings](10-ecmascript6-template-strings)
+## [10-ecmascript6-template-strings](10-ecmascript6-template-strings/)
 Illustrates how to use *ES6 template strings* to insert values in strings without using concatenation.
 
 ## 11-ecmascript6-arrow-functions
@@ -58,60 +58,60 @@ Illustrates how to use *ES6 destructuring* in function parameters.
 ## 18-ecmascript6-assignment-destructuring-misc
 Illustrates several misc use cases in which assignment destructuring is specially useful.
 
-## [19-ecmascript6-rest-parameters](19-ecmascript6-rest-parameters)
+## [19-ecmascript6-rest-parameters](19-ecmascript6-rest-parameters/)
 A couple of examples about the usage of the rest `...` parameters for functions with a variable argument list.
 
-## [20-ecmascript6-spread-operator](20-ecmascript6-spread-operator)
+## [20-ecmascript6-spread-operator](20-ecmascript6-spread-operator/)
 Illustrate use case scenarios for the spread operator `...`.
 
-## [21-ecmascript6-object-improvements](21-ecmascript6-object-improvements)
+## [21-ecmascript6-object-improvements](21-ecmascript6-object-improvements/)
 Illustrate `Object.assign` and `Object.is` methods.
 
-## [22-ecmascript6-hello-iterators](22-ecmascript6-hello-iterators)
+## [22-ecmascript6-hello-iterators](22-ecmascript6-hello-iterators/)
 Illustrates the basics of the iterable protocol of ES6 that lets you turn regular JavaScript objects into sequences that can be iterated over.
 
-## [23-ecmascript6-infinite-sequences](23-ecmascript6-infinite-sequences)
+## [23-ecmascript6-infinite-sequences](23-ecmascript6-infinite-sequences/)
 Illustrates the basics of the iterable protocol of ES6 with infinite sequences, how to extract values from them and how to encapsulate in functions.
 
-## [24-ecmascript6-iterating-over-object-maps](24-ecmascript6-iterating-over-object-maps)
+## [24-ecmascript6-iterating-over-object-maps](24-ecmascript6-iterating-over-object-maps/)
 Illustrates how to convert a key-value JavaScript object into an iterable sequence.
 
-## [25-ecmascript6-hello-generators](25-ecmascript6-hello-generators)
+## [25-ecmascript6-hello-generators](25-ecmascript6-hello-generators/)
 Illustrates the basics of generator functions, how to define them and use them.
 
-## [26-ecmascript6-generators-returning-generators](26-ecmascript6-generators-returning-generators)
+## [26-ecmascript6-generators-returning-generators](26-ecmascript6-generators-returning-generators/)
 Illustrates how a generator can yield another generator or iterable object using `yield*`.
 
-## [27-ecmascript6-generators-iterating-manually](27-ecmascript6-generators-iterating-manually)
+## [27-ecmascript6-generators-iterating-manually](27-ecmascript6-generators-iterating-manually/)
 Basic example illustrating how to iterate manually over the sequence given by a generator function.
 
-## [28-ecmascript6-generators-passing-params](28-ecmascript6-generators-passing-params)
+## [28-ecmascript6-generators-passing-params](28-ecmascript6-generators-passing-params/)
 Exploring what passing arguments to `next()` in generators functions mean.
 
-## [29-ecmascript6-generators-advanced](29-ecmascript6-generators-advanced)
+## [29-ecmascript6-generators-advanced](29-ecmascript6-generators-advanced/)
 Explores advanced uses of generators using as example the implementation of the Magic 8-ball.
 
-## [30-ecmascript6-generators-async-flows](30-ecmascript6-generators-async-flows)
+## [30-ecmascript6-generators-async-flows](30-ecmascript6-generators-async-flows/)
 Illustrates how to use generator functions in async flows.
 
-## [31-ecmascript6-generators-throwing-errors](31-ecmascript6-generators-throwing-errors)
+## [31-ecmascript6-generators-throwing-errors](31-ecmascript6-generators-throwing-errors/)
 Illustrates how to use `throw` from generators and how to catch those exceptions from client code.
 
-## [32-ecmascript6-generators-return](32-ecmascript6-generators-return)
+## [32-ecmascript6-generators-return](32-ecmascript6-generators-return/)
 Illustrates the effect of *returning* from generator sequences and generator functions.
 
-## [33-ecmascript6-hello-async-await](33-ecmascript6-hello-async-await)
+## [33-ecmascript6-hello-async-await](33-ecmascript6-hello-async-await/)
 Illustrates how to synchronize promises using `async` functions and the `await` keyword.
 
-## [34-ecmascript6-async-await-flows](34-ecmascript-async-await-flows)
+## [34-ecmascript6-async-await-flows](34-ecmascript-async-await-flows/)
 Illustrates how to manage parallel flows using async-await.
 
-## [35-ecmascript6-async-iterators](35-ecmascript-async-iterators)
+## [35-ecmascript6-async-iterators](35-ecmascript-async-iterators/)
 A *non-working* example of async iterators. The example does not run.
 
-## [e01-dice-experiment-infinite-sequences](e01-dice-experiment-infinite-sequences)
+## [e01-dice-experiment-infinite-sequences](e01-dice-experiment-infinite-sequences/)
 Illustrates a simple use case of infinite iterators modeling the experiment of throwing dice repeateadly and printing the results.
 
-## [e02-playlist-as-iterator](e02-playlist-as-iterator)
+## [e02-playlist-as-iterator](e02-playlist-as-iterator/)
 Illustrates a simple use case of ES6 iterators to model a playlist with songs that can be repeated a number of times and with optional shuffle.
 
