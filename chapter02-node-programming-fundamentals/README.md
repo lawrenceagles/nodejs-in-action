@@ -52,8 +52,8 @@ Illustrates how to implement parallel flow control for tasks that are discovered
 ## e01-async-waterfall-rss-feed
 An example consisting in rewriting the *serial-flow-custom* example, but using the *async* module instead of doing it custom.
 
-## [e02-modules-for-exchanging-data](e02-modules-for-exchanging-data)
+## [e02-modules-for-exchanging-data](e02-modules-for-exchanging-data/)
 An example illustrating how to use a module for exchanging data between different parts of an application.
 
-## [e03-symmetric-crypto](e03-symmetric-crypto)
+## [e03-symmetric-crypto](e03-symmetric-crypto/)
 An example illustrating how to create a basic crypto helper that encrypts and decrypts using a hardcoded key.
