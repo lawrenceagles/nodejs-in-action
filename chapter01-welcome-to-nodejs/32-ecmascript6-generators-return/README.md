@@ -1,4 +1,4 @@
-# 31-ecmascript6-generators-return
+# 32-ecmascript6-generators-return
 > explicitly returning from a generator
 
 ## Description

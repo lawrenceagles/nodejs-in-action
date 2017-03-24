@@ -100,6 +100,15 @@ Illustrates how to use `throw` from generators and how to catch those exceptions
 ## [32-ecmascript6-generators-return](32-ecmascript6-generators-return)
 Illustrates the effect of *returning* from generator sequences and generator functions.
 
+## [33-ecmascript6-hello-async-await](33-ecmascript6-hello-async-await)
+Illustrates how to synchronize promises using `async` functions and the `await` keyword.
+
+## [34-ecmascript6-async-await-flows](34-ecmascript-async-await-flows)
+Illustrates how to manage parallel flows using async-await.
+
+## [35-ecmascript6-async-iterators](35-ecmascript-async-iterators)
+A *non-working* example of async iterators. The example does not run.
+
 ## [e01-dice-experiment-infinite-sequences](e01-dice-experiment-infinite-sequences)
 Illustrates a simple use case of infinite iterators modeling the experiment of throwing dice repeateadly and printing the results.
 
