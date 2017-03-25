@@ -1,0 +1,108 @@
+# Chapter 0 &mdash; EcmaScript 6 examples
+> Node.js examples on ES6 concepts
+
+## 00-prj-template
+Basic template for ES6 based applications.
+
+## [01-ecmascript6-classes-node](01-ecmascript6-classes-node/)
+Compares the syntax of prototype classes and the new ES6 class syntax.
+
+## [02-ecmascript6-const-let](02-ecmascript6-const-let/)
+Illustrates the use of const and let.
+
+## [03-ecmascript6-hello-promises](03-ecmascript6-hello-promises/)
+Illustrates the most basic example of promises in Node.
+
+## [04-ecmascript6-promise-chaining-simple](04-ecmascript6-promise-chaining-simple/)
+Illustrates how to do a simple *waterfall* sequence of Promise calls.
+
+## [05-ecmascript6-promise-chaining-complex](05-ecmascript6-promise-chaining-complex/)
+Illustrates how to do a more complex chaining of Promise calls.
+
+## [06-ecmascript6-promise-parallel](06-ecmascript6-promise-parallel/)
+Illustrates how to do a *parallel* sequence of Promise calls using `Promise.all` and `Promise.race`.
+
+## [07-ecmascript6-template-strings](07-ecmascript6-template-strings/)
+Illustrates how to use *ES6 template strings* to insert values in strings without using concatenation.
+
+## [08-ecmascript6-arrow-functions](08-ecmascript6-arrow-functions/)
+Illustrates how to use *ES6 arrow functions* to simplify the syntax of functions taking functions as parameters.
+
+## [09-ecmascript6-property-value-shorthands](09-ecmascript6-property-value-shorthands/)
+Illustrates how to use *ES6 property value shorthands* to simplify the assignments of properties to objects when the variables holding those objects already have the desired name.
+
+## [10-ecmascript6-computed-properties](10-ecmascript6-computed-properties/)
+Illustrates how to use *ES6 computed properties* to define object properties that don't have a fixed value until runtime.
+
+## [11-ecmascript6-method-definitions](11-ecmascript6-method-definitions/)
+Illustrates how to use *ES6 method definitions* to define functions in JavaScript objects.
+
+## [12-ecmascript6-assignment-destructuring-objects](12-ecmascript6-assignment-destructuring-objects/)
+Illustrates how to use *ES6 destructuring* in JavaScript objects as a shorthand notation when extratcting specific properties from objects.
+
+## [13-ecmascript6-assignment-destructuring-arrays](13-ecmascript6-assignment-destructuring-arrays/)
+Illustrates how to use *ES6 destructuring* in JavaScript arrays as a shorthand notation when extratcting specific properties from objects.
+
+## [14-ecmascript6-assignment-destructuring-function-params](14-ecmascript6-assignment-destructuring-function-params/)
+Illustrates how to use *ES6 destructuring* in function parameters.
+
+## [15-ecmascript6-assignment-destructuring-misc](15-ecmascript6-assignment-destructuring-misc/)
+Illustrates several misc use cases in which assignment destructuring is specially useful.
+
+## [16-ecmascript6-rest-parameters](16-ecmascript6-rest-parameters/)
+A couple of examples about the usage of the rest `...` parameters for functions with a variable argument list.
+
+## [17-ecmascript6-spread-operator](17-ecmascript6-spread-operator/)
+Illustrate use case scenarios for the spread operator `...`.
+
+## [18-ecmascript6-object-improvements](18-ecmascript6-object-improvements/)
+Illustrate `Object.assign` and `Object.is` methods.
+
+## [19-ecmascript6-hello-iterators](19-ecmascript6-hello-iterators/)
+Illustrates the basics of the iterable protocol of ES6 that lets you turn regular JavaScript objects into sequences that can be iterated over.
+
+## [20-ecmascript6-infinite-sequences](20-ecmascript6-infinite-sequences/)
+Illustrates the basics of the iterable protocol of ES6 with infinite sequences, how to extract values from them and how to encapsulate in functions.
+
+## [21-ecmascript6-iterating-over-object-maps](21-ecmascript6-iterating-over-object-maps/)
+Illustrates how to convert a key-value JavaScript object into an iterable sequence.
+
+## [22-ecmascript6-hello-generators](22-ecmascript6-hello-generators/)
+Illustrates the basics of generator functions, how to define them and use them.
+
+## [23-ecmascript6-generators-returning-generators](23-ecmascript6-generators-returning-generators/)
+Illustrates how a generator can yield another generator or iterable object using `yield*`.
+
+## [24-ecmascript6-generators-iterating-manually](24-ecmascript6-generators-iterating-manually/)
+Basic example illustrating how to iterate manually over the sequence given by a generator function.
+
+## [25-ecmascript6-generators-passing-params](25-ecmascript6-generators-passing-params/)
+Exploring what passing arguments to `next()` in generators functions mean.
+
+## [26-ecmascript6-generators-advanced](26-ecmascript6-generators-advanced/)
+Explores advanced uses of generators using as example the implementation of the Magic 8-ball.
+
+## [27-ecmascript6-generators-async-flows](27-ecmascript6-generators-async-flows/)
+Illustrates how to use generator functions in async flows.
+
+## [28-ecmascript6-generators-throwing-errors](28-ecmascript6-generators-throwing-errors/)
+Illustrates how to use `throw` from generators and how to catch those exceptions from client code.
+
+## [29-ecmascript6-generators-return](29-ecmascript6-generators-return/)
+Illustrates the effect of *returning* from generator sequences and generator functions.
+
+## [30-ecmascript6-hello-async-await](30-ecmascript6-hello-async-await/)
+Illustrates how to synchronize promises using `async` functions and the `await` keyword.
+
+## [31-ecmascript6-async-await-flows](31-ecmascript-async-await-flows/)
+Illustrates how to manage parallel flows using async-await.
+
+## [32-ecmascript6-async-iterators](32-ecmascript-async-iterators/)
+A *non-working* example of async iterators. The example does not run.
+
+## [e01-dice-experiment-infinite-sequences](e01-dice-experiment-infinite-sequences/)
+Illustrates a simple use case of infinite iterators modeling the experiment of throwing dice repeateadly and printing the results.
+
+## [e02-playlist-as-iterator](e02-playlist-as-iterator/)
+Illustrates a simple use case of ES6 iterators to model a playlist with songs that can be repeated a number of times and with optional shuffle.
+
