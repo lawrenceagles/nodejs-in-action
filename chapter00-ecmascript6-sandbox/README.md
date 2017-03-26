@@ -1,7 +1,7 @@
 # Chapter 0 &mdash; EcmaScript 6 examples
 > Node.js examples on ES6 concepts
 
-## 00-prj-template
+## [00-prj-template](00-prj-template/)
 Basic template for ES6 based applications.
 
 ## [01-ecmascript6-classes-node](01-ecmascript6-classes-node/)
@@ -94,11 +94,14 @@ Illustrates the effect of *returning* from generator sequences and generator fun
 ## [30-ecmascript6-hello-async-await](30-ecmascript6-hello-async-await/)
 Illustrates how to synchronize promises using `async` functions and the `await` keyword.
 
-## [31-ecmascript6-async-await-flows](31-ecmascript-async-await-flows/)
+## [31-ecmascript6-async-await-flows](31-ecmascript6-async-await-flows/)
 Illustrates how to manage parallel flows using async-await.
 
-## [32-ecmascript6-async-iterators](32-ecmascript-async-iterators/)
+## [32-ecmascript6-async-iterators](32-ecmascript6-async-iterators/)
 A *non-working* example of async iterators. The example does not run.
+
+## [33-ecmascript6-collections](33-ecmascript6-collections/)
+An introduction to the Map, WeakMap, Set and WeakSet with really simple examples that illustrate the API.
 
 ## [e01-dice-experiment-infinite-sequences](e01-dice-experiment-infinite-sequences/)
 Illustrates a simple use case of infinite iterators modeling the experiment of throwing dice repeateadly and printing the results.
