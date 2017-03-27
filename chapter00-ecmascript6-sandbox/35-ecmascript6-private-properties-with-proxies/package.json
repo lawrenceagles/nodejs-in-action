@@ -1,7 +1,7 @@
 {
-  "name": "33-ecmascript6-collections",
+  "name": "35-ecmascript6-private-properties-with-proxies",
   "version": "0.0.1",
-  "description": "ES6 collections: Map, WeakMap, Set and WeakSet",
+  "description": "Using ES6 proxies to create private properties",
   "main": "index.js",
   "engines": {
     "node": "7.7.2",

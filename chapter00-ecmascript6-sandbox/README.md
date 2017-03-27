@@ -103,6 +103,12 @@ A *non-working* example of async iterators. The example does not run.
 ## [33-ecmascript6-collections](33-ecmascript6-collections/)
 An introduction to the Map, WeakMap, Set and WeakSet with really simple examples that illustrate the API.
 
+## [34-ecmascript6-hello-proxies](34-ecmascript6-hello-proxies/)
+An introduction to ES6 proxies.
+
+## [35-ecmascript6-private-properties-with-proxies](35-ecmascript6-private-properties-with-proxies/)
+An implementation of a function that wraps an object in a proxy for which certain properties are protected agains reads and writes.
+
 ## [e01-dice-experiment-infinite-sequences](e01-dice-experiment-infinite-sequences/)
 Illustrates a simple use case of infinite iterators modeling the experiment of throwing dice repeateadly and printing the results.
 
