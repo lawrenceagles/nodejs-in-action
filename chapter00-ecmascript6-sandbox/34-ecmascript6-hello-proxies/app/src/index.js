@@ -187,3 +187,153 @@ function hidingTargetObjectBehindProxies() {
   console.log("=============================");
 }
 hidingTargetObjectBehindProxies();
+
+/*
+  Additional traps: has() trap
+
+  handler.has lets you conceal add logic associated to `in` operations
+  You should return true or false to signal whether the property is accessible or not
+*/
+function hasTrap() {
+  const handler = {
+    get(target, key) {
+      invariant(key, "get");
+      return Reflect.get(target, key);
+    },
+    set(target, key, value) {
+      invariant(key, "set");
+      return Reflect.set(target, key, value);
+    },
+    has(target, key) {
+      if (key.startsWith("_")) {
+        return false;
+      }
+      return Reflect.has(target, key);
+    }
+  };
+  function invariant(key, action) {
+    if (key.startsWith("_")) {
+      throw new Error(`Invalid attempt to ${ action } private ${ key } property`);
+    }
+  }
+
+  const target = {
+    _hidden: "This is an internal hidden property",
+    exposed: "This is a read/write property"
+  };
+
+  const proxy = new Proxy(target, handler);
+  console.log(`_hidden in proxy=${ "_hidden" in proxy }`);
+  console.log(`exposed in proxy=${ "exposed" in proxy }`);
+  console.log(`_hidden in target=${ "_hidden" in target }`);
+  console.log(`proxy.hasOwnProperty("_hidden")=${ proxy.hasOwnProperty("_hidden") }`);
+
+  console.log("=============================");
+}
+hasTrap();
+
+/*
+  Additional traps: deleteProperty() trap
+
+  handler.deleteProperty lets you add custom logic associated to `delete` operations
+*/
+function deletePropertyTrap() {
+  const handler = {
+    get(target, key) {
+      invariant(key, "get");
+      return Reflect.get(target, key);
+    },
+    set(target, key, value) {
+      invariant(key, "set");
+      return Reflect.set(target, key, value);
+    },
+    has(target, key) {
+      if (key.startsWith("_")) {
+        return false;
+      }
+      return Reflect.has(target, key);
+    },
+    deleteProperty(target, key) {
+      invariant(key, "delete");
+      return Reflect.deleteProperty(target, key);
+    }
+  };
+  
+  function invariant(key, action) {
+    if (key.startsWith("_")) {
+      throw new Error(`Invalid attempt to ${ action } private ${ key } property`);
+    }
+  }
+
+  const target = { _hidden: "foo", exposed: "bar" };
+  const proxy = new Proxy(target, handler);
+
+  console.log(`_hidden in proxy=${ "_hidden" in proxy }`);
+  console.log(`exposed in proxy=${ "exposed" in proxy }`);
+  try {
+    delete proxy._hidden;
+  } catch (err) {
+    console.log(`Error deleting property: ${ err }`);
+  }
+  
+  try {
+    delete proxy.exposed;
+  } catch (err) {
+    console.log(`Error deleting property: ${ err }`);
+  }
+  console.log(`_hidden in proxy=${ "_hidden" in proxy }`);
+  console.log(`exposed in proxy=${ "exposed" in proxy }`);
+  console.log("=============================");
+}
+deletePropertyTrap();
+
+/*
+  Additional traps: defineProperty() trap
+
+  handler.defineProperty lets you intercept properties being defined
+  In the example, we prevent the creation of private properties in the object
+
+  Note that the set trap will be invoked prior to defineProperty
+*/
+function definePropertyTrap() {
+  const handler = {
+    defineProperty(target, key, descriptor) {
+      invariant(key, "define");
+      return Reflect.defineProperty(target, key, descriptor);
+    }    
+  };
+  
+  function invariant(key, action) {
+    if (key.startsWith("_")) {
+      throw new Error(`Invalid attempt to ${ action } private ${ key } property`);
+    }
+  }
+
+  const target = { _hidden: "foo", exposed: "bar" };
+  const proxy = new Proxy(target, handler);
+
+  try {
+    proxy._secret = "oops!";
+  } catch (err) {
+    console.log(`Error defining property: ${ err }`);
+  }
+  
+  try {
+    proxy.message = "Hello to Jason Isaacs!";
+  } catch (err) {
+    console.log(`Error deleting property: ${ err }`);
+  }
+  console.log(`_secret in proxy=${ "_secret" in proxy }`);
+  console.log(`message in proxy=${ "message" in proxy }`);
+
+
+  // It also traps Object.defineProperty calls
+  try {
+    Object.defineProperty(proxy, "_secret", {value: true, writable: false});
+  } catch (err) {
+    console.log(`Error while using Object.defineProperty: ${ err }`);
+  }
+
+  console.log("=============================");
+}
+definePropertyTrap();
