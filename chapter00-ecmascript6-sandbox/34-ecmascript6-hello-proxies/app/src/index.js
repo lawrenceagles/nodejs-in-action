@@ -337,3 +337,83 @@ function definePropertyTrap() {
   console.log("=============================");
 }
 definePropertyTrap();
+
+/*
+  Additional traps: ownKeys() trap
+
+  handler.ownKeys lets you intercept calls that return an Array of the 
+  properties of the object
+
+  In the example, we implement the interceptor to hide private properties
+  that starts with "_"
+
+  ownKeys interceptor is used during the following operations and with
+  the following restrictions:
+  + Reflect.ownKeys(): return every own key on the object
+  + Object.getOwnPropertyNames(): returns only non-symbol properties
+  + Object.getOwnPropertySysmbols() returns only symbol properties
+  + Object.keys() returns only non-symbols enumerable properties
+  + for..in return only non-symbol enumerable properties
+*/
+function ownKeysTrap() {
+  const handler = {
+    ownKeys(target) {
+      return Reflect.ownKeys(target)
+        .filter(key => {
+          const isStringKey = typeof key === "string";
+          if (isStringKey) {
+            return !key.startsWith("_");
+          }
+          return true;
+        });
+    }    
+  };
+
+  const target = { _hidden: "foo", exposed: "bar", [Symbol("id")]: "47eb8800" };
+  const proxy = new Proxy(target, handler);
+
+  for (const key of Object.keys(proxy)) {
+    console.log(key);
+  }
+  console.log(Object.getOwnPropertyNames(proxy));
+  console.log(Object.getOwnPropertySymbols(proxy));
+
+  console.log("=============================");
+}
+ownKeysTrap();
+
+/*
+  Additional traps: getOwnPropertyDescriptor() trap
+
+  handler.getOwnPropertyDescriptor lets you intercept calls that 
+  ask for the property descriptor of some key.
+  
+  In the example, we conceal properties starting with "_"
+
+  This method traps calls to:
+  + Reflect.getOwnPropertyDescriptor
+  + object.hasOwn Property
+
+*/
+function ownPropertyDescriptorTrap() {
+  const handler = {
+    getOwnPropertyDescriptor(target, key) {
+      if (key.startsWith("_")) {
+        return;
+      }
+      return Reflect.getOwnPropertyDescriptor(target, key);
+    }
+  };
+
+  const target = { _hidden: "foo", exposed: "bar" };
+  const proxy = new Proxy(target, handler);
+
+  console.log(Reflect.getOwnPropertyDescriptor(proxy, "_secret"));
+  console.log(Reflect.getOwnPropertyDescriptor(proxy, "exposed"));
+  
+  console.log(proxy.hasOwnProperty("_secret"));
+  console.log(proxy.hasOwnProperty("exposed"));
+
+  console.log("=============================");
+}
+ownPropertyDescriptorTrap();
