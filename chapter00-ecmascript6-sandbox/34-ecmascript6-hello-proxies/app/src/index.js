@@ -417,3 +417,202 @@ function ownPropertyDescriptorTrap() {
   console.log("=============================");
 }
 ownPropertyDescriptorTrap();
+
+/*
+  Additional traps: apply() trap
+
+  handler.apply lets you intercept function calls.
+  
+  In the example, we trap a function that acts as an around interceptor,
+  displaying the arguments and return value and how long it took to complete
+
+*/
+function applyTrap() {
+  const handler = {
+    apply(target, ctx, args) {
+      console.log(`function called with ${ args }`);
+      console.time("function_call");
+      const result = Reflect.apply(target, ctx, args);
+      console.timeEnd("function_call");
+      console.log(`the result of the function call was ${ result }`);
+      return result;
+    }
+  };
+
+  function sum(a, b) {
+    return a + b;
+  }
+
+  const proxy = new Proxy(sum, handler);
+  console.log(proxy(5, 6));
+  console.log("=============================");
+}
+applyTrap();
+
+
+/*
+  Tip: Trapping method call
+
+  there is no specific Reflect method to intercept
+  method calls, but you can use handler.get and this
+  trick to intercept those calls
+
+*/
+function methodCallsTrap() {
+  const handler = {
+    get(target, key) {
+      if (typeof target[key] === "function") {
+        return function(...args) {
+          const result = target[key].apply(this, args);
+          console.log(`Method ${ key } has been called with params "${ args } with result=${ result }"`);
+          return result;
+        };
+      } else {
+        Reflect.get(target.key);
+      }
+    }
+  };
+
+  const target = {
+    getGreeting(name) {
+      return `Hello to ${ name }!!!`;
+    },
+    sayHello(name) {
+      console.log(this.getGreeting(name));
+    }
+  };
+
+
+  const proxy = new Proxy(target, handler);
+  console.log(proxy.getGreeting("Jason Isaacs"));
+  proxy.sayHello("Jason Isaacs");
+
+  console.log("=============================");
+}
+methodCallsTrap();
+
+/*
+  Additional traps: construct() trap
+
+  handler.construct lets you intercept uses of the `new` operator
+  
+  Note that per definition, a proxy should not change the behavior
+  of the target object - if you're doing so, you might be using
+  the wrong abstraction.
+
+  In the example, we trap a the call to the constructor in order to
+  define a property in the object, which will be later used by the
+  method defined in the class
+
+*/
+function constructTrap() {
+  const handler = {
+    construct(Target, args) {
+      const [ name ] = args;
+      const target = Reflect.construct(Target, args);
+      target.name = name;
+      return target;
+    }
+  };
+
+  class Target {
+    sayHello() {
+      console.log(`Hello to ${ this.name }`);
+    }
+  }
+
+  const ProxiedTarget = new Proxy(Target, handler);
+
+  const greeter = new ProxiedTarget("Jason Isaacs");
+  greeter.sayHello();
+
+  console.log("=============================");
+}
+constructTrap();
+
+
+/*
+  Additional traps: getPrototypeOf() trap
+
+  handler.getPrototypeOf lets you intercept calls trying to obtain the
+  prototype of an object.
+  
+  In the example, we implement the getPrototypeOf trap to change
+  the prototype of the object received to an Array.
+  Obviously, this does not mean that the rest of the Array methods
+  are in the proxy!
+
+*/
+function getPrototypeOfTrap() {
+  const handler = {
+    getPrototypeOf: target => Array.prototype // eslint-disable-line no-unused-vars
+  };
+
+  const target = {};
+
+  const proxy = new Proxy(target, handler);
+  console.log(proxy instanceof Array);
+  try {
+    proxy.push("hello");
+  } catch (err) {
+    console.log(`Error while pushing an element to the proxy: ${ err }`);
+  }
+
+  console.log("=============================");
+}
+getPrototypeOfTrap();
+
+
+/*
+  Additional traps: setPrototypeOf() trap
+
+  handler.setPrototypeOf lets you intercept calls trying to set the
+  prototype of an object
+*/
+/* This just doesn't work 
+function setPrototypeOfTrap() {
+  const handler = {
+    setPrototypeOf(target, proto) {
+      Object.setPrototypeOf(target, proto);
+    }
+  };
+
+  const base = {};
+  function Target() {}
+  const proxy = new Proxy(Target, handler);
+  proxy.setPrototypeOf(proxy, base);
+  console.log(proxy.prototype === base);
+  console.log("=============================");
+}
+setPrototypeOfTrap();
+*/
+
+/*
+  Additional traps: preventExtensions() trap
+
+  handler.preventExtensions lets you intercept calls to 
+  Object.preventExtensions, which can be used to forbid
+  adding new properties to an existing object.
+*/
+
+function preventExtensionTrap() {
+  const canExtend = new WeakSet();
+  const handler = {
+    preventExtensions(target) {
+      const canPrevent = !canExtend.has(target);
+      if (canPrevent) {
+        Object.preventExtensions(target);
+      }
+      return Reflect.preventExtensions(target);
+    }
+  };
+
+  const target = {};
+  const proxy = new Proxy(target, handler);
+  canExtend.add(target);
+  Object.preventExtensions(proxy);
+  console.log(Object.isExtensible(proxy));
+
+  console.log("=============================");
+}
+preventExtensionTrap();
