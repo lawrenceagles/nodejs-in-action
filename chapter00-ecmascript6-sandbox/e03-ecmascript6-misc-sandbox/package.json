@@ -1,7 +1,7 @@
 {
-  "name": "35-ecmascript6-private-properties-with-proxies",
+  "name": "e03-ecmascript6-misc-sandbox",
   "version": "0.0.1",
-  "description": "Using ES6 proxies to create private properties",
+  "description": "Misc ES6 examples",
   "main": "index.js",
   "engines": {
     "node": "7.7.2",

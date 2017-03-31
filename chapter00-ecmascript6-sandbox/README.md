@@ -118,3 +118,5 @@ Illustrates a simple use case of infinite iterators modeling the experiment of t
 ## [e02-playlist-as-iterator](e02-playlist-as-iterator/)
 Illustrates a simple use case of ES6 iterators to model a playlist with songs that can be repeated a number of times and with optional shuffle.
 
+## [e03-ecmascript6-misc-sandbox](e03-ecmascript6-misc-sandbox/)
+A sandbox for misc ES6 examples.
