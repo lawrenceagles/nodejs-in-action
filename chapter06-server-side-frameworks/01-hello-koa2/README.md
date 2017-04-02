@@ -18,7 +18,7 @@ Koa is an HTTP server library, which means it is a library that helps you build 
 | Fact Sheet              |                                                                  |
 ------------------------- | ---------------------------------------------------------------- |
 | **Library Type**        | HTTP server library                                              |
-| **Features**            | Generator-based middleware, request/response model               |
+| **Features**            | async/await-based middleware, request/response model             |
 | **Suggested Uses**      | Lightweight web apps, non-strict HTTP APIs, serving SPA web apps |
 | **Plugin Architecture** | Middleware                                                       |
 | **Documentation**       | http://koa.js                                                    |

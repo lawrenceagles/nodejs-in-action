@@ -1,8 +1,8 @@
 {
-  "name": "02-hello-koa2-routes",
+  "name": "01-hello-koa2",
   "version": "0.0.1",
-  "description": "Introducing Koa routes",
-  "main": "index.js",
+  "description": "Introducing Koa 2, the HTTP server library",
+  "main": "server.js",
   "engines": {
     "node": "7.7.4",
     "npm": "4.1.2"
@@ -19,13 +19,22 @@
   "license": "ISC",
   "devDependencies": {
     "eslint": "3.19.0",
-    "nodemon": "1.11.0"
+    "generator-kraken": "2.2.3",
+    "nodemon": "1.11.0",
+    "yo": "1.8.5"
   },
   "dependencies": {
-    "koa": "2.2.0",
-    "koa-router": "7.1.1"
+    "construx": "1.0.1",
+    "construx-copier": "1.0.0",
+    "construx-dustjs": "1.1.0",
+    "dust-makara-helpers": "4.1.2",
+    "express": "4.15.2",
+    "kraken-js": "2.1.0",
+    "makara": "2.0.3",
+    "save": "2.3.0"
   },
   "scripts": {
+    "setup": "rm -rf node_modules && npm install",
     "prestart": "npm run lint",
     "start": "node app/src/$npm_package_main",
     "lint": "eslint app/src/",
