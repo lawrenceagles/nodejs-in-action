@@ -120,3 +120,6 @@ Illustrates a simple use case of ES6 iterators to model a playlist with songs th
 
 ## [e03-ecmascript6-misc-sandbox](e03-ecmascript6-misc-sandbox/)
 A sandbox for misc ES6 examples.
+
+## [e04-ecmascript6-simple-test-framework](e04-ecmascript6-simple-test-framework/)
+A simple test framework for Node.js
