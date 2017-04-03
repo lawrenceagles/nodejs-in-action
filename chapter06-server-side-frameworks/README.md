@@ -9,3 +9,9 @@ Illustrates how to write routes for Koa HTTP server framework using the `koa-rou
 
 ## 03-hello-kraken
 The result of the Kraken generator on top of the project structure. Illustrates the strict structure required by the Kraken HTTP server framework.
+
+## 04-hello-hapi
+Introduces *Hapi* HTTP server framework creating the simplest of HTTP server framework.
+
+## 05-hapi-plugins
+Illustrates how to use *Hapi* plugins.
