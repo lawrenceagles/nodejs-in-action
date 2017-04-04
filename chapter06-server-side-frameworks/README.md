@@ -15,3 +15,6 @@ Introduces *Hapi* HTTP server framework creating the simplest of HTTP server fra
 
 ## 05-hapi-plugins
 Illustrates how to use *Hapi* plugins.
+
+## 06-hello-sails
+Illustrates how to set up a *Sails* app using the generator.
