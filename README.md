@@ -9,4 +9,4 @@
   + [Chapter 3 &mdash; Automating the Web with Scraping](chapter03-automating-the-web-with-scraping/)
   + [Chapter 4 &mdash; What is a Node Web Application](chapter04-node-web-apps/)
   + [Chapter 5 &mdash; Front-end Build Systems](chapter05-frontend-build-systems/)
-  + Chapter 6 &mdash; Server-side Frameworks
+  + [Chapter 6 &mdash; Server-side Frameworks](chapter06-server-side-frameworks/)
