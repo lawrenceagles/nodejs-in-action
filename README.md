@@ -10,3 +10,6 @@
   + [Chapter 4 &mdash; What is a Node Web Application](chapter04-node-web-apps/)
   + [Chapter 5 &mdash; Front-end Build Systems](chapter05-frontend-build-systems/)
   + [Chapter 6 &mdash; Server-side Frameworks](chapter06-server-side-frameworks/)
+  + [Chapter 6 &mdash; Server-side Frameworks](chapter06-server-side-frameworks/)
+  + [Chapter 7 &mdash; Connect and Express in Depth](chapter07-connect-and-express-in-depth/)
+ 
