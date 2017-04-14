@@ -9,3 +9,6 @@ The basics of middleware chaining in Connect.
 
 ## [03-building-configurable-middleware](./03-building-configurable-middleware/)
 Illustrates the concept of configurable middleware, which consists in returning middleware functions from modules.
+
+## [04-connect-error-handling](./04-connect-error-handling/)
+Illustrates the basics of *Connect* error handling middleware.
