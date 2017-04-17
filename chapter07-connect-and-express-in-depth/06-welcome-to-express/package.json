@@ -1,7 +1,7 @@
 {
-  "name": "00-prj-template",
+  "name": "06-welcome-to-express",
   "version": "0.0.1",
-  "description": "Node.js prj template",
+  "description": "Express app skeleton",
   "main": "index.js",
   "engines": {
     "node": "7.7.4",
@@ -18,15 +18,28 @@
   },
   "license": "ISC",
   "devDependencies": {
+    "eslint": "3.18.0",
+    "nodemon": "1.11.0"
   },
-  "dependencies": {},
+  "config": {
+    "debugModules": "06-welcome-to-express:server" 
+  },
+  "dependencies": {
+    "body-parser": "1.17.1",
+    "cookie-parser": "1.4.3",
+    "debug": "2.6.3",
+    "ejs": "2.5.6",
+    "express": "4.15.2",
+    "morgan": "1.8.1",
+    "serve-favicon": "2.4.2"
+  },
   "scripts": {
     "setup": "rm -rf node_modules && npm install",
     "prestart": "npm run lint",
-    "start": "node app/src/$npm_package_main",
+    "start": "DEBUG=${npm_package_config_debugModules:-$npm_package_name} node ./app/src/bin/www",
     "lint": "eslint app/src/",
     "predebug": "npm run lint",
-    "debug": "node --inspect-brk=${npm_config_debugHost:-127.0.0.1} app/src/$npm_package_main",
+    "debug": "node --inspect-brk=${npm_config_debugHost:-127.0.0.1} ./app/src/bin/www",
     "dev": "node_modules/.bin/nodemon --ext js,json,yml --watch app/src --watch .eslintrc.yml --exec 'npm start'",
     "pretest": "./node_modules/.bin/eslint app/tst/",
     "test": "node app/tst/test.js"

@@ -12,3 +12,6 @@ Illustrates the concept of configurable middleware, which consists in returning 
 
 ## [04-connect-error-handling](./04-connect-error-handling/)
 Illustrates the basics of *Connect* error handling middleware.
+
+## [05-hello-express](./05-hello-express/)
+A minimal HTTP server based on Express that returns a plain-text greeting message.
