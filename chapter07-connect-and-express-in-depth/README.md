@@ -15,3 +15,10 @@ Illustrates the basics of *Connect* error handling middleware.
 
 ## [05-hello-express](./05-hello-express/)
 A minimal HTTP server based on Express that returns a plain-text greeting message.
+
+## [06-welcome-to-express](./06-welcome-to-express/)
+A template project for a full-fledged *Express* based application.
+
+## [e01-grokking-express-scaffolding](./e01-grokking-express-scaffolding/)
+A more involved example showing how a frontend application interacts with the *Express* application that serves it.
+
