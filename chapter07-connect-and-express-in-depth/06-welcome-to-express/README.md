@@ -3,7 +3,7 @@
 
 ## Description
 
-This example creates a skeleton for a comple Express based app requiring to serve both resources and HTML documents.
+This example creates a skeleton for a complete Express based app requiring to serve both resources and HTML documents.
 The scaffolding and dependencies are exactly like the ones you'd find using [express-generator](https://www.npmjs.com/package/express-generator) but into the general project structure i've been using in this repo.
 
 The skeleton is runnable, with a couple of *routes* enabled for testing.
@@ -39,7 +39,7 @@ Let's see each of the relevant aspects in detail:
 We take advantage of the way in which the application can be started using the `bin/www` runnable script using an configurable logger and therefore, we tailor the `start` task as:
 ```json
   "config": {
-    "debugModules": "06-welcome-to-express:server" 
+    "debugModules": "06-welcome-to-express:server"
   },
   "dependencies": {
 ...
