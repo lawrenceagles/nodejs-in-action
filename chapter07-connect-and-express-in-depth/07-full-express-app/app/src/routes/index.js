@@ -29,6 +29,10 @@ exports.error = (err, req, res, next) => {
       msg = "Server Unavailable";
       res.statusCode = 503;
       break;
+    case "authorization":
+      msg = "Unauthorized";
+      res.statusCode = 401;
+      break;
     default:
       msg = "Internal Server Error";
       res.statusCode = 500;
@@ -43,6 +47,9 @@ exports.error = (err, req, res, next) => {
     },
     text: () => {
       res.send(`${ msg }\n`);
+    },
+    default: () => {
+      res.status(406).send("Not Acceptable");
     }
   });
   next(new Error(msg));

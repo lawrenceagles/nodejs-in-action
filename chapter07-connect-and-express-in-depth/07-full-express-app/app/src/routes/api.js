@@ -35,3 +35,19 @@ exports.entries = (req, res, next) => {
     });
   });
 };
+
+exports.validateUserCredentials = (req, res, next) => {
+  if (!req.remoteUser) {
+    return next({type: "authorization"});
+  }
+  User.authenticate(res.locals.user.name, res.locals.user.pass, (err, user) => {
+    if (err) {
+      return next(err);
+    }
+    if (user) {
+      next();
+    } else {
+      next({type: "authorization"});
+    }
+  });  
+};

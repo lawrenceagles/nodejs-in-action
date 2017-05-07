@@ -8,3 +8,12 @@ logger:
 server:
   port: 5000
   public: "public"
+
+app:
+  entriesPerPage: 3
+
+ERROR_ROUTE: true
+
+db:
+  host: localhost
+  port: 6379

@@ -16,6 +16,10 @@ exports.list = (req, res, next) => {
 };
 
 exports.submit = (req, res, next) => {
+  if (!res.locals.user) {
+    return next({type: "authorization"});
+  }
+
   const data = req.body.entry;
 
   const entry = new Entry({

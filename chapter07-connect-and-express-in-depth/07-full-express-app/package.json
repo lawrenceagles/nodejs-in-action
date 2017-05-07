@@ -25,6 +25,7 @@
     "debugModules": "*:server"
   },
   "dependencies": {
+    "basic-auth": "1.1.0",
     "bcrypt": "1.0.2",
     "body-parser": "1.17.1",
     "console-stamp": "0.2.5",

@@ -46,9 +46,12 @@ const app = express();
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
+
 /*
   Middleware setup
 */
+
+/* 3rd party middleware */
 app.use(favicon(path.join(__dirname, config("server:public"), "favicon.ico")));
 app.use(logger(config("logger:format") || "tiny"));
 app.use(bodyParser.json());
@@ -56,19 +59,30 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(session({ secret: "secret", resave: false, saveUninitialized: true }));
 app.use(express.static(path.join(__dirname, config("server:public"))));
+
+/* custom middleware */
 app.use(messages);
 app.use("/api", api.auth);
 app.use(user);
+
+
+/*
+  App settings related config
+*/
+app.set("entriesPerPage", config("app:entriesPerPage"));
 
 
 
 /*
   Routes setup
 */
-app.get("/api/user/:id", api.user);
-app.post("/api/entry", entries.submit);
-app.get("/api/entries/:page?", page(Entry.count), api.entries);
 
+// RESTful API
+app.get("/api/user/:id", api.user);
+app.post("/api/entry", api.validateUserCredentials, entries.submit);
+app.get("/api/entries/:page?", page(Entry.count), api.entries); // we use the default value for paging programmatically
+
+// Interactive Requests
 app.get("/post", entries.form);
 app.post("/post", validate.required("entry[title]"), validate.lengthAbove("entry[title]", 4), entries.submit);
 
@@ -81,9 +95,25 @@ app.get("/login", login.form);
 app.post("/login", login.submit);
 app.get("/logout", login.logout);
 
+
+
 /* This will validate the page parameter */
-app.param("page", (req, res, next, id) => {
-  if (!Number.isNaN(Number.parseInt(id))) {
+app.param("page", async (req, res, next, id) => {
+  async function getNumAvailPages() {
+    return new Promise((resolve, reject) => {
+      Entry.count((err, numEntries) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(Math.ceil(numEntries / app.get("entriesPerPage")));
+      });
+    });
+  }
+
+  const pageNumCandidate = Number.parseInt(id);
+  const numAvailPages = await getNumAvailPages();
+
+  if (!Number.isNaN(pageNumCandidate) && pageNumCandidate >= 0 && pageNumCandidate < numAvailPages) {
     next();
   } else {
     routes.notFound(req, res, next);
@@ -92,7 +122,7 @@ app.param("page", (req, res, next, id) => {
 
 
 /* This will handle `/` requests */
-app.get("/:page?", page(Entry.count, 3), entries.list);
+app.get("/:page?", page(Entry.count, app.get("entriesPerPage")), entries.list);
 
 if (config("ERROR_ROUTE")) {
   app.get("/dev/error", (req, res, next) => {
@@ -110,7 +140,7 @@ app.use(routes.error);
 
 
 /*
-  Displaying some obscure Express related settings
+  Displaying some Express related settings
 */
 debug(`Application running with env = ${ app.get("env") }`);
 debug(`Application running with NODE_ENV = ${ config("NODE_ENV") }`);
@@ -118,5 +148,8 @@ debug(`Application running with NODE_ENV = ${ config("NODE_ENV") }`);
 debug(`View Caching = ${ app.get("view cache") }`);
 
 debug(`ERROR_ROUTE = ${ config("ERROR_ROUTE") }`);
+debug(`Entries per page = ${ app.get("entriesPerPage") }`);
+
 
 module.exports = app;
+
