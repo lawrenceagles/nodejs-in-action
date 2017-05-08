@@ -124,6 +124,7 @@ app.param("page", async (req, res, next, id) => {
 /* This will handle `/` requests */
 app.get("/:page?", page(Entry.count, app.get("entriesPerPage")), entries.list);
 
+/* This enables a fake error route so that you can check how it looks */
 if (config("ERROR_ROUTE")) {
   app.get("/dev/error", (req, res, next) => {
     const err = new Error("database connection failed");
