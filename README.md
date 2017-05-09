@@ -12,4 +12,5 @@
   + [Chapter 6 &mdash; Server-side Frameworks](chapter06-server-side-frameworks/)
   + [Chapter 6 &mdash; Server-side Frameworks](chapter06-server-side-frameworks/)
   + [Chapter 7 &mdash; Connect and Express in Depth](chapter07-connect-and-express-in-depth/)
+  + [Chapter 8 &mdash; Web Application Templating](chapter08-web-application-templating/)
  
