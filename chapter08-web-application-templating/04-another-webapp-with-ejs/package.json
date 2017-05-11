@@ -1,7 +1,7 @@
 {
-  "name": "02-webapp-with-ejs",
+  "name": "04-another-webapp-with-ejs",
   "version": "0.0.1",
-  "description": "Returning HTML using EJS as the template engine",
+  "description": "A simple webapp using EJS template engine",
   "main": "index.js",
   "engines": {
     "node": "7.10.0",
