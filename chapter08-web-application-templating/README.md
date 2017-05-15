@@ -15,3 +15,9 @@ A web application the outputs HTML without using a template engine, nothing grou
 
 ## [05-ejs-caching](./05-ejs-caching/)
 Illustrates how to enable caching of EJS templates.
+
+## [06-hello-hoganjs](./06-hello-hoganjs/)
+Illustrates the basics of *hogan.js* a *Mustache* template language compiler.
+
+## [07-hello-pug](./07-hello-pug/)
+Illustrates the basics of *Pug*, the successor of *Jade* template engine.

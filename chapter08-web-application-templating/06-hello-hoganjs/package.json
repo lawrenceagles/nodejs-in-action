@@ -1,7 +1,7 @@
 {
-  "name": "05-ejs-caching",
+  "name": "06-hello-hoganjs",
   "version": "0.0.1",
-  "description": "Understanding EJS caching mechanisms",
+  "description": "The basics of hogan.js template engine",
   "main": "index.js",
   "engines": {
     "node": "7.10.0",
@@ -22,10 +22,11 @@
     "nodemon": "1.11.0"
   },
   "dependencies": {
-    "ejs": "2.5.6"
+    "github-flavored-markdown": "1.0.1",
+    "hogan.js": "3.0.2"
   },
   "scripts": {
-    "setup": "rm -rf node_modules && npm install",    
+    "setup": "rm -rf node_modules && npm install",
     "prestart": "npm run lint",
     "start": "node app/src/$npm_package_main",
     "lint": "eslint app/src/",

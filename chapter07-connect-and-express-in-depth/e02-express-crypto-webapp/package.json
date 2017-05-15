@@ -1,7 +1,7 @@
 {
-  "name": "07-full-express-app",
+  "name": "cryptohelper-webapp",
   "version": "0.0.1",
-  "description": "Creating a complete Express base app",
+  "description": "Encrypting and Decrypting with crypto-helper",
   "main": "index.js",
   "engines": {
     "node": "7.9.0",
@@ -9,12 +9,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/sergiofgonzalez/nodejs-in-action.git"
+    "url": "TBD"
   },
   "keywords": [],
   "author": {
     "name": "Sergio F. Gonzalez",
-    "email": "sergio.f.gonzalez@gmail.com"
+    "email": "sergio.f.gonzalez@accenture.com"
   },
   "license": "ISC",
   "devDependencies": {
@@ -22,11 +22,9 @@
     "nodemon": "1.11.0"
   },
   "config": {
-    "debugModules": "*:server"
+    "debugModules": "server:*"
   },
   "dependencies": {
-    "basic-auth": "1.1.0",
-    "bcrypt": "1.0.2",
     "body-parser": "1.17.1",
     "cookie-parser": "1.4.3",
     "debug": "2.6.3",
@@ -36,7 +34,6 @@
     "js-yaml": "3.8.3",
     "morgan": "1.8.1",
     "nconf": "0.8.4",
-    "redis": "2.7.1",
     "serve-favicon": "2.4.2"
   },
   "scripts": {

@@ -22,3 +22,5 @@ A template project for a full-fledged *Express* based application.
 ## [e01-grokking-express-scaffolding](./e01-grokking-express-scaffolding/)
 A more involved example showing how a frontend application interacts with the *Express* application that serves it.
 
+## [e02-express-crypto-webapp](./e02-express-crypto-webapp/)
+Simple Express application with a form that performs symmetric encription on user data.
