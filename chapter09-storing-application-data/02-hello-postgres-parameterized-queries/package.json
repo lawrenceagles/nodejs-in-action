@@ -1,7 +1,7 @@
 {
-  "name": "01-webapp-without-template-engine",
+  "name": "01-hello-postgres",
   "version": "0.0.1",
-  "description": "Returning HTML without using any template engine",
+  "description": "Interacting with Postgres: first steps",
   "main": "index.js",
   "engines": {
     "node": "7.10.0",
@@ -21,7 +21,9 @@
     "eslint": "3.19.0",
     "nodemon": "1.11.0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "pg": "6.2.2"
+  },
   "scripts": {
     "setup": "rm -rf node_modules && npm install",
     "prestart": "npm run lint",
