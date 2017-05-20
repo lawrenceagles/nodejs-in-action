@@ -1,7 +1,7 @@
 {
-  "name": "02-hello-postgres-parameterized-queries",
+  "name": "03-hello-knex",
   "version": "0.0.1",
-  "description": "Interacting with Postgres using parameterized queries",
+  "description": "Introducing knex, the query builder framework",
   "main": "index.js",
   "engines": {
     "node": "7.10.0",
@@ -22,7 +22,9 @@
     "nodemon": "1.11.0"
   },
   "dependencies": {
-    "pg": "6.2.2"
+    "knex": "0.13.0",
+    "pg": "6.2.2",
+    "sqlite3": "3.1.8"
   },
   "scripts": {
     "setup": "rm -rf node_modules && npm install",
