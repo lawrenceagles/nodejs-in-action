@@ -10,3 +10,5 @@ The basics of interacting with a Postgres database using the `pg` module with pa
 ## [03-hello-knex](./03-hello-knex/)
 Introducing *Knex* a query building framework, that also supports interacting with the database.
 
+## [e01-postgres-transactions](./e01-postgres-transactions/)
+
