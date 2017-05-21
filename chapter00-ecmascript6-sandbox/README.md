@@ -123,3 +123,6 @@ A sandbox for misc ES6 examples.
 
 ## [e04-ecmascript6-simple-test-framework](e04-ecmascript6-simple-test-framework/)
 A simple test framework for Node.js
+
+## [e05-defining-a-promise-executes-it](e05-defining-a-promise-executes-it/)
+A very basic example that illustrates that defining a promise executes it before it is invoked.

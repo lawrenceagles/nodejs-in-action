@@ -1,6 +1,6 @@
-# e03-ecmascript6-misc-sandbox
-> misc examples
+# e04-simple-test-framework
+> building a minimalistic test framework for this projects.
 
 ## Description
-Illustrates how to use revocable proxies. Revocable proxies are just like regular proxies but they allow you to cut off access to the target object through the proxy. 
+Illustrates how to build a super-simplistict test framework.
 
