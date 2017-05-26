@@ -11,10 +11,14 @@ The basics of interacting with a Postgres database using the `pg` module with pa
 Introducing *Knex* a query building framework, that also supports interacting with the database.
 
 ## [04-hello-mongodb](./04-hello-mongodb/)
-First steps of dealing with MongoDB API from *Node.js*.
+First steps into MongoDB API from *Node.js*.
 
 ## [05-mongodb-persistence-layer](./05-mongodb-persistence-layer/)
 Illustrates how to build a persistence layer using *MongoDB*.
+
+## [06-hello-redis](./04-hello-redis/)
+First steps into Redis API from *Node.js*.
+
 
 ## [e01-postgres-transactions](./e01-postgres-transactions/)
 Illustrates how to perform SQL operations in a transaction with the `pg` module.
