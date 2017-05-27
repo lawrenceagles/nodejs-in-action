@@ -19,6 +19,8 @@ Illustrates how to build a persistence layer using *MongoDB*.
 ## [06-hello-redis](./04-hello-redis/)
 First steps into Redis API from *Node.js*.
 
+## [07-redis-pub-sub](./07-redis-pub-sub/)
+Using *Redis* publish-subscribe mechanism in the simplest of examples.
 
 ## [e01-postgres-transactions](./e01-postgres-transactions/)
 Illustrates how to perform SQL operations in a transaction with the `pg` module.
