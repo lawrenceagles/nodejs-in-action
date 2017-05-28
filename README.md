@@ -14,4 +14,5 @@
   + [Chapter 7 &mdash; Connect and Express in Depth](chapter07-connect-and-express-in-depth/)
   + [Chapter 8 &mdash; Web Application Templating](chapter08-web-application-templating/)
   + [Chapter 9 &mdash; Storing Application Data](chapter09-storing-application-data/)
+  + [Chapter 10 &mdash; Testing Node Applications](chapter10-testing-node-apps/)
  
