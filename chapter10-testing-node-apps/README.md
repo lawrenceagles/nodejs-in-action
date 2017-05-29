@@ -11,4 +11,7 @@ Introduces *Mocha* the popular testing framework.
 Introduces *Vows* testing framework.
 
 ## [04-hello-chai](./04-hello-chai/)
-Introduces *Chai* assertion library.
+Introduces *Chai* assertion library illustrating the three assertion interfaces: *assert*, *expect* and *should*.
+
+## [05-hello-should](./05-hello-should/)
+Introduce *Should* assertion library.
