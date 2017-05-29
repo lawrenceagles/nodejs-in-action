@@ -1,7 +1,7 @@
 {
-  "name": "01-hello-assert",
+  "name": "04-hello-chai",
   "version": "0.0.1",
-  "description": "Basis of Node.js application testing",
+  "description": "Introducing the Chai assertion library",
   "main": "index.js",
   "engines": {
     "node": "7.10.0",
@@ -18,10 +18,10 @@
   },
   "license": "ISC",
   "devDependencies": {
-    "eslint": "3.19.0"
+    "eslint": "3.19.0",
+    "chai": "4.0.0"    
   },
   "dependencies": {
-    "chai": "4.0.0"
   },
   "scripts": {
     "setup": "rm -rf node_modules && npm install",

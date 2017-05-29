@@ -15,3 +15,6 @@ Introduces *Chai* assertion library illustrating the three assertion interfaces:
 
 ## [05-hello-should](./05-hello-should/)
 Introduce *Should* assertion library.
+
+## [06-hello-sinon](./06-hello-sinon/)
+Introduce *Sinon* library to create mocks, stubs and spies.
