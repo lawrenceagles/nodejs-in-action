@@ -16,4 +16,4 @@
   + [Chapter 9 &mdash; Storing Application Data](chapter09-storing-application-data/)
   + [Chapter 10 &mdash; Testing Node Applications](chapter10-testing-node-apps/)
   + [Chapter 11 &mdash; Deploying Node Applications and Maintaining Uptime](chapter11-testing-node-apps/)
- 
+  + [Chapter 12 &mdash; Writing Command-Line Applications](chapter12-writing-cli-apps/)
