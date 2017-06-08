@@ -57,3 +57,11 @@ An example illustrating how to use a module for exchanging data between differen
 
 ## [e03-symmetric-crypto](e03-symmetric-crypto/)
 An example illustrating how to create a basic crypto helper that encrypts and decrypts using a hardcoded key.
+
+## [e03-symmetric-crypto](e03-symmetric-crypto/)
+An example illustrating how to create a basic crypto helper that encrypts and decrypts using a hardcoded key.
+
+## [e04-exports-and-exports-module](e04-exports-and-exports-module/)
+A very simple example illustrating when to use `exports.method = ...` vs. `module.exports = ...`.
+
+
