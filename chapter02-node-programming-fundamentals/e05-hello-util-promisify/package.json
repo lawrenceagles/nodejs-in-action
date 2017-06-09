@@ -16,8 +16,7 @@
     "name": "Sergio F. Gonzalez",
     "email": "sergio.f.gonzalez@gmail.com"
   },
-  "config": {
-  },
+  "config": {},
   "license": "ISC",
   "devDependencies": {
     "eslint": "3.19.0"

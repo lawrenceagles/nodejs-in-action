@@ -64,4 +64,6 @@ An example illustrating how to create a basic crypto helper that encrypts and de
 ## [e04-exports-and-exports-module](e04-exports-and-exports-module/)
 A very simple example illustrating when to use `exports.method = ...` vs. `module.exports = ...`.
 
+## [e05-hello-util-promisify](e05-hello-util-promisify/)
+An introduction about how to use `util.promisify` to convert callback-based functions to Promises.
 
