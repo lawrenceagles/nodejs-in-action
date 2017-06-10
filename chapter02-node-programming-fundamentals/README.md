@@ -81,3 +81,7 @@ An example illustrating `__dirname`, `__filename` and `path.join`.
 
 ## [e10-hello-console-methods](e10-hello-console-methods/)
 Illustrates the different features of the `console` object.
+
+## [e11-hello-os-integration](e11-hello-os-integration/)
+Illustrates the different features available to integrate with the underlying OS such as getting memory usage, the process ID, reading arguments from the command line, exiting with a particular exit code or listening on OS signals.
+

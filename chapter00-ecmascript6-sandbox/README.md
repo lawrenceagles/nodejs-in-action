@@ -126,3 +126,6 @@ A simple test framework for Node.js
 
 ## [e05-defining-a-promise-executes-it](e05-defining-a-promise-executes-it/)
 A very basic example that illustrates that defining a promise executes it before it is invoked.
+
+## [e06-hello-bind-and-apply](e06-hello-bind-and-apply/)
+Illustrates a basic examples of `function.bind` and `function.apply`.
