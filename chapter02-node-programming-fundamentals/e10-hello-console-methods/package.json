@@ -1,7 +1,7 @@
 {
-  "name": "e06-hello-require-module-groups",
+  "name": "e10-hello-console-methods",
   "version": "0.0.1",
-  "description": "Illustrating how group modules and load them in one go",
+  "description": "The different options of the console methods",
   "main": "index.js",
   "engines": {
     "node": "8.1.0",
@@ -21,8 +21,7 @@
   "devDependencies": {
     "eslint": "3.19.0"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "scripts": {
     "setup": "rm -rf node_modules && rm -f package-lock.json && rm -rf .nyc_output coverage && npm install",
     "prestart": "npm run lint",

@@ -1,5 +1,5 @@
 {
-  "name": "06-hello-require-module-groups-package",
+  "name": "e07-hello-require-module-groups-package",
   "version": "0.0.1",
   "description": "Illustrating how group modules and load them in one go in a flexible way using package.json",
   "main": "index.js",

@@ -70,5 +70,14 @@ An introduction about how to use `util.promisify` to convert callback-based func
 ## [e06-hello-require-module-groups](e06-hello-require-module-groups/)
 An example illustrating how to group related modules and load them in a single `require`. 
 
-## [e07-hello-require-module-groups-package](e06-hello-require-module-groups-package/)
+## [e07-hello-require-module-groups-package](e07-hello-require-module-groups-package/)
 An example illustrating how to group related modules and load them in a single `require` in a very flexible using using a `package.json`.
+
+## [e08-hello-file-locations](e08-hello-file-locations/)
+An example illustrating `__dirname`, `__filename` and `path.join`.
+
+## [e09-hello-pipes](e09-hello-pipes/)
+An example illustrating `__dirname`, `__filename` and `path.join`.
+
+## [e10-hello-console-methods](e10-hello-console-methods/)
+Illustrates the different features of the `console` object.

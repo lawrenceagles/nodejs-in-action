@@ -12,3 +12,6 @@ Demonstrates how to create a simple but complete CLI application, that can be ex
 
 ## [04-hello-pipes](./04-hello-pipes/)
 Illustrates the basics of `pipe` in Node.js by building a small CLI command that echoes what it received on *stdin* on the *stdout*.
+
+## [e01-benchmarking-reads](./e01-benchmarking-reads/)
+Illustrates how to use `console.time` to benchmark how long it takes to read a file.

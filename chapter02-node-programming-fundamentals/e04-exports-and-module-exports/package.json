@@ -1,5 +1,5 @@
 {
-  "name": "04-exports-and-exports-module",
+  "name": "e04-exports-and-exports-module",
   "version": "0.0.1",
   "description": "Illustrating when to use exports vs. exports.module",
   "main": "index.js",

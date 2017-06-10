@@ -1,7 +1,7 @@
 {
-  "name": "e01-dice-experiment-infinite-sequences",
+  "name": "e02-modules-for-exchanging-data",
   "version": "0.0.1",
-  "description": "Throwing dice modeled as infinite sequences",
+  "description": "Using modules for exchanging data",
   "engines": {
     "node": "6.10.10",
     "npm": "3.10.10"

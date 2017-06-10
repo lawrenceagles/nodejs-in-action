@@ -1,7 +1,7 @@
 {
-  "name": "e01-dice-experiment-infinite-sequences",
+  "name": "e03-symmetric-crypto",
   "version": "0.0.1",
-  "description": "Throwing dice modeled as infinite sequences",
+  "description": "How to perform symmetric encryption of a variable",
   "engines": {
     "node": "7.7.2",
     "npm": "4.1.2"

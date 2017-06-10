@@ -1,5 +1,5 @@
 {
-  "name": "05-hello-util-promisify",
+  "name": "e05-hello-util-promisify",
   "version": "0.0.1",
   "description": "Introducing Node.js util.promisify",
   "main": "index.js",
