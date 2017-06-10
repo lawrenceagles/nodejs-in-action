@@ -1,7 +1,7 @@
 {
-  "name": "05-hello-util-promisify",
+  "name": "06-hello-require-module-groups",
   "version": "0.0.1",
-  "description": "Introducing Node.js util.promisify",
+  "description": "Illustrating how group modules and load them in one go",
   "main": "index.js",
   "engines": {
     "node": "8.1.0",

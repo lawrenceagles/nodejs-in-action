@@ -1,7 +1,7 @@
 {
-  "name": "05-hello-util-promisify",
+  "name": "06-hello-require-module-groups-package",
   "version": "0.0.1",
-  "description": "Introducing Node.js util.promisify",
+  "description": "Illustrating how group modules and load them in one go in a flexible way using package.json",
   "main": "index.js",
   "engines": {
     "node": "8.1.0",
@@ -21,8 +21,7 @@
   "devDependencies": {
     "eslint": "3.19.0"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "scripts": {
     "setup": "rm -rf node_modules && rm -f package-lock.json && rm -rf .nyc_output coverage && npm install",
     "prestart": "npm run lint",

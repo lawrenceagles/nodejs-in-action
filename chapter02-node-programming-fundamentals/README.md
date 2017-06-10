@@ -67,3 +67,8 @@ A very simple example illustrating when to use `exports.method = ...` vs. `modul
 ## [e05-hello-util-promisify](e05-hello-util-promisify/)
 An introduction about how to use `util.promisify` to convert callback-based functions to Promises.
 
+## [e06-hello-require-module-groups](e06-hello-require-module-groups/)
+An example illustrating how to group related modules and load them in a single `require`. 
+
+## [e07-hello-require-module-groups-package](e06-hello-require-module-groups-package/)
+An example illustrating how to group related modules and load them in a single `require` in a very flexible using using a `package.json`.
