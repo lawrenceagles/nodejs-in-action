@@ -1,5 +1,5 @@
 # Chapter 8 &mdash; Web Application Templating
-> Node.js examples from 2nd edition
+> a quick look into several templating engines available in Node.js
 
 ## [01-webapp-without-template-engine](./01-webapp-without-template-engine/)
 A web application the outputs HTML without using a template engine, as an illustration of how complicated it can get.

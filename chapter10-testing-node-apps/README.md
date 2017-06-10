@@ -1,5 +1,5 @@
 # Chapter 10 &mdash; Testing Node Applications
-> Node.js examples from 2nd edition
+> Introducing several options available for testing Node.js apps
 
 ## [01-hello-assert](./01-hello-assert/)
 The basis of Node application testing using the `assert` module.

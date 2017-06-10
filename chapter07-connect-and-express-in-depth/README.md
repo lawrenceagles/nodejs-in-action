@@ -1,5 +1,5 @@
 # Chapter 7 &mdash; Connect and Express in Depth
-> Node.js examples from 2nd edition
+> a deep-dive on `connect` and `express`
 
 ## [01-hello-connect](./01-hello-connect/)
 The simplest HTTP server using Connect.

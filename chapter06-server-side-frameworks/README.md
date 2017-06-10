@@ -1,5 +1,5 @@
 # Chapter 6 &mdash; Server-side Frameworks
-> Node.js examples from 2nd edition
+> A quick look into alternative web frameworks to *Express*
 
 ## [01-hello-koa2](./01-hello-koa2)
 Illustrates the basics of the HTTP server framework Koa 2.

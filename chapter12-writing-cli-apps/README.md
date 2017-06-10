@@ -1,5 +1,5 @@
 # Chapter 12 &mdash; Writing Command-Line Applications
-> Node.js examples from 2nd edition
+> hints and tips about writing command-line apps in Node.js
 
 ## [01-hello-args](./01-hello-args/)
 Demonstrates how to access the arguments passed from the command-line to a Node.js application using `process.argv`.

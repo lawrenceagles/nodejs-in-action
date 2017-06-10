@@ -1,5 +1,5 @@
 # Chapter 9 &mdash; Storing Application Data
-> Node.js examples from 2nd edition
+> examples of Node.js programs interacting with several different storage system (SQL and noSQL)
 
 ## [01-hello-postgres](./01-hello-postgres/)
 The basics of interacting with a Postgres database using the `pg` module.

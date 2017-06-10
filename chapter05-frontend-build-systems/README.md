@@ -1,5 +1,5 @@
 # Chapter 5 &mdash; Front-end Build Systems
-> Node.js examples from 2nd edition
+> A quick look into front-end build systems
 
 ## 01-hello-babel-uglify
 Illustrates how to invoke client side tools from *NPM*.

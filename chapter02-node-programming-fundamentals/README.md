@@ -1,5 +1,5 @@
 # Chapter 2 &mdash; Node Programming Fundamentals
-> Node.js examples from 2nd edition
+> Node Fundamentals: modules, callbacks, events and async flow management
 
 ## 01-hello-node-modules
 Illustrates how to create modules in Node.js and how to expose functions to consumers using `exports`. The example creates a module that converts from Euros to Rupees and vice versa and exposes both functions using `exports.fnName = function()`. The application demonstrate how to require and use that module.
