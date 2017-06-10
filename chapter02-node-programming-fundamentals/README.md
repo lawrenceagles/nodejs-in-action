@@ -85,3 +85,5 @@ Illustrates the different features of the `console` object.
 ## [e11-hello-os-integration](e11-hello-os-integration/)
 Illustrates the different features available to integrate with the underlying OS such as getting memory usage, the process ID, reading arguments from the command line, exiting with a particular exit code or listening on OS signals.
 
+## [e12-hello-unref](e12-hello-unref/)
+Illustrates the usage of `unref` which tells Node.js that an established timer should not prevent the program from exiting.
