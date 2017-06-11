@@ -87,3 +87,9 @@ Illustrates the different features available to integrate with the underlying OS
 
 ## [e12-hello-unref](e12-hello-unref/)
 Illustrates the usage of `unref` which tells Node.js that an established timer should not prevent the program from exiting.
+
+## [e13-hello-process-next-tick](e13-hello-process-next-tick/)
+Illustrates how to use `process.nextTick` to send an otherwise synchronous operation to the callback queue.
+
+## [e14-hello-set-immediate](e14-hello-set-immediate/)
+Illustrates how to use `process.setImmediate` to send an otherwise synchronous operation to the callback queue.
