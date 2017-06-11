@@ -1,7 +1,7 @@
 {
-  "name": "e01-basic-auth-lib",
+  "name": "e02-data-uri",
   "version": "0.0.1",
-  "description": "A library for creating the basic auth http header",
+  "description": "Working with Data URIs is a breeze with the Buffer API",
   "main": "index.js",
   "engines": {
     "node": "8.1.0",
@@ -19,8 +19,7 @@
   "config": {},
   "license": "ISC",
   "devDependencies": {
-    "eslint": "3.19.0",
-    "tap": "10.3.3"
+    "eslint": "3.19.0"    
   },
   "dependencies": {},
   "scripts": {
