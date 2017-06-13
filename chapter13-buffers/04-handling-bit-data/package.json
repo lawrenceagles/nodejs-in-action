@@ -1,7 +1,7 @@
 {
-  "name": "03-handling-binary-data",
+  "name": "04-handling-bit-data",
   "version": "0.0.1",
-  "description": "Using the Buffer API to make sense of a .dbf file",
+  "description": "Using the Buffer API to handling binary data at the bit level",
   "main": "index.js",
   "engines": {
     "node": "8.1.0",

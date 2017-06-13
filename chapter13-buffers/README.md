@@ -10,6 +10,9 @@ Illustrates how to transform the buffer encoding in an example that transforms *
 ## [03-handling-binary-data](./03-handling-binary-data/)
 Illustrates how to use the *Buffer* API to read a file in binary format, the `.dbf` specification.
 
+## [04-handling-bit-data](./04-handling-bit-data/)
+Illustrates how to use the *Buffer* API to handle binary data at the bit level by creating a simple binary protocol.
+
 ## [e01-basic-auth-lib](./e01-basic-auth-lib/)
 A simple library that uses the *Buffer* API to transform buffer encoding to build the *Basic Authentication* HTTP header.
 
