@@ -17,3 +17,6 @@
   + [Chapter 10 &mdash; Testing Node Applications](chapter10-testing-node-apps/)
   + [Chapter 11 &mdash; Deploying Node Applications and Maintaining Uptime](chapter11-testing-node-apps/)
   + [Chapter 12 &mdash; Writing Command-Line Applications](chapter12-writing-cli-apps/)
+  + [Chapter 13 &mdash; Buffers](chapter13-buffers/)
+  + [Chapter 14 &mdash; Events](chapter14-events/)
+  + [Chapter 15 &mdash; Streams](chapter15-streams/)
