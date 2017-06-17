@@ -21,3 +21,21 @@ Illustrates how to implement a writable stream.
 
 ## [07-hello-duplex-streams](./07-hello-duplex-streams/)
 Introduces the duplex streams that can act as readable and writable streams through a simple example.
+
+## [08-hello-transform-streams](./08-hello-transform-streams/)
+Introduces the transform streams that can also act as readable and writable streams.
+
+## [09-hello-readable-stream](./09-hello-readable-stream/)
+Introduces the `stream.Readable` at its simplest.
+
+## [10-consuming-readable-stream](./10-consuming-readable-stream/)
+Illustrates how to consume from a readable stream.
+
+## [11-hello-unshift-readable-stream](./11-hello-unshift-readable-stream/)
+Illustrates how to return data to the stream that you have consumed optimistically using `unshift`.
+
+## [12-hello-writable-stream](./12-hello-writable-stream/)
+Introduces the `stream.Writable` at its simplest.
+
+## [e01-pushing-chunks-on-demand](./e01-pushing-chunks-on-demand/)
+Illustrates how to provide chunks to a consumer stream on demand, rather than buffering it without knowing if the consumer stream is ready to consume it.

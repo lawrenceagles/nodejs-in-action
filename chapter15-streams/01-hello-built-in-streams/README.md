@@ -41,3 +41,21 @@ Some notable events:
 + `"close"` &mdash; the underlying resources has been closed.
 + `"finish"` &mdash; emitted in `stream.Writable` instances when `writable.end()` has been called.
 + `"pipe"` &mdash; emitted when passing a stream to `stream.Readable.pipe()` method.
+
+#### Basics
+
+##### pipe
+Use the `pipe()` method to pair an input with an output: it takes a *readable* source stream and hooks the output to a target *writable* stream:
+```javascript
+a.pipe(b).pipe(c).pipe(d);
+// it's the same as
+a.pipe(b);
+b.pipe(c);
+c.pipe(d);
+```
+
+##### Readable
+
+Readable streams produce data that can be fed into a writable, transform or duplex stream by calling `pipe()`.
+
+
