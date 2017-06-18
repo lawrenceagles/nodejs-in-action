@@ -18,3 +18,6 @@ Introduce *Should* assertion library.
 
 ## [06-hello-sinon](./06-hello-sinon/)
 Introduce *Sinon* library to create mocks, stubs and spies.
+
+## [07-hello-tap](./07-hello-tap/)
+Introducing `node-tap` library for testing.
