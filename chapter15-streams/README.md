@@ -37,5 +37,14 @@ Illustrates how to return data to the stream that you have consumed optimistical
 ## [12-hello-writable-stream](./12-hello-writable-stream/)
 Introduces the `stream.Writable` at its simplest.
 
+## [13-hello-classic-streams](./13-hello-classic-streams/)
+Introduces the Node's old interface for streams.
+
+## [14-optimizing-streams-buffer](./14-optimizing-streams-buffer/)
+Illustrates how to tailor a stream's internal buffer and how to benchmark time and memory.
+
+## [15-adapting-streams-on-destination](./15-adapting-streams-on-destination/)
+Illustrates how to adapt the behavior of a readable stream based on the destination it has been piped into.
+
 ## [e01-pushing-chunks-on-demand](./e01-pushing-chunks-on-demand/)
 Illustrates how to provide chunks to a consumer stream on demand, rather than buffering it without knowing if the consumer stream is ready to consume it.
