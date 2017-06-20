@@ -9,3 +9,15 @@ Illustrates how to copy a source file using a readable stream and piping it into
 
 ## [03-hello-bulk-file-io](./03-hello-bulk-file-io/)
 Illustrates how to materialize the contents of a file in a buffer.
+
+## [04-hello-file-descriptors](./04-hello-file-descriptors/)
+Introduces the concept of file descriptors, which can be then used in any of the low-level API calls accepting an *fd*.
+
+## [05-file-locking-mechanism](./05-file-locking-mechanism/)
+Illustrates three level strategies you can use to implement a file-locking mechanism in Node.js.
+
+## [06-file-locking-module](./06-file-locking-module/)
+A basic implementation of a file locking mechanism in a Node.js module.
+
+## [07-recursive-search](./07-recursive-search/)
+Implementing a recursive search for files in a directory tree.
