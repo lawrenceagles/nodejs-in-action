@@ -20,4 +20,10 @@ Illustrates three level strategies you can use to implement a file-locking mecha
 A basic implementation of a file locking mechanism in a Node.js module.
 
 ## [07-recursive-search](./07-recursive-search/)
-Implementing a recursive search for files in a directory tree.
+Implementing a recursive search for files in a directory tree using a sync version and two flavors of async.
+
+## [08-fs-key-value-db](./08-fs-key-value-db/)
+Implementing basic, callback based, key/value data store with file persistence 
+
+## [09-fs-key-value-db-promises](./09-fs-key-value-db-promises/)
+Implementing basic, promise based, key/value data store with file persistence

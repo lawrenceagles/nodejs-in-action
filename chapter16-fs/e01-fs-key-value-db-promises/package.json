@@ -1,7 +1,7 @@
 {
-  "name": "07-recursive-search",
+  "name": "08-fs-key-value-db",
   "version": "0.0.1",
-  "description": "Using fs module to search for files in a directory tree",
+  "description": "creating a callback based key/value datastore with append only file",
   "main": "index.js",
   "engines": {
     "node": "8.1.2",

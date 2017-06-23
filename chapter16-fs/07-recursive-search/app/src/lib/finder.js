@@ -2,6 +2,11 @@
 
 const fs = require("fs");
 const { join } = require("path");
+const { promisify } = require("util");
+
+const readdirAsync = promisify(fs.readdir);
+const statAsync = promisify(fs.stat);
+
 
 
 exports.findSync = (nameRegex, startPath) => {
@@ -75,3 +80,25 @@ exports.find = (nameRegex, startPath, cb) => {
 };
 
 
+exports.findAsync = async (nameRegex, startPath) => {
+  const results = [];
+
+  async function finder(path) {
+    const files = await readdirAsync(path);
+
+    files.forEach(async file => {
+      const fpath = join(path, file);
+      const stats = await statAsync(fpath);
+
+      if (stats.isDirectory()) {
+        await finder(fpath);
+      }
+      if (stats.isFile() && nameRegex.test(file)) {
+        results.push(fpath);
+      }
+    });
+  }
+
+  await finder(startPath);
+  return results;
+};

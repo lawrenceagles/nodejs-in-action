@@ -15,4 +15,8 @@ If applied to the example-tree, we intend to obtain the following list:
 ]
 ```
 
-This functionality is implemented in a module that exposes both sync and async versions of the functionality.
+This functionality is implemented in a module that exposes a sync and two flavors of async versions of the functionality:
++ `finder.findSync` &mdash; sync version using `fs.readdirSync` and `fs.statSync` flavors of the file operations.
++ `finder.find` &mdash; async version using callbacks and counters to control async operations happening in the background
++ `finder.findAsync` &mdash; async version using the same algorithm as in `findSync` but using the async versions for readdir and stat and async/await to control the asynchronicity.
+
