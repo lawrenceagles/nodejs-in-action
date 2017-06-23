@@ -1,7 +1,7 @@
 {
-  "name": "e01-fs-key-value-db-promises",
+  "name": "08-fs-key-value-db",
   "version": "0.0.1",
-  "description": "creating a promises-based key/value datastore with append only file",
+  "description": "creating a callback based key/value datastore with append only file",
   "main": "index.js",
   "engines": {
     "node": "8.1.2",

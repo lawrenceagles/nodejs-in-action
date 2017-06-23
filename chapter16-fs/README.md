@@ -25,5 +25,8 @@ Implementing a recursive search for files in a directory tree using a sync versi
 ## [08-fs-key-value-db](./08-fs-key-value-db/)
 Implementing basic, callback based, key/value data store with file persistence 
 
-## [09-fs-key-value-db-promises](./09-fs-key-value-db-promises/)
+## [09-file-watching-alternatives](./09-file-watching-alternatives/)
+A basic example that illustrates Node.js file watching alternatives: `fs.watch` and `fs.watchFile`.
+
+## [e01-fs-key-value-db-promises](./09-fs-key-value-db-promises/)
 Implementing basic, promise based, key/value data store with file persistence

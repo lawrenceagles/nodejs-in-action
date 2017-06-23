@@ -1,5 +1,5 @@
 # 08-fs-key-value-db
-> > building a callback-based, key/value datastore with persistence on an append-only file
+> building a callback-based, key/value datastore with persistence on an append-only file
 
 ## Description
 The example illustrates how to write a simple key/value database module that provides in-memory access to the current state for speed and use an append-only storage format on disk for persistence.
