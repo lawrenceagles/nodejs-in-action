@@ -9,3 +9,9 @@ Illlustrates how to create a *TCP server* and *TCP clients* from a Node.js appli
 
 ## [03-tcp-nodelay](./03-tcp-nodelay/)
 Illlustrates how to enable `TCP_NODELAY` in Node.js to decrease the latency in interactive/real-time applications that communicate using small packages.
+
+## [04-hello-udp](./04-hello-udp/)
+Demonstrates how to write an application that transfers file from a client to the server using the UDP protocol.
+
+## [05-client-server-udp](./05-client-server-udp/)
+A simple UDP-based chat program.
