@@ -18,3 +18,6 @@ A simple UDP-based chat program.
 
 ## [06-hello-http](./06-hello-http/)
 Illustrates how to create an HTTP server and how to send a request using the core `http` module.
+
+## [07-hello-redirects](./07-hello-redirects/)
+Illustrates how to follow HTTP redirects using only Node.js core modules.
