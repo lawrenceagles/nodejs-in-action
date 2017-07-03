@@ -15,3 +15,6 @@ Demonstrates how to write an application that transfers file from a client to th
 
 ## [05-client-server-udp](./05-client-server-udp/)
 A simple UDP-based chat program.
+
+## [06-hello-http](./06-hello-http/)
+Illustrates how to create an HTTP server and how to send a request using the core `http` module.
