@@ -24,3 +24,6 @@ Illustrates how to follow HTTP redirects using only Node.js core modules.
 
 ## [08-hello-proxies](./08-hello-proxies/)
 Illustrates how to implement an HTTP proxy using Node's core modules.
+
+## [09-hello-dns](./09-hello-dns/)
+Illustrates how to resolve a domain name into its IP address using the `dns.lookup` and `dns.resolve` module.
