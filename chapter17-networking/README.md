@@ -27,3 +27,6 @@ Illustrates how to implement an HTTP proxy using Node's core modules.
 
 ## [09-hello-dns](./09-hello-dns/)
 Illustrates how to resolve a domain name into its IP address using the `dns.lookup` and `dns.resolve` module.
+
+## [10-hello-tls](./10-hello-tls/)
+Illustrates how to create a *TCP server* and *TCP client* that uses *TLS/SSL* to communicate in a secure way. The example is configured with certificates on both client and server side.
