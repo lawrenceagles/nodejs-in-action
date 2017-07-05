@@ -30,3 +30,6 @@ Illustrates how to resolve a domain name into its IP address using the `dns.look
 
 ## [10-hello-tls](./10-hello-tls/)
 Illustrates how to create a *TCP server* and *TCP client* that uses *TLS/SSL* to communicate in a secure way. The example is configured with certificates on both client and server side.
+
+## [11-hello-https](./11-hello-https/)
+Illustrates how to create an *HTTPS server* and *HTTPS client* using certificates on both client and server side. 
