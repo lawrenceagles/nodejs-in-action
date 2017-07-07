@@ -22,3 +22,5 @@
   + [Chapter 15 &mdash; Streams](chapter15-streams/)
   + [Chapter 16 &mdash; File System](chapter16-fs/)
   + [Chapter 17 &mdash; Networking](chapter17-networking/)
+  + [Chapter 18 &mdash; Child Processes in Node.js](chapter18-child-processes/)
+ 
