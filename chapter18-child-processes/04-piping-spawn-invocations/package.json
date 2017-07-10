@@ -1,7 +1,7 @@
 {
-  "name": "01-hello-exec-file",
+  "name": "04-piping-spawn-invocations",
   "version": "0.0.1",
-  "description": "Executing an external, non-Node app and buffering the results using execFile",
+  "description": "Piping together several spawn invocations",
   "main": "index.js",
   "engines": {
     "node": "8.1.3",

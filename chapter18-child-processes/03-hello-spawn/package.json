@@ -1,7 +1,7 @@
 {
-  "name": "01-hello-exec-file",
+  "name": "03-hello-spawn",
   "version": "0.0.1",
-  "description": "Executing an external, non-Node app and buffering the results using execFile",
+  "description": "Executing an external, non-Node app and streaming the results using spawn",
   "main": "index.js",
   "engines": {
     "node": "8.1.3",

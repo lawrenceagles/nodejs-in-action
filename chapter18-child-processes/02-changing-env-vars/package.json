@@ -1,7 +1,7 @@
 {
-  "name": "01-hello-exec-file",
+  "name": "02-changing-env-vars",
   "version": "0.0.1",
-  "description": "Executing an external, non-Node app and buffering the results using execFile",
+  "description": "Querying and changing environment variables",
   "main": "index.js",
   "engines": {
     "node": "8.1.3",
