@@ -33,3 +33,6 @@ Illustrates how to create a *TCP server* and *TCP client* that uses *TLS/SSL* to
 
 ## [11-hello-https](./11-hello-https/)
 Illustrates how to create an *HTTPS server* and *HTTPS client* using certificates on both client and server side. 
+
+## [e01-hello-ssh](./e01-hello-ssh/)
+Illustrates how to send commands to remote machines using SSH protocol thanks to the `ssh2` module.

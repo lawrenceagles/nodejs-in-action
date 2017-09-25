@@ -8,7 +8,7 @@ Node has *two* implementations for file watching:
 
 Node's documentation recommends using `fs.watch` if possible, as it is considered more efficient, fast and reliable. However, there are some caveats associated to `fs.watch` because it depends on some OS specific functionality that might not work as expected under certain circumstances, or may fail when using virtualization software like Docker or in network file systems.
 
-By contrast, `fs.watchFile` doesnt rely on that specifics, and just polls with a given frequence to see if a file has changed. This makes `fs.watchFile` consistent across platforms and ready for network file systems.
+By contrast, `fs.watchFile` doesn't rely on that specifics, and just polls with a given frequence to see if a file has changed. This makes `fs.watchFile` consistent across platforms and ready for network file systems.
 
 This example, lets you verify those:
 1. Type `npm start`
