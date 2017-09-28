@@ -2,7 +2,7 @@
 > introducing error handling with streams
 
 ## Description
-This example illustrates how to manage error handling with streams. Ultimately, you just listens to the `"error"` event on the stream:
+This example illustrates how to manage error handling with streams. Ultimately, you just listen to the `"error"` event on the stream:
 
 ```javascript
 const stream = fs.createReadStream(...);
