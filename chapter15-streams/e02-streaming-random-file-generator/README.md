@@ -30,3 +30,6 @@ function generateFile(recordType, numRecords, filenameSuffix) {
   csvGenerator.pipe(writable);
 }
 ```
+
+**NOTE**
+For a tool the generates the same types of files, by using Node's file API instead of streams see [e02-random-file-generator](../../chapter16-fs/e02-random-file-generator/).
