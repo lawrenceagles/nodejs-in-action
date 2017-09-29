@@ -93,3 +93,6 @@ Illustrates how to use `process.nextTick` to send an otherwise synchronous opera
 
 ## [e14-hello-set-immediate](e14-hello-set-immediate/)
 Illustrates how to use `process.setImmediate` to send an otherwise synchronous operation to the callback queue.
+
+## [e15-hello-promisify](e15-hello-promisify/)
+Illustrates what `util.promisify` is and how to use it to convert regular callbacks in *promises*.
