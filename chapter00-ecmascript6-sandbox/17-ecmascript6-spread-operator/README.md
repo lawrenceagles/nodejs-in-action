@@ -1,5 +1,5 @@
 # 17-ecmascript6-spread-operator
-> illustrates how to use the spread operator
+> illustrates how to use the spread `...` operator 
 
 ## Description
 The spread operator `...` lets you perform the following actions:

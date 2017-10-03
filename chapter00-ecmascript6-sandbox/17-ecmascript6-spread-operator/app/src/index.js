@@ -42,3 +42,10 @@ const date1 = new (Date.bind.apply(Date, [null, 2015, 11, 31]));
 const date2 = new Date(...[2015, 11, 31]);
 console.log(date1);
 console.log(date2);
+
+/* it can also be used as a wrapper for functions that do not receive iterable */
+const maxNum = Math.max(5, 3, 2, 6, 7);
+console.log(`maxNum=${ maxNum }`);
+
+const nums = [5, 3, 2, 6, 7];
+console.log(`max(nums)=${ Math.max(...nums) }`);
