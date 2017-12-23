@@ -16,18 +16,21 @@
   },
   "license": "ISC",
   "devDependencies": {
-    "eslint": "3.13.0"
+    "eslint": "4.13.1"
   },
   "dependencies": {},
   "scripts": {
-    "start": "node build/index.js",
-    "lint": "eslint public/src/",
-    "clean": "rm -rf build/",
-    "copy": "cp -r public/src/ build/",
-    "build": "npm run lint",
-    "prebuild": "npm run clean",
-    "postbuild": "npm run copy",
-    "debug": "node --inspect --debug-brk build/index.js",
-    "dev": "nodemon --ext js,json,yml --watch public/src --watch .eslintrc.yml --exec 'npm run build --silent && npm start'"
+    "setup": "rm -rf node_modules && rm -f package-lock.json && rm -rf .nyc_output coverage && npm install",
+    "prestart": "npm run lint",
+    "start": "DEBUG=${npm_package_config_debugModules:-$npm_package_name} node app/src/$npm_package_main",
+    "lint": "node_modules/.bin/eslint app/src/",
+    "predebug": "npm run lint",
+    "debug": "DEBUG=${npm_package_config_debugModules:-$npm_package_name} node --inspect-brk=${npm_config_debugHost:-127.0.0.1} app/src/$npm_package_main",
+    "dev": "node_modules/.bin/nodemon --ext js,json,yml --watch app/src --watch .eslintrc.yml --exec 'npm start'",
+    "pretest": "./node_modules/.bin/eslint app/tst/",
+    "test-native": "node app/tst/countstream.js",
+    "test-tap": "tap app/tst/*-tap.js",
+    "test-coverage": "tap app/tst/*-tap.js --cov",
+    "test-coverage-html": "tap app/tst/*-tap.js --cov --coverage-report=lcov"
   }
 }
