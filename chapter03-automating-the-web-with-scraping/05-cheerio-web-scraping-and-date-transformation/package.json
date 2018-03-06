@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "cheerio": "0.22.0",
-    "moment": "2.17.1"
+    "moment": "2.21.0"
   },
   "scripts": {
     "start": "node build/index.js",
