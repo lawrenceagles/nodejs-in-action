@@ -1,12 +1,14 @@
-# 05-hello-exec
-> executing a non-Node application, buffering the results and using the underlying shell facilities
+# 06-hello-detached-process
+
+> executing a non-Node application, as a detached process, so that it can keep running even when the parent process dies
 
 ## Description
-This example illustrates how invoke an external application using `exec`, which buffers the results as `execFile` does, but also executes the command into a shell, so that things such as *pipes*, *redirects* and *backgrounding* will be available. 
 
-When using `exec`, the provided callback is invoked when the subshell exits, and it receives the buffered results for `stdout` and `stderr`.
+This example illustrates how to start a detached process from a Node.js application using `spawn` so that it is unaffected with what happens with the parent process (normally, any child process will be terminated when the parent process is terminated).
 
-Note that `exec` should be used cautiously when used with untrusted user input to avoid *shell injection attacks*.
+In the example, we run a long running script stored in `scripts/` using `spawn`. This script writes a record every second to the file `execution-log.txt`.
+
+Note that even when detaching, the parent process will remain active. However, when you kill the parent process (e.g. typing CTRL-C), the child process will remain active.
 
 In Node.js, the `child_process` module allows you to execute other applications (including Node applications).
 It provides 4 different async methods that are intended for different scenarios:

@@ -2,7 +2,7 @@
 > executing a non-Node application buffering the results
 
 ## Description
-This example illustrates how invoke an external application using `execFile`, both using callbacks and *async/await* and how to deal with errors.
+This example illustrates how to invoke an external application using `execFile`, both using callbacks and *async/await* and how to deal with errors.
 
 In Node.js, the `child_process` module allows you to execute other applications (including Node applications).
 It provides 4 different async methods that are intended for different scenarios:

@@ -17,7 +17,7 @@ rules:
     - off
   quotes:
     - error
-    - double
+    - single
     - allowTemplateLiterals: true    
   semi:
     - error

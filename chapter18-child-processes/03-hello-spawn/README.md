@@ -4,6 +4,8 @@
 ## Description
 This example illustrates how invoke an external application using `spawn`, which instead of buffering the results, returns an stream with the information produced by the external command.
 
+In the program, two use-cases are illustrated, in the first one, the results are buffered directly to *stdout* and *stderr* and in the second one, the results are piped into custom writable streams.
+
 In Node.js, the `child_process` module allows you to execute other applications (including Node applications).
 It provides 4 different async methods that are intended for different scenarios:
 + `execFile` &mdash; execute an external application, given a set of arguments, and callback with the buffered output after the process exits.
