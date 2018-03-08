@@ -1,7 +1,7 @@
 {
-  "name": "05-hello-exec",
+  "name": "07-detached-process-and-stdio-configuration",
   "version": "0.0.1",
-  "description": "Executing an external, non-Node app, buffering the results, and in a subshell",
+  "description": "Creating a detached child process from a Node.js parent, severing all links to the child",
   "main": "index.js",
   "engines": {
     "node": "9.7.1",

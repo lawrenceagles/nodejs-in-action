@@ -1,7 +1,7 @@
 {
-  "name": "06-hello-detached-process",
+  "name": "09-hello-fork",
   "version": "0.0.1",
-  "description": "executing a non-Node application, as a detached process",
+  "description": "Executing a Node.js module as a separate process and communicating using IPC",
   "main": "index.js",
   "engines": {
     "node": "9.7.1",

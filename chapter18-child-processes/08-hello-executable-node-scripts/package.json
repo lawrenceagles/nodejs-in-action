@@ -1,7 +1,7 @@
 {
-  "name": "05-hello-exec",
+  "name": "08-hello-executable-node-scripts",
   "version": "0.0.1",
-  "description": "Executing an external, non-Node app, buffering the results, and in a subshell",
+  "description": "shell script programmed in Node.js and invoking it from a Node program using `execFile`",
   "main": "index.js",
   "engines": {
     "node": "9.7.1",

@@ -1,7 +1,7 @@
 {
-  "name": "06-hello-detached-process",
+  "name": "10-fork-with-stdio",
   "version": "0.0.1",
-  "description": "executing a non-Node application, as a detached process",
+  "description": "Executing an external, non-Node app, buffering the results, and in a subshell",
   "main": "index.js",
   "engines": {
     "node": "9.7.1",

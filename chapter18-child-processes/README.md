@@ -25,3 +25,8 @@ Illustrates the techniques to sever the child reference and I/O connection that 
 ## [08-hello-executable-node-scripts](./08-hello-executable-node-scripts/)
 Demonstrates how to create an executable *Unix* script written on Node.js, and then how to call it using `execFile`.
 
+## [09-hello-fork](./09-hello-fork/)
+Illustrates how to create a separate Node.js process using `fork` and how to communicate through messages from the parent to the child and vice versa.
+
+## [10-fork-with-stdio](./10-fork-with-stdio/)
+Illustrates how you can use a streaming interface for the *stdio* when using `fork`.
