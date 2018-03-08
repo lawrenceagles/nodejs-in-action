@@ -21,4 +21,7 @@ Illustrates how to use `spawn` to invoke external applications in detached mode,
 
 ## [07-detached-process-and-stdio-configuration](./07-detached-process-and-stdio-configuration/)
 Illustrates the techniques to sever the child reference and I/O connection that exist between the parent and child processes when using `spawn` so that the parent process can terminate successfully and the child can remain active on its own.
- 
+
+## [08-hello-executable-node-scripts](./08-hello-executable-node-scripts/)
+Demonstrates how to create an executable *Unix* script written on Node.js, and then how to call it using `execFile`.
+

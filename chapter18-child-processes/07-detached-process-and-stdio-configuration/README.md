@@ -1,10 +1,10 @@
-# 06-hello-detached-process
+# 07-detached-process-and-stdio-configuration
 
-> executing a non-Node application, as a detached process, so that it can keep running even when the parent process dies
+> creating a detached child process from a Node.js parent program and severing all links to the child so that the parent can terminate and the child keeps running.
 
 ## Description
 
-This example illustrates how to start a detached process from a Node.js application using `spawn` so that it is unaffected with what happens with the parent process (normally, any child process will be terminated when the parent process is terminated).
+This example demonstrates how to start a detached process from a Node.js application using `spawn` so that it is unaffected with what happens with the parent process (normally, any child process will be terminated when the parent process is terminated).
 
 In the example, we run a long running script stored in `scripts/` using `spawn`. This script writes a record every second to the file `execution-log.txt`.
 
