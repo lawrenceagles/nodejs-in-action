@@ -1,11 +1,11 @@
 {
-  "name": "13-forking-workers-promises",
+  "name": "13-forking-workers-process-pool",
   "version": "0.0.1",
-  "description": "Basic template for executing multiple worker tasks with fork",
+  "description": "Executing multiple workers using fork on a pocess pool",
   "main": "index.js",
   "engines": {
     "node": "9.7.1",
-    "npm": "5.1.0"
+    "npm": "5.7.1"
   },
   "repository": {
     "type": "git",
@@ -16,12 +16,16 @@
     "name": "Sergio F. Gonzalez",
     "email": "sergio.f.gonzalez@gmail.com"
   },
-  "config": {},
+  "config": {
+    "debugModules": "process-pool:*"
+  },
   "license": "ISC",
   "devDependencies": {
     "eslint": "4.1.1"
   },
-  "dependencies": {},
+  "dependencies": {
+    "debug": "3.1.0"
+  },
   "scripts": {
     "setup": "rm -rf node_modules && rm -f package-lock.json && rm -rf .nyc_output coverage && npm install",
     "prestart": "npm run lint",

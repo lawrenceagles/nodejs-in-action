@@ -37,5 +37,8 @@ A simple platform with a parent that distributes tasks across process workers us
 ## [12-forking-workers](./12-forking-workers-promises/)
 A simple platform with a parent that distributes tasks across process workers using a promise-based approach.
 
+## [13-forking-workers](./13-forking-workers-promises/)
+An improvement on [11-forking-workers](./11-forking-workers/) on which a pool of processes are created and tasks are dynamically assigned to them to improve efficiency.
+
 ## [e01-forking-workers-better-err-handling](./e01-forking-workers-better-err-handling/)
 A reimplementation of [11-forking-workers](./11-forking-workers/) but with a better error handling.
