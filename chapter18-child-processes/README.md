@@ -30,3 +30,12 @@ Illustrates how to create a separate Node.js process using `fork` and how to com
 
 ## [10-fork-with-stdio](./10-fork-with-stdio/)
 Illustrates how you can use a streaming interface for the *stdio* when using `fork`.
+
+## [11-forking-workers](./11-forking-workers/)
+A simple platform with a parent that distributes tasks across process workers using a callback-based approach.
+
+## [12-forking-workers](./12-forking-workers-promises/)
+A simple platform with a parent that distributes tasks across process workers using a promise-based approach.
+
+## [e01-forking-workers-better-err-handling](./e01-forking-workers-better-err-handling/)
+A reimplementation of [11-forking-workers](./11-forking-workers/) but with a better error handling.
