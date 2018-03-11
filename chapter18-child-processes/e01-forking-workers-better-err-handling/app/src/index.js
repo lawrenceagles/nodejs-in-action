@@ -15,8 +15,9 @@ const util = require('util');
 
 
 function doWork(job, cb) {
-  // const child = child_process.fork(path.join(__dirname, `worker`));
-  const child = child_process.fork(path.join(__dirname, `worker`), [], {execArgv: ['--inspect=9223']});
+  const child = child_process.fork(path.join(__dirname, `worker`));
+  /* Uncomment next line to debug parent/chil */
+  // const child = child_process.fork(path.join(__dirname, `worker`), [], {execArgv: ['--inspect=9223']});
   let cbTriggered = false;
 
   child
@@ -61,7 +62,7 @@ function doWork(job, cb) {
     .send(job);
 }
 
-for (let i = 0; i < 1; i++) {
+for (let i = 0; i < 10; i++) {
   doWork(i, (err, result) => {
     if (err) {
       return console.log(`PARENT: An error occurred while doing work(${ i }): ${ util.inspect(err) }`);
