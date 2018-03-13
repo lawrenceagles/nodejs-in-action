@@ -15,3 +15,6 @@ Illustrates the basics of `pipe` in Node.js by building a small CLI command that
 
 ## [e01-benchmarking-reads](./e01-benchmarking-reads/)
 Illustrates how to use `console.time` to benchmark how long it takes to read a file.
+
+## [e02-generate-data-report](./e02-generate-data-report/)
+A basic CLI application that generates a basic report on some JavaScript data.

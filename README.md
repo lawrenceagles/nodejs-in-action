@@ -1,5 +1,5 @@
 # Node.js in Action
-> Examples from the book *Node.js in Action, 2nd Edition* (Manning, 2016) and Practical Modern JavaScript repository (https://github.com/mjavascript/practical-modern-javascript) and *Node.js in Practice* (Manning, 2015).
+> Examples from the book *Node.js in Action, 2nd Edition* (Manning, 2016) and Practical Modern JavaScript repository (https://github.com/mjavascript/practical-modern-javascript) and *Node.js in Practice* (Manning, 2015) and *Data Wrangling with JavaScript* (Manning, 2018).
 
 ## Contents
 + Part 1 &mdash; Node Fundamentals
