@@ -24,3 +24,6 @@ A more involved example showing how a frontend application interacts with the *E
 
 ## [e02-express-crypto-webapp](./e02-express-crypto-webapp/)
 Simple Express application with a form that performs symmetric encription on user data.
+
+## [e03-express-https-static-website](./e03-express-https-static-website/)
+Simple Express application for static websites and SPAs, configured for HTTPS access.
