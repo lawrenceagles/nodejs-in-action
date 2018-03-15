@@ -27,3 +27,6 @@ Simple Express application with a form that performs symmetric encription on use
 
 ## [e03-express-https-static-website](./e03-express-https-static-website/)
 Simple Express application for static websites and SPAs, configured for HTTPS access.
+
+## [e04-express-https-rest](./e03-express-https-static-website/)
+A template for an HTTPS Express application support static websites and REST requests. Support for client-side JavaScript is also included.
