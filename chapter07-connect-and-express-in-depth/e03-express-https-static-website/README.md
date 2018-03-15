@@ -171,12 +171,15 @@ $ npm start
 In this step, we will use *Chrome* to validate that we can access the application locally using HTTPS (or remotely, if the server is hosted on a VM, for example), by accepting the security warnings presented to use by the browser.
 
 So, when accessing https://localhost:8443 we will see:
+
 ![Chrome Privacy Warning](./doc_images/chrome-privacy-warning.png)
 
 But you will be able to click on *Advanced* and *Proceed to localhost* to access the HTTPS enabled website:
+
 ![Chrome Proceed to localhost](./doc_images/chrome-privacy-warning-proceed.png)
 
 And the static web page will be displayed:
+
 ![Unsecured localhost app](./doc_images/unsecured-https-enabled-application.png)
 
 At this point, you might be satisfied enough, but we will go the extra mile and configure the self-signed root CA on the system certificate store and in Chrome, so that you no longer receive the security warnings.
@@ -326,16 +329,22 @@ The same type of output you'd get for `127.0.0.1:8443`.
 If we try again to access https://localhost:8443 from the browser we will see that we still get the same security warning as before, but that can be easily fixed by installing the *root SSL certificate* `rootCA.pem` generated on [step 2](#step-2-create-the-root-ssl-certificate).
 
 To do that, open Chrome Settings, type *Manage Certificates*:
+
 ![Chrome settings](./doc_images/chrome-settings.png)
+
 ![Manage certificates](./doc_images/chrome-settings-certs.png)
 
 Then, you just have to import the self-signed root SSL certificate into Chrome:
 ![Import CA certificate](./doc_images/chrome-settings-certs-ca-import.png)
+
 ![Import CA certificate2](./doc_images/chrome-settings-certs-ca-import-cert.png)
+
 ![Import CA certificate3](./doc_images/chrome-settings-certs-ca-import-cert-options.png)
+
 ![Import CA certificate4](./doc_images/chrome-settings-certs-ca-import-cert-done.png)
 
 Once completed the configuration, you can try again to access https://localhost:8443 and you will see the green lock on the toolbar!
+
 ![Secured HTTPS](./doc_images/chrome-local-secure.png)
 
 Note that the same sequence of steps can be followed to install the *root SSL certificate* into the host machine if you use VMs for local development.
