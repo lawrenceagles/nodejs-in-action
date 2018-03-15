@@ -24,7 +24,7 @@ In this step, we generate a private key that will be used in the creation of the
 
 Therefore, you should type:
 
-```bash
+```
 # create and cd to a directory not linked with the Express app
 mkdir -p ~/Development/https-resources
 cd ~/Development/https-resources
@@ -43,7 +43,7 @@ Verifying - Enter pass phrase for rootCA.key:  # <- retype previous password
 
 In this step, we create the root SSL certificate. This will be used as a self-signed CA, used to validate the server certificate(s) we use.
 
-```bash
+```
 # create root SSL certificate using previously generated key
 # -nodes: don't encrypt the private key
 # -days: override the default validity with the given number
@@ -66,7 +66,7 @@ Email Address []:sergio.f.gonzalez@gmail.com # <- same as above
 ```
 
 At this point, you will have the key and certificate for your local CA:
-```bash
+```
 $ cd ~/Development/https-resources
 $ ls -la
 total 16
@@ -100,7 +100,7 @@ emailAddress = sergio.f.gonzalez@gmail.com
 ```
 
 Now we're ready to create the actual *server key*:
-```bash
+```
 # create the certificate signing request (CSR), also referred to as server key
 $ openssl req -new -sha256 -nodes -out server.csr -newkey rsa:2048 -keyout server.key -config <(cat server.csr.cnf)
 Generating a 2048 bit RSA private key
@@ -130,12 +130,15 @@ subjectAltName = @alt_names
 
 [alt_names]
 DNS.1 = localhost
+IP.1 = 127.0.0.1
+IP.2 = 192.168.56.101
+IP.3 = 192.168.56.102
 ```
 
-Note that only localhost is added. If (like me) you use VMs for local development you might be tempted to add the VMs IP addresses to the *alt_names*. However, that does not work.
+Note that we specify both the DNS and IP addresses for which the *server certificate* will be valid. This is especially useful if (like me) you use a VM for local development and you sometimes access the applications running inside the VM from the host machine (e.g. 192.168.56.101) as well.
 
 Then, we can proceed to create the *server certificate*:
-```bash
+```
 $ openssl x509 -req -in server.csr -CA rootCA.pem -CAkey rootCA.key -CAcreateserial \
 -out server.crt -days 1024 -sha256 -extfile v3.ext
 Signature ok
@@ -156,7 +159,7 @@ The main pieces of the Express configuration are:
 + Configure HTTPS on the `www` module, ensuring that the certificate and server key are read from the configuration
 
 Once this is completed, you can type:
-```bash
+```
 $ npm start
   express-static:index Application running with env = development +0ms
   express-static:index Application running with NODE_ENV = undefined +2ms
@@ -170,7 +173,7 @@ In this step, we will use *Chrome* to validate that we can access the applicatio
 So, when accessing https://localhost:8443 we will see:
 ![Chrome Privacy Warning](./doc_images/chrome-privacy-warning.png)
 
-But you will be able to click on *Advanved* and *Proceed to localhost* to access the HTTPS enabled website:
+But you will be able to click on *Advanced* and *Proceed to localhost* to access the HTTPS enabled website:
 ![Chrome Proceed to localhost](./doc_images/chrome-privacy-warning-proceed.png)
 
 And the static web page will be displayed:
@@ -183,7 +186,7 @@ At this point, you might be satisfied enough, but we will go the extra mile and 
 Installing the *root SSL certificate* in Ubuntu's certificate store will help the applications that rely on that store to validate server certificates, so it's a good thing to do.
 
 The procedure has been tested on *Ubuntu 16.04*:
-```bash
+```
 # Installing the CA
 $ sudo cp ~/Development/https-resources/rootCA.pem /usr/local/share/ca-certificates/rootCA.crt
 
@@ -199,7 +202,7 @@ After that step, there are a couple of things you can do to validate that everyt
 + Use openssl to obtain detailed information from the server
 
 For the first validation type:
-```bash
+```
 # Checking
 $ cat /etc/ssl/certs/ca-certificates.crt
 ...
@@ -230,7 +233,7 @@ You can check that the last entry in the file matches the contents of our `rootC
 
 The second verification is much more elaborate and requires the server to be running. It consists on an *OpenSSL* command that actually interacts with the server as the browser would do and returns the HTTPS related information:
 
-```bash
+```
 # start the server
 $ npm start
 
@@ -322,20 +325,20 @@ The same type of output you'd get for `127.0.0.1:8443`.
 
 If we try again to access https://localhost:8443 from the browser we will see that we still get the same security warning as before, but that can be easily fixed by installing the *root SSL certificate* `rootCA.pem` generated on [step 2](#step-2-create-the-root-ssl-certificate).
 
-To do that, open Chrome Settings, type *Manage Certificates* and Import the *server.crt* file:
-[Chrome settings](./doc_images/chrome-settings.png)
-[Manage certificates](./doc_images/chrome-settings-certs.png)
+To do that, open Chrome Settings, type *Manage Certificates*:
+![Chrome settings](./doc_images/chrome-settings.png)
+![Manage certificates](./doc_images/chrome-settings-certs.png)
 
 Then, you just have to import the self-signed root SSL certificate into Chrome:
-[Import CA certificate](./doc_images/chrome-settings-certs-ca-import.png)
-[Import CA certificate2](./doc_images/chrome-settings-certs-ca-import-cert.png)
-[Import CA certificate3](./doc_images/chrome-settings-certs-ca-import-cert-options.png)
-[Import CA certificate4](./doc_images/chrome-settings-certs-ca-import-cert-done.png)
+![Import CA certificate](./doc_images/chrome-settings-certs-ca-import.png)
+![Import CA certificate2](./doc_images/chrome-settings-certs-ca-import-cert.png)
+![Import CA certificate3](./doc_images/chrome-settings-certs-ca-import-cert-options.png)
+![Import CA certificate4](./doc_images/chrome-settings-certs-ca-import-cert-done.png)
 
 Once completed the configuration, you can try again to access https://localhost:8443 and you will see the green lock on the toolbar!
-[Secured HTTPS](./doc_images/chrome-local-secure.png)
+![Secured HTTPS](./doc_images/chrome-local-secure.png)
 
-
+Note that the same sequence of steps can be followed to install the *root SSL certificate* into the host machine if you use VMs for local development.
 
 ## References
 
