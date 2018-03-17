@@ -96,3 +96,6 @@ Illustrates how to use `process.setImmediate` to send an otherwise synchronous o
 
 ## [e15-hello-promisify](e15-hello-promisify/)
 Illustrates what `util.promisify` is and how to use it to convert regular callbacks in *promises*.
+
+## [e16-hello-jwt](e16-hello-jwt/)
+Grokking *JWT (Jason Web Tokens)* using both 3rd party modules and Node.js.
