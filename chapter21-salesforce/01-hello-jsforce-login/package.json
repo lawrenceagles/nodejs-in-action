@@ -1,7 +1,7 @@
 {
-  "name": "e16-hello-jwt",
+  "name": "01-grokking-sqs",
   "version": "0.0.1",
-  "description": "basic examples on jwt",
+  "description": "Interacting with Amazon Web Services Simple Queue Service (SQS)",
   "main": "index.js",
   "engines": {
     "node": "9.8.0",
@@ -17,15 +17,14 @@
     "email": "sergio.f.gonzalez@gmail.com"
   },
   "config": {
-    "debugModules": "jwt:*"
+    "debugModules": "*:*"
   },
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
-    "eslint": "4.18.2"
+    "eslint": "4.19.0"
   },
   "dependencies": {
-    "debug": "3.1.0",
-    "njwt": "0.4.0"
+    "jsforce": "1.8.4"
   },
   "scripts": {
     "setup": "rm -rf node_modules && rm -f package-lock.json && rm -rf .nyc_output coverage && npm install",
@@ -34,6 +33,7 @@
     "lint": "node_modules/.bin/eslint app/src/",
     "predebug": "npm run lint",
     "debug": "DEBUG=${npm_package_config_debugModules:-$npm_package_name} node --inspect-brk=${npm_config_debugHost:-127.0.0.1} app/src/$npm_package_main",
+    "dev": "node_modules/.bin/nodemon --ext js,json,yml --watch app/src --watch .eslintrc.yml --exec 'npm start'",
     "pretest": "./node_modules/.bin/eslint app/tst/",
     "test-native": "node app/tst/countstream.js",
     "test-tap": "tap app/tst/*-tap.js",

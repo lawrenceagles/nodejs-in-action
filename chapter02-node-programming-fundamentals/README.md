@@ -99,3 +99,15 @@ Illustrates what `util.promisify` is and how to use it to convert regular callba
 
 ## [e16-hello-jwt](e16-hello-jwt/)
 Grokking *JWT (Jason Web Tokens)* using both 3rd party modules and Node.js.
+
+## [e17-custom-promisified-read](e17-custom-promisified-read/)
+Simple library exposing a *promisified* version of read that returns its materialized contents (therefore not approapriate for large files).
+
+## [e18-custom-promisified-http-request](e18-custom-promisified-http-request)
+Simple http promised based library (wip).
+
+## [e19-hello-import-json-file](e19-hello-import-json-file)
+Simple program demonstrating how to import a JSON file.
+
+## [e20-hello-papaparse](e20-hello-papaparse)
+Illustrates `papaparse` CSV parsing capabilities

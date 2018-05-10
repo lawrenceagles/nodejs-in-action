@@ -27,3 +27,5 @@ Additional examples are my own :)
 
 + Part 2 &mdash; Applications
   + [Chapter 19 &mdash; Interacting with Amazon Web Services](chapter19-aws/)
+  + [Chapter 20 &mdash; Data Processing](chapter20-data-processing/)
+  + [Chapter 21 &mdash; Interacting with Salesforce](chapter21-salesforce/)

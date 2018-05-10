@@ -6,14 +6,14 @@ const util = require("util");
 util.inspect.defaultOptions.depth = null;
 
 module.exports.encrypt = (clearText) => {
-  const cipher = crypto.createCipher("AES256", "wittertainment");
+  const cipher = crypto.createCipher("AES256", "customer-segmentation");
   let encrypted = cipher.update(clearText, "utf8", "hex");
   encrypted += cipher.final("hex");
   return Promise.resolve(encrypted);
 };
 
 module.exports.decrypt = (encryptedHash) => {
-  const decipher = crypto.createDecipher("AES256", "wittertainment");  
+  const decipher = crypto.createDecipher("AES256", "customer-segmentation");  
   let clearText = decipher.update(encryptedHash, "hex", "utf8");
   clearText += decipher.final("utf8");
   return Promise.resolve(clearText);

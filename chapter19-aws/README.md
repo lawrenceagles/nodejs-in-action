@@ -2,5 +2,4 @@
 > Node.js applications interacting with AWS interactively
 
 ## [01-grokking-sqs](./01-grokking-sqs/)
-Illustrates how to invoke external applications obtaining a materialized buffer with the result of the execution once completed using `execFile`.
-
+publishing and consuming queue messages from *Amazon Simple Queue Service (SQS)* using a callback based library.
