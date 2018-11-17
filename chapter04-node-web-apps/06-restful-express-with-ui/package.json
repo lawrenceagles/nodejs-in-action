@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "body-parser": "1.16.0",
-    "bootstrap": "4.0.0-alpha.6",
+    "bootstrap": "4.1.3",
     "bootstrap4": "0.0.1-security",
     "ejs": "2.5.5",
     "express": "4.14.0",

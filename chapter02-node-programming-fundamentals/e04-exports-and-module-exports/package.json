@@ -23,7 +23,7 @@
     "eslint": "3.19.0"
   },
   "dependencies": {
-    "debug": "2.6.8"
+    "debug": "4.1.0"
   },
   "scripts": {
     "setup": "rm -rf node_modules && rm -f package-lock.json && rm -rf .nyc_output coverage && npm install",

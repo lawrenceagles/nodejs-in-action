@@ -25,7 +25,7 @@
     "tap": "10.3.3"
   },
   "dependencies": {
-    "debug": "2.6.8"
+    "debug": "4.1.0"
   },
   "scripts": {
     "setup": "rm -rf node_modules && rm -f package-lock.json && npm install",

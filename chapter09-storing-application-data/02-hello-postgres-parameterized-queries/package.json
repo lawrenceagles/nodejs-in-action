@@ -22,7 +22,7 @@
     "nodemon": "1.11.0"
   },
   "dependencies": {
-    "pg": "6.2.2"
+    "pg": "7.6.1"
   },
   "scripts": {
     "setup": "rm -rf node_modules && npm install",
