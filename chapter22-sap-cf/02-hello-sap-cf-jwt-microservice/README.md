@@ -62,41 +62,41 @@ app.get('/api/greetme/:name?', authenticator.secureEndpoint(), api.greetMe); // 
 
 5. The authenticator includes logic to automatically disable authentication when running locally, so you can try accessing the defined endpoints after running `npm start`. When running on SAP Cloud Foundry environment, you will need to obtain a bearer token to access the secured endpoints:
     1. Obtain the client id, client secret and authentication endpoint url by running:
-    ```bash
-    $ cf env sap-cf-microservice
-    System-Provided:
-    {
-    "VCAP_SERVICES": {
-      "xsuaa": [
+      ```bash
+      $ cf env sap-cf-microservice
+      System-Provided:
       {
-        "binding_name": null,
-        "credentials": {
-        "clientid": "<the-client-id>",
-        "clientsecret": "<the-client-secret>",
-        ...
-        "url": "<the-authentication-endpoint>",
-        "verificationkey": "-----BEGIN PUBLIC KEY-----...
-    ```
+      "VCAP_SERVICES": {
+        "xsuaa": [
+        {
+          "binding_name": null,
+          "credentials": {
+          "clientid": "<the-client-id>",
+          "clientsecret": "<the-client-secret>",
+          ...
+          "url": "<the-authentication-endpoint>",
+          "verificationkey": "-----BEGIN PUBLIC KEY-----...
+      ```
 
     2. Send an HTTP request to the authentication endpoint to obtain the JWT token:
-    ```bash
-    curl -v -X POST \
-    --header "Content-Type: application/x-www-form-urlencoded" \
-    -G \
-    --data-urlencode "grant_type=password" \
-    --data-urlencode "client_id=<the-client-id>" \
-    --data-urlencode "client_secret=<the-client-secret>" \
-    --data-urlencode "username=<your-SAP-CF-username>" \
-    --data-urlencode "password=<your-SAP-CF-password>" \
-    <the-authentication-endpoint>/oauth/token
-    ```
-    If the request is successful, you will obtain a JSON that contains a property `access_token` that you can use to access the secure endpoints.
+      ```bash
+      curl -v -X POST \
+      --header "Content-Type: application/x-www-form-urlencoded" \
+      -G \
+      --data-urlencode "grant_type=password" \
+      --data-urlencode "client_id=<the-client-id>" \
+      --data-urlencode "client_secret=<the-client-secret>" \
+      --data-urlencode "username=<your-SAP-CF-username>" \
+      --data-urlencode "password=<your-SAP-CF-password>" \
+      <the-authentication-endpoint>/oauth/token
+      ```
+      If the request is successful, you will obtain a JSON that contains a property `access_token` that you can use to access the secure endpoints.
 
     3. Send a request for the secured endpoint. The request must include the access token in the *authorization header* as described below:
-    ```bash
-    curl --verbose \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json" \
-    --header "Authorization: Bearer <the-access-token-from-the-previous-step> \
-    https://sap-cf-microservice.cfapps.eu10.hana.ondemand.com/api/greetme/inma
-    ```
+      ```bash
+      curl --verbose \
+      --header "Content-Type: application/json" \
+      --header "Accept: application/json" \
+      --header "Authorization: Bearer <the-access-token-from-the-previous-step> \
+      https://sap-cf-microservice.cfapps.eu10.hana.ondemand.com/api/greetme/inma
+      ```
