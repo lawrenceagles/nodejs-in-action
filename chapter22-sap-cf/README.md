@@ -4,5 +4,5 @@
 ## [01-hello-sap-cf-microservice](./01-hello-sap-cf-microservice/)
 The simplest Express-based Node.js microservice deployable to SAP Cloud Foundry.
 
-## [02-hello-sap-cf-auth-microservice](./01-hello-sap-cf-jwt-microservice/)
+## [02-hello-sap-cf-auth-microservice](./02-hello-sap-cf-jwt-microservice/)
 The simplest Express-based Node.js microservice deployable to SAP Cloud Foundry featuring JWT authentication.
