@@ -1,10 +1,12 @@
 # 02-hello-sap-cf-jwt-microservice
-> Express-based Node.js microservice subject of being deployed to SAP Cloud Foundry
+> Express-based Node.js microservice subject of being deployed to SAP Cloud Foundry featuring JWT based authentication.
 
 ## Description
 
 This example illustrates how to deploy the simplest *Express* application to SAP Cloud Foundry.
-The following endpoint is defined: `/api/heartbeat`.
+The following API is defined: 
++ `/api/heartbeat`: an *unauthenticated* endpoint that returns a simple JSON with a static message and the current timestamp.
++ `/api/greetme/:name?`: a JWT authenticated endpoint that returns a message, the current timestamp and some user information retrieved from the security context once the user has been authenticated.
 
 ## Configuration
 Authentication in the SAP CF environment is provided by the UAA service. In this example, *OAuth 2.0* is used as the authentication mechanism.
@@ -97,6 +99,6 @@ app.get('/api/greetme/:name?', authenticator.secureEndpoint(), api.greetMe); // 
       curl --verbose \
       --header "Content-Type: application/json" \
       --header "Accept: application/json" \
-      --header "Authorization: Bearer <the-access-token-from-the-previous-step> \
+      --header "Authorization: Bearer <the-access-token-from-the-previous-step>" \
       https://sap-cf-microservice.cfapps.eu10.hana.ondemand.com/api/greetme/inma
       ```
