@@ -1,7 +1,7 @@
 {
-  "name": "e07-hello-closure",
+  "name": "e09-hello-rest-and-spread",
   "version": "0.0.1",
-  "description": "Grokking closures and context",
+  "description": "Simple usage of rest and spread operators",
   "main": "index.js",
   "engines": {
     "node": "10.x.x",
@@ -21,7 +21,8 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "eslint": "5.9.0"
+    "eslint": "5.12.0",
+    "eslint-plugin-security": "1.4.0"
   },
   "dependencies": {},
   "scripts": {

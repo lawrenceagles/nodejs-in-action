@@ -132,3 +132,12 @@ A very basic example that illustrates that defining a promise executes it before
 
 ## [e06-hello-bind-and-apply](e06-hello-bind-and-apply/)
 Illustrates a basic examples of `function.bind` and `function.apply`.
+
+## [e07-hello-closure](e07-hello-closure/)
+grokking closures and context.
+
+## [e08-hello-throttled-function](e08-hello-throttled-function/)
+Basic implementation of a throttling wrapper using higher-order functions.
+
+## [e09-hello-rest-and-spread](e09-hello-rest-and-spread/)
+Some examples using the *rest* and *spread* operators in JavaScript.

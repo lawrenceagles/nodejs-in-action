@@ -5,7 +5,13 @@ env:
 parserOptions:
   ecmaVersion: 2018
   
-extends: 'eslint:recommended'
+plugins:
+  - "security"
+
+extends:
+  - "eslint:recommended"
+  - "plugin:security/recommended"
+
 rules:
   indent:
     - error

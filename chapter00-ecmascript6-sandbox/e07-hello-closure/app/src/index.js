@@ -1,5 +1,37 @@
 'use strict';
 
+/* The simplest example: using closures to protect variables from outside manipulation */
+
+function tallyCounter() {
+  let total = 0;
+
+  return function count() {
+    total++;
+    return total;
+  };
+}
+
+const countFn = tallyCounter();
+console.log(countFn());
+console.log(countFn());
+console.log(countFn());
+
+
+/* another use: defer code execution but using values from the past */
+
+function logTheDateFromBefore(delayMillis) {
+  const date = new Date();
+
+  function logDate() {
+    console.log(`current: ${ new Date().toISOString() }, past: ${ date.toISOString() }`);
+  }
+
+  setTimeout(logDate, delayMillis);
+}
+
+logTheDateFromBefore(30000);
+
+
 function outer() {
   const outerVar = 'Hello';
 
