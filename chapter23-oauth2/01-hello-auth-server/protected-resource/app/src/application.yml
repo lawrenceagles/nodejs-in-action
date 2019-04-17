@@ -6,9 +6,10 @@ logger:
   format: ":date[iso] :method :url :status :response-time msec :res[content-length] bytes"
 
 server:
-  port: 9001
+  port: 9002
   public: "public"    # location of static resources
 
+
 token-store:
-  path: "tokens.db"
-  read-only: false
+  path: "../authorization-server/tokens.db"
+  read-only: true

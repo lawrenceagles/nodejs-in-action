@@ -1,7 +1,7 @@
 {
-  "name": "oauth-authorization-server",
+  "name": "oauth-protected-resource",
   "version": "0.0.1",
-  "description": "The simplest Authorization Server",
+  "description": "The simplest setup for Node.js OAuth2 components.",
   "engines": {
     "node": "10.x.x",
     "npm": "6.4.1"
@@ -16,7 +16,7 @@
     "email": "sergio.f.gonzalez@gmail.com"
   },
   "config": {
-    "debugModules": "auth-server:*"
+    "debugModules": "protected-resource:*"
   },
   "license": "MIT",
   "devDependencies": {
@@ -25,6 +25,7 @@
   "dependencies": {
     "body-parser": "1.18.3",
     "cookie-parser": "1.4.4",
+    "cors": "2.8.5",
     "debug": "4.1.1",
     "ejs": "2.6.1",
     "express": "4.16.4",
@@ -36,11 +37,7 @@
     "morgan": "1.9.1",
     "nconf": "0.10.0",
     "nosql": "6.1.0",
-    "querystring": "0.2.0",
-    "randomstring": "1.1.5",
-    "serve-favicon": "2.5.0",
-    "underscore": "1.9.1",
-    "underscore.string": "3.3.5"
+    "serve-favicon": "2.5.0"
   },
   "scripts": {
     "setup": "rm -rf node_modules && rm -f package-lock.json && rm -rf .nyc_output coverage && npm install",
@@ -48,7 +45,7 @@
     "start": "DEBUG=${DEBUG:-$npm_package_config_debugModules} node app/src/bin/www",
     "lint": "node_modules/.bin/eslint app/src/",
     "predebug": "npm run lint",
-    "debug": "DEBUG=${DEBUG:-$npm_package_config_debugModules} node --inspect-brk app/src/bin/www",
+    "debug": "DEBUG=${DEBUG:-$npm_package_config_debugModules} node --inspect-brk=:9231 app/src/bin/www",
     "test": "echo nothing to do\n"
   }
 }

@@ -3,13 +3,13 @@
 const AuthorizationServerServices = require('../services/auth-server-services');
 const createError = require('http-errors');
 const __ = require('underscore');
+__.string = require('underscore.string');
 const url = require('url');
 const randomstring = require('randomstring');
 const querystring = require('querystring');
 const debug = require('debug')('auth-server:index-routes');
-const nosql = require('nosql').load('database.nosql');
+const TokenStore = require('../lib/token-store');
 
-nosql.clear();
 
 exports.home = (req, res) => {
   const clients = AuthorizationServerServices.getClients();
@@ -70,6 +70,7 @@ exports.approve = (req, res, next)  => {
   }
 
   AuthorizationServerServices.removeAuthorizationRequestById(reqId);
+
   if (req.body.approve) {
     if (query['response_type'] === 'code') {
       const code = randomstring.generate(8);
@@ -83,13 +84,16 @@ exports.approve = (req, res, next)  => {
         urlParsed.query.error = 'invalid_scope';
         return res.redirect(url.format(urlParsed));
       }
-      // shouldn't be this outside the if(query???)
+
       AuthorizationServerServices.addNewAuthorizationCode({code, authInfo: { authorizationEndpointRequest: query, scope, user }});
       const urlParsed = url.parse(query['redirect_uri']);
       urlParsed.query = urlParsed.query || {};
       urlParsed.query.code = code;
       urlParsed.query.state = query.state;
-      return res.redirect(url.format(urlParsed));
+
+      const redirectUrl = url.format(urlParsed);
+      debug(`Redirect: ${ redirectUrl }`);
+      return res.redirect(redirectUrl);
     }
 
     const urlParsed = url.parse(query['redirect_uri']);
@@ -104,7 +108,7 @@ exports.approve = (req, res, next)  => {
   return res.redirect(url.format(urlParsed));
 };
 
-exports.token = (req, res) => {
+exports.token = async (req, res) => {
   const authHeader = req.headers['authorization'];
   let clientId, clientSecret;
   if (authHeader) {
@@ -159,7 +163,7 @@ exports.token = (req, res) => {
   }
 
   const token = { 'access_token': randomstring.generate(), 'client_id': clientId, scope: clientScopes }; 
-  nosql.insert(token);
+  await TokenStore.push(token);
 
   debug(`Issuing access token ${ token['access_token'] } with scope ${ token.scope }`);
 

@@ -11,11 +11,11 @@ class AuthorizationServer {
   }
 
   getAuthorizationEndpoint() {
-    return this.authorizationEndpoint;
+    return this.getAuthorizationEndpoint;
   }
 
   getTokenEndpoint() {
-    return this.tokenEndpoint;
+    return this.getTokenEndpoint;
   }
 
   static getAuthorizationServer() {
