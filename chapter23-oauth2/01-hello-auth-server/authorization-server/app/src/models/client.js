@@ -53,15 +53,4 @@ for (const clientFromConfig of config('oauth:clients')) {
 
 debug(`${ clients.length } client(s) are registered in this Authorization Server`);
 
-// const clients = [ 
-//   new Client({
-//     'client_name': 'Client#1', 
-//     'client_id': `oauth-client-1`, 
-//     'client_secret': `oauth-client-secret-1`,
-//     'redirect_uris': [`http://localhost:9000/callback`],
-//     'scope': `foo bar`,
-//     'logo_uri': '/images/bomb.png' // Internet URI also works
-//   })
-// ];
-
 module.exports = Client;

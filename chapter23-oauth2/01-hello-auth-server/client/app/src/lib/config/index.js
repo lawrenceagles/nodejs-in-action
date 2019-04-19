@@ -8,7 +8,7 @@
 const path = require('path');
 const yaml = require('js-yaml');
 const nconf = require('nconf');
-const debug = require('debug')(`auth-server:lib-config`);
+const debug = require('debug')(`client:lib-config`);
 
 
 const propertiesFilename = process.env.npm_package_config_PROPERTIES_FILENAME || 'application.yml';

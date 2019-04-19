@@ -1,7 +1,7 @@
 'use strict';
 
 const util = require('util');
-const debug = require('debug')('auth-server:error-routes');
+const debug = require('debug')('protected-resource:error-routes');
 const config = require('../lib/config');
 
 util.inspect.defaultOptions.depth = null;

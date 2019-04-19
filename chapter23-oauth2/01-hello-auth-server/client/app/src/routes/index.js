@@ -5,7 +5,6 @@ const randomstring = require('randomstring');
 const debug = require('debug')('client:index-routes');
 const buildUrl = require('../lib/build-url');
 const createError = require('http-errors');
-// const qs = require('qs');
 const encodeClientCredentials = require('../lib/encode-client-credentials');
 const http = require('http');
 const util = require('util');
@@ -23,7 +22,6 @@ exports.home = (req, res) => {
   if (!accessToken) {
     res.locals.messages.push({ type: 'info', string: `No access_token available yet` });  
   }
-
   res.render('home', { title: `OAuth2 Client`, 'access_token': accessToken, scope: scope });
 };
 
@@ -32,11 +30,11 @@ exports.authorize = (req, res) => {
   state = randomstring.generate();
 
   const authorizeUrl = buildUrl(
-    AuthorizationServerServices.getAuthorizationServer().getAuthorizationEndpoint(),
+    AuthorizationServerServices.getAuthorizationServer().authorizationEndpoint,
     {
       'response_type': 'code',
-      'client_id': AuthorizationServerServices.getClient()['client_id'],
-      'redirect_uri': AuthorizationServerServices.getClient()['redirect_uris'][0],
+      'client_id': AuthorizationServerServices.getClients()[0]['client_id'],
+      'redirect_uri': AuthorizationServerServices.getClients()[0]['redirect_uris'][0],
       state
     }
   );
@@ -48,7 +46,6 @@ exports.authorize = (req, res) => {
 
 exports.callback = (req, res, next) => {
   if (req.query.error) {
-    // maybe a message will be more appropriate here
     return res.render('error', {msg: req.query.error, status: res.statusCode });
   }
 
@@ -62,18 +59,13 @@ exports.callback = (req, res, next) => {
   const postData = querystring.stringify({
     'grant_type': 'authorization_code',
     code,
-    redirect_uri: AuthorizationServerServices.getClient()['redirect_uris'][0]    
+    redirect_uri: AuthorizationServerServices.getClients()[0]['redirect_uris'][0]    
   });
-  // const formData = qs.stringify({
-  //   'grant_type': 'authorization_code',
-  //   code,
-  //   redirect_uri: AuthorizationServerServices.getClient()['redirect_uris'][0]    
-  // });
 
-  const clientId = AuthorizationServerServices.getClient()['client_id'];
-  const clientSecret = AuthorizationServerServices.getClient()['client_secret'];
+  const clientId = AuthorizationServerServices.getClients()[0]['client_id'];
+  const clientSecret = AuthorizationServerServices.getClients()[0]['client_secret'];
   
-  const tokenEndpointUrl = new URL(AuthorizationServerServices.getAuthorizationServer().getTokenEndpoint());
+  const tokenEndpointUrl = new URL(AuthorizationServerServices.getAuthorizationServer().tokenEndpoint);
   const options = {
     hostname: tokenEndpointUrl.hostname,
     port: tokenEndpointUrl.port,
@@ -85,26 +77,6 @@ exports.callback = (req, res, next) => {
       'Authorization': `Basic ${ encodeClientCredentials(clientId, clientSecret) }`      
     }
   };
-
-  // const options = new URL(AuthorizationServerServices.getAuthorizationServer().getTokenEndpoint());
-  // options.method = 'POST';
-  // options.headers = {
-  //   'Content-Type': 'application/x-www-form-urlencoded',
-  //   'Content-Length': Buffer.byteLength(postData),
-  //   'Authorization': `Basic ${ encodeClientCredentials(clientId, clientSecret) }`
-  // };
-  
-
-  //  const headers = {
-  //   'Content-Type': 'application/x-www-form-urlencoded',
-  //   'Content-Length': formData.length,
-  //   'Authorization': `Basic ${ encodeClientCredentials(clientId, clientSecret) }`
-  // };
-
-  // const httpOptions = new URL(AuthorizationServerServices.getAuthorizationServer().getTokenEndpoint());
-  // httpOptions.headers = headers;
-  // httpOptions.method = 'POST';
-
 
   const tokReq = http.request(options, tokRes => {
     let resData = '';
@@ -146,7 +118,7 @@ exports.fetchResource = (req, res) => {
   }
 
   debug(`Making request to Protected Resource with access token ${ accessToken }`);
-  const protectedResourceUrl = new URL(config('server:protected-resource'));
+  const protectedResourceUrl = new URL(config('oauth:protected-resource'));
   const options = {
     hostname: protectedResourceUrl.hostname,
     port: protectedResourceUrl.port,

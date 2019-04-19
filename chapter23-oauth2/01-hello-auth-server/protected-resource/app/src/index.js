@@ -17,19 +17,6 @@ const util = require('util');
 const messages = require('./middleware/messages');
 const cors = require('cors');
 const getAccessToken = require('./middleware/get-access-token');
-// const nosql = require('nosql').load('file.nosql');
-// const loki = require('lokijs');
-// const db = new loki('../authorization-server/tokens.db', { autoload: true, autoloadCallback: databaseInitialize, autosave: false, autosaveInterval: 5000 } );
-
-// let items;
-// function databaseInitialize() {
-//   items = db.getCollection('tokens');
-//   if (items === null) {
-//     items = db.addCollection('tokens');
-//   }
-
-//   runProgramLogic();
-// }
 
 /*
   Routes
@@ -70,7 +57,6 @@ app.use(cors());
 
 /* custom middleware */
 app.use(messages);
-// app.use(getAccessToken);
 
 /*
   Routes setup
@@ -91,23 +77,5 @@ app.use(errRoutes.error);
 
 
 debug(`Express application started with env=${ app.get('env')}; NODE_ENV=${ config(`NODE_ENV`) }; View Caching: ${ app.get('view cache') }; Views directory: ${ app.get('views') }`);
-
-
-// OAuth related information
-
-
-// const codes = {};
-// const requests = {};
-
-// function runProgramLogic() {
-//   if (items.count() > 0) {
-//     const adri = items.findOne({ 'access_token': 'UEj1qx7t1JKeY2yfW2cCC9EuUOOK7Nv7' });
-//     console.log(adri);
-  
-//   }
-// }
-
-
-
 
 module.exports = app;

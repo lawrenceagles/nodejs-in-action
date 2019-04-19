@@ -28,11 +28,11 @@
       <p><b>ID:</b> <code><%= client['client_id'] %></code></p>        
       <p><b>URI(s):</b> <code><%= client['redirect_uris'] %></code></p>
       <% if (client['logo_uri']) { %>
-        <p><b>Logo:</b> <img src="<%= client['logo_uri'] %>"></p>
+        <p><b>Logo:</b> <img src="<%= client['logo_uri'] %>" class="img-thumbnail"></p>
       <% } %>
 
       <form action="/approve" method="POST">
-        <input type="text" name="reqId" value="<%= reqId %>">
+        <input type="hidden" name="reqId" value="<%= reqId %>">
         <% if (reqScope) { %>
           <p>The client is requesting access to the following:</p>
           <ul>
@@ -41,8 +41,8 @@
             <% }); %>
           </ul>
         <% } %>
-        <button type="submit" class="btn btn-primary" name="approve" value="Approve">Approve</button>
-        <button type="submit" class="btn btn-secondary" name="deny" value="Deny">Deny</button>
+        <button type="submit" class="btn btn-success" name="approve" value="Approve">Approve</button>
+        <button type="submit" class="btn btn-danger" name="deny" value="Deny">Deny</button>
       </form>
 
 
