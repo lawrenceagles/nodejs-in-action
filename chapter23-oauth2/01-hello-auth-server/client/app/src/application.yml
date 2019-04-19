@@ -9,4 +9,5 @@ server:
   port: 9000
   public: "public"    # location of static resources
 
+oauth:
   protected-resource: "http://localhost:9002/resource"

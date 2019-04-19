@@ -59,7 +59,6 @@ app.use(messages);
   Routes setup
 */
 
-// Interactive requests
 app.get('/', routes.home);
 app.get('/authorize', routes.authorize);
 app.get('/callback', routes.callback);
@@ -75,16 +74,5 @@ app.use(errRoutes.error);
 
 
 debug(`Express application started with env=${ app.get('env')}; NODE_ENV=${ config(`NODE_ENV`) }; View Caching: ${ app.get('view cache') }; Views directory: ${ app.get('views') }`);
-
-
-// OAuth related information
-
-
-// const codes = {};
-// const requests = {};
-
-
-
-
 
 module.exports = app;

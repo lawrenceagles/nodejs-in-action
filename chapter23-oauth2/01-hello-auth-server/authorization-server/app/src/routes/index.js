@@ -43,6 +43,7 @@ exports.authorize = (req, res, next) => {
     return next(createError.BadRequest(`Mismatched redirect URI for ${ req.path }; expected one of "${ client.redirect_uris }" but got "${ clientRedirectUri }"`));
   }
 
+  /* compute the difference between the requested and authorized scopes */
   const requestedScopes = req.query.scope ? req.query.scope.split(' ') : undefined;
   const authorizedScopes = client.scope ? client.scope.split(' ') : undefined;
   if (__.difference(requestedScopes, authorizedScopes).length > 0) {
