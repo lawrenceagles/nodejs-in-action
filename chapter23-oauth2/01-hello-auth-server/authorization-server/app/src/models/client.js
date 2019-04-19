@@ -1,43 +1,67 @@
+const config = require('../lib/config');
+const debug = require('debug')('auth-server:models-client');
 
 class Client {
   constructor({ 'client_name': clientName = undefined, 'client_id': clientId, 'client_secret': clientSecret, 'redirect_uris': redirectUris, 'logo_uri': clientLogoUri = undefined, scope}) {
-    this['client_name'] = clientName;
-    this['client_id'] = clientId;
-    this['client_secret'] = clientSecret;
-    this['redirect_uris'] = redirectUris;
-    this.scope = scope;
-    this['logo_uri'] = clientLogoUri;
+    this._clientName = clientName;
+    this._clientId = clientId;
+    this._clientSecret = clientSecret;
+    this._redirectUris = redirectUris;
+    this._scope = scope;
+    this._logoUri = clientLogoUri;
   }
 
-  get() {
-    return {
-      'client_name': this['client_name'],
-      'client_id': this['client_id'],
-      'client_secret': this['client_secret'],
-      'redirect_uris': this['redirect_uris'],
-      scope: this.scope,
-      'logo_uri': this['logo_uri']
-    };
+  get 'client_name'() {
+    return this._clientName;
   }
+
+  get 'client_id'() {
+    return this._clientId;
+  }
+
+  get 'client_secret'() {
+    return this._clientSecret;
+  }
+
+  get 'redirect_uris'() {
+    return this._redirectUris.slice(0);
+  }
+
+  get scope() {
+    return this._scope;
+  }
+
+  get 'logo_uri'() {
+    return this._logoUri;
+  }
+
 
   static getClients() {
     return clients;
   }
 
-  static getClientByClientId(clientId) {
+  static findByClientId(clientId) {
     return this.getClients().find(client => client['client_id'] == clientId);
   }
 }
 
-const clients = [ 
-  new Client({
-    'client_name': 'Client#1', 
-    'client_id': `oauth-client-1`, 
-    'client_secret': `oauth-client-secret-1`,
-    'redirect_uris': [`http://localhost:9000/callback`],
-    'scope': `foo bar`,
-    'logo_uri': '/images/bomb.png' // Internet URI also works
-  })
-];
+
+const clients = [];
+for (const clientFromConfig of config('oauth:clients')) {
+  clients.push(new Client(clientFromConfig));
+}
+
+debug(`${ clients.length } client(s) are registered in this Authorization Server`);
+
+// const clients = [ 
+//   new Client({
+//     'client_name': 'Client#1', 
+//     'client_id': `oauth-client-1`, 
+//     'client_secret': `oauth-client-secret-1`,
+//     'redirect_uris': [`http://localhost:9000/callback`],
+//     'scope': `foo bar`,
+//     'logo_uri': '/images/bomb.png' // Internet URI also works
+//   })
+// ];
 
 module.exports = Client;

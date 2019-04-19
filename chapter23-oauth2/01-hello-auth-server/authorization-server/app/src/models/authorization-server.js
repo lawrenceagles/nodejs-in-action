@@ -1,21 +1,17 @@
+const config = require('../lib/config');
+
 class AuthorizationServer {
   constructor({ authorizationEndpoint, tokenEndpoint }) {
-    this.authorizationEndpoint = authorizationEndpoint;
-    this.tokenEndpoint = tokenEndpoint;
+    this._authorizationEndpoint = authorizationEndpoint;
+    this._tokenEndpoint = tokenEndpoint;
   }
 
-  get() {
-    return {
-      authorizationEndpoint: this.authorizationEndpoint, tokenEndpoint: this.tokenEndpoint
-    };
+  get authorizationEndpoint() {
+    return this._authorizationEndpoint;
   }
 
-  getAuthorizationEndpoint() {
-    return this.authorizationEndpoint;
-  }
-
-  getTokenEndpoint() {
-    return this.tokenEndpoint;
+  get tokenEndpoint() {
+    return this._tokenEndpoint;
   }
 
   static getAuthorizationServer() {
@@ -25,8 +21,8 @@ class AuthorizationServer {
 
 
 const authServer = new AuthorizationServer({ 
-  authorizationEndpoint: `http://localhost:9001/authorize`,
-  tokenEndpoint: `http://localhost:9001/token`
+  authorizationEndpoint: config('oauth:auth-server:authorization-endpoint'),
+  tokenEndpoint: config('oauth:auth-server:token-endpoint')
 });
 
 module.exports = AuthorizationServer;

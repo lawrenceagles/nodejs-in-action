@@ -8,6 +8,7 @@ util.inspect.defaultOptions.depth = null;
 util.inspect.defaultOptions.breakLength = Infinity;
 
 exports.notFound = (req, res) => {
+  debug(`Handling NotFound route: ${ req.path }`);
   res.status(404)
     .format({
       html: () => {
@@ -24,8 +25,8 @@ exports.notFound = (req, res) => {
 };
 
 exports.error = (err, req, res, next) => {
+  debug(`Handling error at the route level: ${ util.inspect(err) }`);
   let msg;
-  debug(`Error found: ${ util.inspect(err) }`);
   if (config('NODE_ENV') !== 'production') {
     res.locals.messages.push({ type: 'error', string: err.message? err.message : util.inspect(err) });
   }  
@@ -38,7 +39,6 @@ exports.error = (err, req, res, next) => {
       res.locals.messages.unshift({ type: 'error', string: err.name });
     }
   }
-
 
   res.format({
     html: () => res.render('error', { msg, status: res.statusCode }),
