@@ -111,3 +111,9 @@ Simple program demonstrating how to import a JSON file.
 
 ## [e20-hello-papaparse](e20-hello-papaparse)
 Illustrates `papaparse` CSV parsing capabilities
+
+## [e21-events-echo-server](e21-events-echo-server)
+Introduces the `on` and `once` methods for registering event handlers on a simple TCP server.
+
+## [e22-events-custom-event-emitter](e21-events-echo-server)
+Introduces the `on` and `once` methods for registering event handlers on a simple TCP server.

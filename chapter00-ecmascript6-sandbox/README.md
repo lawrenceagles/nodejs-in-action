@@ -115,9 +115,11 @@ Illustrates basic usage of revocable proxies.
 ## [37-ecmascript6-async-await-loops](37-ecmascript6-async-await-loops/)
 Illustrates the intricacies of using async/await in loops and gives some examples about how to do sequential *blocking* iteration and parallel iteration that only blocks at the end of the parallel processing.
 
-## [38-ydkjs-01-typeof](38-ydkjs-01-typeof/)
-Illustrates what typeof returns for the basic types in JavaScript.
+## [38-ydkjs-01-typeof](38-ydkjs-01-value-type-determination/)
+Illustrates what `typeof` returns for the basic types in JavaScript.
 
+## [39-ydkjs-01-comparisons](39-ydkjs-01-comparisons/)
+Grokking comparisons and equality in JS.
 
 ## [e01-dice-experiment-infinite-sequences](e01-dice-experiment-infinite-sequences/)
 Illustrates a simple use case of infinite iterators modeling the experiment of throwing dice repeateadly and printing the results.

@@ -10,5 +10,4 @@ console.log(`typeof {'a': 1}: '${ typeof {'a': 1} }'`);
 console.log(`typeof [1, 2, 3]: '${ typeof [1, 2, 3] }'`);
 console.log(`typeof function hello() {}: '${ typeof function hello() {} }'`);
 
-let fn = () => {};
-console.log(`typeof () => {}: '${ typeof fn }'`);
+console.log(`typeof (() => {}): '${ typeof (() => {}) }'`);
