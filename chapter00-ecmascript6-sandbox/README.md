@@ -121,6 +121,12 @@ Illustrates what `typeof` returns for the basic types in JavaScript.
 ## [39-ydkjs-01-comparisons](39-ydkjs-01-comparisons/)
 Grokking comparisons and equality in JS.
 
+## [40-ydkjs-01-classes](40-ydkjs-01-classes/)
+A refresher on JS classes.
+
+## [41-ydkjs-01-classes](41-ydkjs-01-es-modules/)
+A refresher on ES modules.
+
 ## [e01-dice-experiment-infinite-sequences](e01-dice-experiment-infinite-sequences/)
 Illustrates a simple use case of infinite iterators modeling the experiment of throwing dice repeateadly and printing the results.
 

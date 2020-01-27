@@ -1,6 +1,6 @@
 # You don't Know JavaScript &mdash; 01: Get Started
-## 39 &mdash; Comparisons
-> Illustrates the *ins* and *outs* of comparisons in JavaScript
+## 39 &mdash; Classes
+> A refresher on JavaScript classes
 
 ### The strict equality operator `===`
 
