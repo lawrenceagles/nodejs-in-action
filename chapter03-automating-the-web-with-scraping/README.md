@@ -16,4 +16,5 @@ Illustrates how to perform web scraping on dynamic HTML pages (pages with placeh
 ## 05-cheerio-web-scraping-and-date-transformation
 Illustrates how to create CSV data out of the contents of an HTML page using `cheerio` and `moment` for the HTML and date manipulation respectively.
 
-
+## e01-hello-puppeteer
+A collection of Puppeteers basic techniques. Puppeteer is a Node.js library that provides a high-level API to control Chrome/Chromium.
