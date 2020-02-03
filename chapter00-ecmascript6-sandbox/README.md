@@ -124,8 +124,11 @@ Grokking comparisons and equality in JS.
 ## [40-ydkjs-01-classes](40-ydkjs-01-classes/)
 A refresher on JS classes.
 
-## [41-ydkjs-01-classes](41-ydkjs-01-es-modules/)
+## [41-ydkjs-01-es-modules](41-ydkjs-01-es-modules/)
 A refresher on ES modules.
+
+## [42-ydkjs-01-es-iterators](42-ydkjs-01-es-iterators/)
+A refresher on ES iterators, iterables and the spread operator `...` to consume iterators.
 
 ## [e01-dice-experiment-infinite-sequences](e01-dice-experiment-infinite-sequences/)
 Illustrates a simple use case of infinite iterators modeling the experiment of throwing dice repeateadly and printing the results.

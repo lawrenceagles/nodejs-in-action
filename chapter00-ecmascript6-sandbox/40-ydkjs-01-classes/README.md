@@ -1,5 +1,5 @@
 # You don't Know JavaScript &mdash; 01: Get Started
-## 39 &mdash; Classes
+## 40 &mdash; Classes
 > A quick refresher on classes: composition and inheritance
 
 
