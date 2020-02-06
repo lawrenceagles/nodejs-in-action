@@ -23,7 +23,43 @@ let hello = greeting('hello');
 
 When the `greeting()` function is executed, an instance of the inner function `who()` is created, and that function *closes over* the `msg` variable. No matter when we execute the `hello()` function, it will always remember that originally it *closed over* `'hello'`.
 
-Note that closures don't make copies of the values over which the function has closed over &mdash; rather, they keep a link to the original variable. Therefore, you can actually observe or make updates to these variables over time.
+Note that closures don't make copies of the values over which the function has closed over &mdash; rather, they keep a link to the original variable. Therefore, you can actually observe or make updates to these variables over time, as seen on the example below:
+
+```javascript
+/* closures don't make copies of the variables they close over, they keep references to them */
+function counter(step = 1) {
+  let count = 0;
+  return function increaseCount() {
+  // increaseCount closes over `count` and `step` so that they can be read and modified
+  count += step;7
+    return count;
+  };
+}
+```
+
+Closures are common on asynchronous code:
+
+```javascript
+function doSomethingAfterSomeTime(msg) {
+  // the callback closes over `msg`
+  setTimeout(() => {
+    console.log(`Howdy, I was told to display this message after 2 seconds: ${ msg }`);
+  }, 2000);
+}
+```
+
+Note that it's not necessary that the outer scope is a function &mdash; it suffices to have at least one variable in an outer scope accessed from an inner function:
+
+```javascript
+const done = false;
+if (!done) {
+  let msg = `Hello to Jason Isaacs`;
+  // the callback closes over `msg`
+  setTimeout(() => {
+    console.log(msg);
+  }, 4000);
+}
+```
 
 ## You don't know JS Examples
 All the examples in this section are taken from https://github.com/getify/You-Dont-Know-JS.
