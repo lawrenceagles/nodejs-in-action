@@ -139,6 +139,9 @@ A refresher on `this` keyword.
 ## [45-ydkjs-01-prototypes](45-ydkjs-01-prototypes/)
 A refresher on prototypes.
 
+## [46-ydkjs-01-this-revisited](46-ydkjs-01-this-revisited/)
+Revisiting `this` keyword in the context of prototypes.
+
 ## [e01-dice-experiment-infinite-sequences](e01-dice-experiment-infinite-sequences/)
 Illustrates a simple use case of infinite iterators modeling the experiment of throwing dice repeateadly and printing the results.
 
