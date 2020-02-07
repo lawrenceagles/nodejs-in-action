@@ -130,8 +130,11 @@ A refresher on ES modules.
 ## [42-ydkjs-01-es-iterators](42-ydkjs-01-es-iterators/)
 A refresher on ES iterators, iterables and the spread operator `...` to consume iterators.
 
-## [43-ydkjs-01-closure](42-ydkjs-01-closure/)
+## [43-ydkjs-01-closure](43-ydkjs-01-closure/)
 A refresher on closures.
+
+## [44-ydkjs-01-this](44-ydkjs-01-this/)
+A refresher on `this` keyword.
 
 ## [e01-dice-experiment-infinite-sequences](e01-dice-experiment-infinite-sequences/)
 Illustrates a simple use case of infinite iterators modeling the experiment of throwing dice repeateadly and printing the results.
