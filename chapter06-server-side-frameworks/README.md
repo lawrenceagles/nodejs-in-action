@@ -18,3 +18,12 @@ Illustrates how to use *Hapi* plugins.
 
 ## [06-hello-sails](./06-hello-sails)
 Illustrates how to set up a *Sails* app using the generator.
+
+## [e01-validating-with-joi](./e01-validating-with-joi)
+Multiple examples of how to validate different data types with Joi.
+
+## [e02-hello-cls-hooked](./e02-hello-cls-hooked)
+Illustrates how to use the `cls-hooked` package to create *continuation-local* storage, a similar construct to thread-local storage when programming with threads.
+
+## [e03-hello-cls-hooked-context-module](./e03-hello-cls-hooked-context-module)
+Illustrates how to use the `cls-hooked` package to create *continuation-local* storage based context module. This should allow a program to access the context at any given point of the execution and retrieve values that are not shared across different instances of the same function.
