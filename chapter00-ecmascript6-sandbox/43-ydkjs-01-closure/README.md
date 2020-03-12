@@ -9,6 +9,12 @@ Thus:
 + a closure is part of the nature of a function &mdash; objects don't get closures
 + to observe a closure, you must execute a function in a different scope than where that function was originally defined.
 
+Closure is a natural result of lexical scope when the language has functions as first-class values, as JavaScript does. When a function makes a reference to variables from an outer scope, and that function is passed around as a value and executed in other scopes, it maintains access to its original scope variables: that is a closure.
+
+| NOTE: |
+| :--- |
+| Lexical scope is the mechanism that ensures that only variables at the same level of scope nesting, or in outer scopes are accessible, while variables from inner scopes are hidden. |
+
 In the following example:
 
 ```javascript
