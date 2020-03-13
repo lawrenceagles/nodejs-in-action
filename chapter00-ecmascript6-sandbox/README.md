@@ -142,6 +142,13 @@ A refresher on prototypes.
 ## [46-ydkjs-01-this-revisited](46-ydkjs-01-this-revisited/)
 Revisiting `this` keyword in the context of prototypes.
 
+## [47-ydkjs-01-function-forms](47-ydkjs-01-function-forms/)
+Illustrating anonymous and named function expressions, the `.name` property and all the shapes and forms of functions in JavaScript.
+
+## [48-ydkjs-01-coercive-conditional-comparison](48-ydkjs-01-coercive-conditional-comparison/)
+Illustrating anonymous and named function expressions, the `.name` property and all the shapes and forms of functions in JavaScript.
+Discussing how comparisons work in `if`, the ternary operator, `while` and `for` loops
+
 ## [e01-dice-experiment-infinite-sequences](e01-dice-experiment-infinite-sequences/)
 Illustrates a simple use case of infinite iterators modeling the experiment of throwing dice repeateadly and printing the results.
 

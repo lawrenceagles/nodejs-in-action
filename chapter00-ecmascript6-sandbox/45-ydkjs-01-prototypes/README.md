@@ -25,6 +25,9 @@ You can create a standalone object (that is, one that does not have any prototyp
 
 As you might expect in a delegation relationship, the properties that you defined on *B* having the same name as the ones defined on *A* will shadow the ones from *A*.
 
+### Class Syntax
+Note that this approach is discouraged now, as a cleaner approach using the `class` keyword is available. That will make everything work in the same way, but without the nuisances of the prototypal class approach, which is confusing.
+
 ## You don't know JS Examples
 All the examples in this section are taken from https://github.com/getify/You-Dont-Know-JS.
 Especifically, this example is based on [Prototypes](https://github.com/getify/You-Dont-Know-JS/blob/2nd-ed/get-started/ch3.md#prototypes) section.
