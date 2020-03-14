@@ -181,3 +181,6 @@ Practicing with value types and comparisons where coercion is involved. In the e
 
 ## [e11-ydkjs-01-practicing-closure](e11-ydkjs-01-practicing-closure/)
 Practicing with closure. In the example, a function `range` that returns a range of numbers of a function that can be used to return a range of numbers is developed.
+
+## [e12-ydkjs-01-practicing-closure](e12-ydkjs-01-practicing-closure/)
+Practicing prototypes. In the example, it is developed a slot machine that displays three rows corresponding to the positions of their three reels.
