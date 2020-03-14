@@ -175,3 +175,9 @@ Basic implementation of a throttling wrapper using higher-order functions.
 
 ## [e09-hello-rest-and-spread](e09-hello-rest-and-spread/)
 Some examples using the *rest* and *spread* operators in JavaScript.
+
+## [e10-ydkjs-01-practicing-comparisons](e10-ydkjs-01-practicing-comparisons/)
+Practicing with value types and comparisons where coercion is involved. In the example, a function `scheduleMeeting` that returns whether a given meeting falls under working hours is developed.
+
+## [e11-ydkjs-01-practicing-closure](e11-ydkjs-01-practicing-closure/)
+Practicing with closure. In the example, a function `range` that returns a range of numbers of a function that can be used to return a range of numbers is developed.
