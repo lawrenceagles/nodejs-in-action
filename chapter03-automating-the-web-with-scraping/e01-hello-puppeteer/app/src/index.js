@@ -92,7 +92,6 @@ async function performSearch() {
 
   console.log(links.join(`\n`));
 
-  await browser.close();
 
   await browser.close();
 }
