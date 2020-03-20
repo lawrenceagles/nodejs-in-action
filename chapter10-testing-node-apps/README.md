@@ -21,3 +21,9 @@ Introduce *Sinon* library to create mocks, stubs and spies.
 
 ## [07-hello-tap](./07-hello-tap/)
 Introducing `node-tap` library for testing.
+
+## [e01-hello-sinon-spies](./e01-hello-sinon-spies/)
+Practicing Sinon.js spies.
+
+## [e02-hello-proxyquire](./e02-hello-proxyquire/)
+Mocking dependencies with `proxyquire`.
