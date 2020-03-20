@@ -142,6 +142,13 @@ A refresher on prototypes.
 ## [46-ydkjs-01-this-revisited](46-ydkjs-01-this-revisited/)
 Revisiting `this` keyword in the context of prototypes.
 
+## [47-ydkjs-01-function-forms](47-ydkjs-01-function-forms/)
+Illustrating anonymous and named function expressions, the `.name` property and all the shapes and forms of functions in JavaScript.
+
+## [48-ydkjs-01-coercive-conditional-comparison](48-ydkjs-01-coercive-conditional-comparison/)
+Illustrating anonymous and named function expressions, the `.name` property and all the shapes and forms of functions in JavaScript.
+Discussing how comparisons work in `if`, the ternary operator, `while` and `for` loops
+
 ## [e01-dice-experiment-infinite-sequences](e01-dice-experiment-infinite-sequences/)
 Illustrates a simple use case of infinite iterators modeling the experiment of throwing dice repeateadly and printing the results.
 
@@ -168,3 +175,12 @@ Basic implementation of a throttling wrapper using higher-order functions.
 
 ## [e09-hello-rest-and-spread](e09-hello-rest-and-spread/)
 Some examples using the *rest* and *spread* operators in JavaScript.
+
+## [e10-ydkjs-01-practicing-comparisons](e10-ydkjs-01-practicing-comparisons/)
+Practicing with value types and comparisons where coercion is involved. In the example, a function `scheduleMeeting` that returns whether a given meeting falls under working hours is developed.
+
+## [e11-ydkjs-01-practicing-closure](e11-ydkjs-01-practicing-closure/)
+Practicing with closure. In the example, a function `range` that returns a range of numbers of a function that can be used to return a range of numbers is developed.
+
+## [e12-ydkjs-01-practicing-closure](e12-ydkjs-01-practicing-closure/)
+Practicing prototypes. In the example, it is developed a slot machine that displays three rows corresponding to the positions of their three reels.

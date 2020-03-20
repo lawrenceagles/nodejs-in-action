@@ -7,3 +7,4 @@ build
 coverage
 *.pem
 **/scripts/bkp/
+*.0x
