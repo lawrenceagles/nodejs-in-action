@@ -27,3 +27,6 @@ Practicing Sinon.js spies.
 
 ## [e02-hello-proxyquire](./e02-hello-proxyquire/)
 Mocking dependencies with `proxyquire`.
+
+## [e03-proxyquire-official-example](./e03-proxyquire-official-example/)
+Practicing `proxyquire` with the official examples.
