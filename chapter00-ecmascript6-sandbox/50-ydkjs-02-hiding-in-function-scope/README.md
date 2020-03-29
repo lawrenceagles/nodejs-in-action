@@ -74,6 +74,16 @@ In the latter solution, the consumer code is completely unaware of the *memoizat
 
 The price of such great *DX* is the definition of `factorial` as a function expression initialized to an anonymous function (an anonymous `hideTheCache`) that is immediately invoked as part of the function expression initialization.
 
+### Immediately Invoked Function Expressions (IIFE)
+
+The construct that in the previous section provides a better *DX* is known as *Immediately Invoked Function Expression (or IIFE)*. An *IIFE* is usefult when you want to create a scope to hide variables/functions.
+
+Note that using an IIFE define a scope and therefore, might create unintended consequences depending on the code around it &mdash; creating an IIFE around an arbitrary piece of code might change the behavior of the code it is wrapping:
++ A `return` statement in the arbitrary piece of code will return from the IIFE
++ Non-arrow IIFEs will change the binding of the `this` keyword
++ `break` and `continue` won't operate across an IIFE boundary
+
+
 
 ## You don't know JS Examples
 All the examples in this section are taken from https://github.com/getify/You-Dont-Know-JS, book 2 on [Scopes & Closures](https://github.com/getify/You-Dont-Know-JS/tree/2nd-ed/scope-closures).
