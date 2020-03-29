@@ -147,7 +147,13 @@ Illustrating anonymous and named function expressions, the `.name` property and 
 
 ## [48-ydkjs-01-coercive-conditional-comparison](48-ydkjs-01-coercive-conditional-comparison/)
 Illustrating anonymous and named function expressions, the `.name` property and all the shapes and forms of functions in JavaScript.
-Discussing how comparisons work in `if`, the ternary operator, `while` and `for` loops
+Discussing how comparisons work in `if`, the ternary operator, `while` and `for` loops.
+
+## [49-ydkjs-02-hello-lexical-scope](49-ydkjs-02-hello-lexical-scope/)
+Mostly documentation and simple code samples about lexical scope, the concept of *hoisting* and auto-initialization of formal function definitions and `var` declarations.
+
+## [50-ydkjs-02-hello-lexical-scope](50-ydkjs-02-hiding-in-function-scope/)
+Mostly documentation and simple code samples about lexical scope, the concept of *hoisting* and auto-initialization of formal function definitions and `var` declarations.
 
 ## [e01-dice-experiment-infinite-sequences](e01-dice-experiment-infinite-sequences/)
 Illustrates a simple use case of infinite iterators modeling the experiment of throwing dice repeateadly and printing the results.
