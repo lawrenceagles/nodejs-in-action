@@ -152,8 +152,20 @@ Discussing how comparisons work in `if`, the ternary operator, `while` and `for`
 ## [49-ydkjs-02-hello-lexical-scope](49-ydkjs-02-hello-lexical-scope/)
 Mostly documentation and simple code samples about lexical scope, the concept of *hoisting* and auto-initialization of formal function definitions and `var` declarations.
 
-## [50-ydkjs-02-hello-lexical-scope](50-ydkjs-02-hiding-in-function-scope/)
+## [50-ydkjs-02-hiding-in-function-scope/](50-ydkjs-02-hiding-in-function-scope/)
 Mostly documentation and simple code samples about lexical scope, the concept of *hoisting* and auto-initialization of formal function definitions and `var` declarations.
+
+## [51-ydkjs-02-hello-scoping-with-blocks/](51-ydkjs-02-hello-scoping-with-blocks/)
+Practising scoping with blocks to limit exposure of variables.
+
+## [52-ydkjs-02-var-vs-let/](52-ydkjs-02-var-vs-let/)
+Learning the subtle differences between `let` and `var` and when to use each one correctly.
+
+## [53-ydkjs-02-catch-scope/](53-ydkjs-02-catch-scope/)
+Learning about the `catch` scope.
+
+## [54-ydkjs-02-function-declarations-in-blocks/](54-ydkjs-02-function-declarations-in-blocks/)
+Practising function declarations in blocks.
 
 ## [e01-dice-experiment-infinite-sequences](e01-dice-experiment-infinite-sequences/)
 Illustrates a simple use case of infinite iterators modeling the experiment of throwing dice repeateadly and printing the results.
