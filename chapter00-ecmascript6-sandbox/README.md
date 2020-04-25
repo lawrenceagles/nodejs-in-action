@@ -167,6 +167,15 @@ Learning about the `catch` scope.
 ## [54-ydkjs-02-function-declarations-in-blocks/](54-ydkjs-02-function-declarations-in-blocks/)
 Practising function declarations in blocks.
 
+## [55-hello-optional-chaining/](55-hello-optional-chaining/)
+Practising the optional chaining operator `?.`.
+
+## [56-hello-nullish-coalescing/](56-hello-nullish-coalescing/)
+Practising the nullish coalescing operator `??`.
+
+## [57-hello-intl-datetime-formatting/](57-hello-intl-datetime-formatting/)
+Practising `Intl.DateTimeFormatting` and its options to display language-sensitive dates and times.
+
 ## [e01-dice-experiment-infinite-sequences](e01-dice-experiment-infinite-sequences/)
 Illustrates a simple use case of infinite iterators modeling the experiment of throwing dice repeateadly and printing the results.
 

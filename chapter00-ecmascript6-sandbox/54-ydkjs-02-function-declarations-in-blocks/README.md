@@ -1,5 +1,5 @@
 # You don't Know JavaScript &mdash; 02: Scope and Closures
-## 51 &mdash; Function Declarations in Blocks
+## 54 &mdash; Function Declarations in Blocks
 > practising function declarations in blocks
 
 ### Function Declarations In Blocks
