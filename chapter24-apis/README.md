@@ -1,4 +1,4 @@
-# Chapter 23 &mdash; API related topics
+# Chapter 24 &mdash; API related topics
 > Node.js APIs: specification, documentation, validation...
 
 ## [01-hello-openapi](./01-hello-openapi/)
