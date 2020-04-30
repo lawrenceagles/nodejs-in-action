@@ -1,5 +1,5 @@
 # e21 &mdash; Node Event Emitters
-> Practicing Node.js Event Emitters
+> Practising Node.js Event Emitters
 
 ## Description
 `EventEmitter` is a class that helps us implement publish-subscribe pattern in Node.js.
@@ -79,7 +79,7 @@ Statement C
 
 Node.js uses internally events in many areas such as streams and processes. Streams emit `open`, `end` and `data` events that allow your application to respond and act upon receiving such events. The `process` object also exposes events such as `exit`, `beforeExit` and `uncaughtException`.
 
-Data can be passed from an `eventEmitter` instance to the listener as additional arguments to `emit`: 
+Data can be passed from an `eventEmitter` instance to the listener as additional arguments to `emit`:
 
 ```javascript
 eventEmitter.on('evt', (arg1, arg2, arg3) => console.log(arg1, arg2, arg3));
