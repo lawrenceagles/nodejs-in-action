@@ -61,7 +61,23 @@ When a breakpoint is reached, columns will automatically stack. If you don't wan
 
 ### Content
 
-The content sections servers as a refreshing of the different HTML5 elements.
+The content section serves as a refreshing of the different HTML5 elements.
 
 ### Typography
+
+The typography section serves as a refreshing of the different typography related concepts, and how it applies to relevant HTML elements.
+
+### Code
+
+The code section serves as a refreshing about how to style source code related content.
+
+### Images
+
+The Images section serves as a refreshing about how to style and align images and pictures.
+
+### Tables
+
+The Tables section serves as a refreshing for the different supported tables.
+
+### Figures
 
