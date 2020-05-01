@@ -129,3 +129,38 @@ for (let i = 0; i < 3; i++) {
 console.log(`\nkeeps3[0]() = ${ keeps3[0]() }`);
 console.log(`keeps3[1]() = ${ keeps3[1]() }`);
 console.log(`keeps3[2]() = ${ keeps3[2]() }`);
+console.log(`\n`);
+
+/* Example 7: understanding if closure is per scope or per variable */
+
+function manageStudentGrades(studentRecords) {
+  var grades = studentRecords.map(getGrade);
+  return addGrade;
+
+  function getGrade(record) {
+    return record.grade;
+  }
+
+  function sortAndTrimGradesList() {
+    grades.sort(function desc(g1, g2) {
+      return g2 - g1;
+    });
+    grades = grades.slice(0, 10); // keep only top 10 grades
+  }
+
+  function addGrade(newGrade) {
+    grades.push(newGrade);
+    sortAndTrimGradesList();
+    return grades;
+  }
+}
+
+var addNextGrade = manageStudentGrades([
+  { id: 14, name: 'Jason', grade: 86 },
+  { id: 73, name: 'Ingrid', grade: 87 },
+  { id: 112, name: 'Idris', grade: 75 },
+  { id: 6, name: 'Sarah', grade: 91 }
+]);
+
+console.log(addNextGrade(81));  // [ 91, 87, 86, 81, 75 ]
+console.log(addNextGrade(68));  // [ 91, 87, 86, 81, 75, 68 ]
