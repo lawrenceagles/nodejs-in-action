@@ -81,3 +81,10 @@ The Tables section serves as a refreshing for the different supported tables.
 
 ### Figures
 
+Figure related info
+
+### Components
++ Alerts
++ Badges
+
+
