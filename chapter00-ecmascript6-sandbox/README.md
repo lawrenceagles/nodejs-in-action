@@ -176,6 +176,16 @@ Practising the nullish coalescing operator `??`.
 ## [57-hello-intl-datetime-formatting/](57-hello-intl-datetime-formatting/)
 Practising `Intl.DateTimeFormatting` and its options to display language-sensitive dates and times.
 
+## [58-ydkjs-02-using-closures/](58-ydkjs-02-using-closures/)
+Practising closures.
+
+## [59-ydkjs-02-module-pattern/](59-ydkjs-02-module-pattern/)
+A discussion on building modules using a custom way, and CommonJS modules.
+
+## [60-ydkjs-02-ecmascript-modules/]60-ydkjs-02-ecmascript-modules/)
+Practising ECMAScript modules.
+
+
 ## [e01-dice-experiment-infinite-sequences](e01-dice-experiment-infinite-sequences/)
 Illustrates a simple use case of infinite iterators modeling the experiment of throwing dice repeateadly and printing the results.
 
