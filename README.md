@@ -30,7 +30,7 @@ Additional examples are my own :)
   + [Chapter 20 &mdash; Data Processing](chapter20-data-processing/)
   + [Chapter 21 &mdash; Interacting with Salesforce](chapter21-salesforce/)
   + [Chapter 22 &mdash; Interacting with SAP Cloud Foundry](chapter22-sap-cf/)
-  + [Chapter 23 &mdash; APIs](chapter23-oauth2/)
+  + [Chapter 23 &mdash; OAuth2](chapter23-oauth2/)
   + [Chapter 24 &mdash; APIs](chapter24-apis/)
   + [Chapter 25 &mdash; Web Applications](chapter25-web-appps/)
 
