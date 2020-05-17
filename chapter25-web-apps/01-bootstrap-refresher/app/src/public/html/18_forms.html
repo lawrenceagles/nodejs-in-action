@@ -272,13 +272,134 @@
 
     <!-- Horizontal Form -->
     <div class="container">
-      <h2>Horizontal Forms <small class="text-muted"> Horizontal forms</small></h2>
+      <h2>Horizontal Forms</h2>
       <form>
+
+        <!-- first row: email -->
+        <div class="form-group row">
+          <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
+          <div class="col-sm-10">
+            <input type="email" class="form-control" id="inputEmail3">
+          </div>
+        </div>
+
+        <!-- examples with different sizes -->
+        <div class="form-group row">
+          <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Small Email</label>
+          <div class="col-sm-10">
+            <input type="email" class="form-control form-control-sm" id="colFormLabelSm">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="colFormLabelLg" class="col-sm-2 col-form-label col-form-label-lg">Large Email</label>
+          <div class="col-sm-10">
+            <input type="email" class="form-control form-control-lg" id="colFormLabelLg">
+          </div>
+        </div>
+        <!-- end: examples with different sizes -->
+
+        <!-- second row: password -->
+        <div class="form-group row">
+          <label for="inputPassword3" class="col-sm-2 col-form-label">Password</label>
+          <div class="col-sm-10">
+            <input type="password" class="form-control" id="inputPassword3">
+          </div>
+        </div>
+
+        <!-- third row: radios (it spans several rows, one per radio option)-->
+        <fieldset class="form-group">
+          <div class="row">
+            <legend class="col-form-label col-sm2 pt-0">Radios</legend>
+            <div class="col-sm-10">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="option1" checked>
+                <label class="form-check-label" for="gridRadios1">First radio</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="option2">
+                <label class="form-check-label" for="gridRadios1">Second radio</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios3" value="option3" disabled>
+                <label class="form-check-label" for="gridRadios1">Third radio</label>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+        <!-- end: third row: radios -->
+
+        <!-- fourth row: checkbox -->
+        <div class="form-group row">
+          <div class="col-sm-2">Terms and Conditions</div>
+          <div class="col-sm-10">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="gridCheck1">
+              <label class="form-check-label" for="gridCheck1">Agree to sell my soul</label>
+            </div>
+          </div>
+        </div>
+        <!-- end: fourth row: checkbox -->
+
+        <!-- fifth row: button -->
+        <div class="form-group row">
+          <div class="col-sm-10">
+            <button type="submit" class="btn btn-primary">Sign in</button>
+          </div>
+        </div>
+        <!-- fifth row: end -->
       </form>
     </div>
     <!-- end: Horizontal form -->
 
+    <!-- Form with auto-sizing -->
+    <div class="container">
+      <h2>Form <small class="text-muted">with auto-sizing</small></h2>
+      <form>
+        <div class="form-row align-items-center">
+          <!-- Name field -->
+          <div class="col-auto">
+            <label class="sr-only" for="inlineFormInput">Name</label>
+            <input type="text" class="form-control mb-2" id="inlineFormInput" placeholder="your name">
+          </div>
 
+          <!-- Email field -->
+          <div class="col-auto">
+            <label class="sr-only" for="inlineFormInputGroup">Username</label>
+            <div class="input-group mb-2">
+              <div class="input-group-prepend">
+                <div class="input-group-text">@</div>
+              </div>
+              <input type="text" class="form-control" id="inlineFormInputGroup" placeholder="email@example.com">
+            </div>
+          </div>
+          <!-- end: Email field-->
+
+          <!-- Remember me checkbox -->
+          <div class="col-auto">
+            <div class="form-check mb-2">
+              <input class="form-check-input" type="checkbox" id="autoSizingCheck">
+              <label class="form-check-label" for="autoSizingCheck">Remember me</label>
+            </div>
+          </div>
+          <!-- end: Remember me checkbox -->
+
+          <!-- submit button -->
+          <div class="col-auto">
+            <button type="submit" class="btn btn-primary mb-2">Submit</button>
+          </div>
+          <!-- end: submit button -->
+        </div>
+      </form>
+    </div>
+    <!-- end: Form with auto-sizing -->
+
+    <!-- Inline forms -->
+    <div class="container">
+      <h2>Form <small class="text-muted">with auto-sizing</small></h2>
+      <form>
+      </form>
+    </div>
+    <!-- end: Inline forms -->
 
     <!-- Bootstrap JavaScript for behavior -->
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
