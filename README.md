@@ -32,7 +32,7 @@ Additional examples are my own :)
   + [Chapter 22 &mdash; Interacting with SAP Cloud Foundry](chapter22-sap-cf/)
   + [Chapter 23 &mdash; OAuth2](chapter23-oauth2/)
   + [Chapter 24 &mdash; APIs](chapter24-apis/)
-  + [Chapter 25 &mdash; Web Applications](chapter25-web-appps/)
+  + [Chapter 25 &mdash; Web Applications](chapter25-web-apps/)
 
 + Part 3 &mdash; Flavors and Frameworks
   + [Chapter 26 &mdash; Functional Programming](chapter26-functional-programming/)

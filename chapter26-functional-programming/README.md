@@ -6,4 +6,6 @@ This section is a collection of assorted documentation and samples on functional
 ## [01 &mdash; Intro to Functional Programming](./01-fpj-01-intro-to-fp/)
 Defining the fundamental principles and concepts of Functional Programming.
 
+## [02 &mdash; Data Structures and Algorithms: Lists](./02-fpj-02-data-structures-and-algorithms-lists/)
+Defining the fundamental principles and concepts of Functional Programming.
 

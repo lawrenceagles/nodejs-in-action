@@ -182,7 +182,7 @@ Practising closures.
 ## [59-ydkjs-02-module-pattern/](59-ydkjs-02-module-pattern/)
 A discussion on building modules using a custom way, and CommonJS modules.
 
-## [60-ydkjs-02-ecmascript-modules/]60-ydkjs-02-ecmascript-modules/)
+## [60-ydkjs-02-ecmascript-modules/](60-ydkjs-02-ecmascript-modules/)
 Practising ECMAScript modules.
 
 

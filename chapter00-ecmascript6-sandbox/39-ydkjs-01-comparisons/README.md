@@ -26,7 +26,7 @@ let y = x;
 
 You're actually copying the reference.
 
-### The loose equality operator `===` (and other comparisons)
+### The loose equality operator `==` (and other comparisons)
 
 JavaScript also allows you do to *coercive comparisons*, where *coercion* means a value of one type being converted to its respective representation in another type to whatever extent possible.
 
