@@ -33,3 +33,6 @@ Additional examples are my own :)
   + [Chapter 23 &mdash; APIs](chapter23-oauth2/)
   + [Chapter 24 &mdash; APIs](chapter24-apis/)
   + [Chapter 25 &mdash; Web Applications](chapter25-web-appps/)
+
++ Part 3 &mdash; Flavors and Frameworks
+  + [Chapter 26 &mdash; Functional Programming](chapter26-functional-programming/)
