@@ -395,11 +395,380 @@
 
     <!-- Inline forms -->
     <div class="container">
-      <h2>Form <small class="text-muted">with auto-sizing</small></h2>
-      <form>
+      <h2>Inline Forms <small class="text-muted">forms on a single horizontal row</small></h2>
+      <form class="form-inline">
+        <label class="sr-only" for="inlineFormInputName2">Name</label>
+        <input type="text" class="form-control mb-2 mr-sm-2" id="inlineFormInputName2" placeholder="your name here">
+        <label class="sr-only" for="inlineFormInputGroupUsername2">Username</label>
+        <div class="input-group mb-2 mr-sm-2">
+          <div class="input-group-prepend">
+            <div class="input-group-text">@</div>
+          </div>
+          <input type="text" class="form-control" id="inlineFormInputGroupUsername2" placeholder="your username here">
+        </div>
+        <div class="form-check mb-2 mr-sm-2">
+          <input class="form-check-input" type="checkbox" id="inlineFormCheck">
+          <label class="form-check-label" for="inlineFormCheck">
+            Remember me
+          </label>
+        </div>
+        <button type="submit" class="btn btn-primary mb-2">Submit</button>
       </form>
     </div>
     <!-- end: Inline forms -->
+
+    <!-- Help Text -->
+    <div class="container">
+      <h2>Help Text <small class="text-muted"> quick example to demonstrate form styling</small></h2>
+      <!-- basic form -->
+      <form>
+        <div class="form-group">
+          <label for="inputPassword5">Password</label>
+          <input type="password" class="form-control" id="inputPassword5">
+          <small id="passwordHelpBlock" class="form-text text-muted">
+            Your password must be 8-20 characters long, contain letters and numbers, must not contain spaces and
+            must not derive from your username.
+          </small>
+        </div>
+      </form>
+      <!-- end: basic form-->
+
+      <!-- inline form -->
+      <form class="form-inline">
+        <div class="form-group">
+          <label for="inputPassword6">Password</label>
+          <input type="password" class="form-control mx-sm-3" id="inputPassword6">
+          <small id="passwordHelpInline" class="text-muted">
+            Your password must be 8-20 characters long.
+          </small>
+        </div>
+      </form>
+      <!-- end: inline form -->
+    </div>
+    <!-- end: Help Text -->
+
+    <!-- Disabling elements in Forms -->
+    <div class="container">
+      <h2>Disabled Forms <small class="text-muted"> disabling elements in a form</small></h2>
+      <form>
+        <div class="form-group">
+          <label for="disabledInputEmail1">Email address</label>
+          <input type="email" class="form-control" id="disabledInputEmail1" aria-describedby="emailHelp" disabled>
+        </div>
+        <div class="form-group form-check">
+          <input type="checkbox" class="form-check-input" id="disabledCheck1" disabled>
+          <label class="form-check-label" for="disabledCheck1">Agree to sell my soul</label>
+        </div>
+        <div class="form-group">
+          <label for="disabledSelect">Disabled Select Menu</label>
+          <select id="disabledSelec" class="form-control" disabled>
+            <option>Disabled Select</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary" disabled>Submit</button>
+      </form>
+    </div>
+    <!-- end: Disabling elements in Forms -->
+
+    <!-- Validating Forms with HTML5 -->
+    <div class="container">
+      <h2>Validating Forms <small class="text-muted"> form validation with HTML5 (default)</small></h2>
+      <form novalidate>
+        <!-- first row -->
+        <div class="form-row">
+          <div class="col-md-4 mb-3">
+            <label for="validationDefault01">First name</label>
+            <input type="text" class="form-control" id="validationDefault01" value="Jason" required>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="validationDefault02">Last name</label>
+            <input type="text" class="form-control" id="validationDefault02" value="Isaacs" required>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="validationDefaultUsername">Username</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroupPrepend02">@</span>
+              </div>
+              <input type="text" class="form-control" id="validationDefaultUsername" aria-describedby="inputGroupPrepend02" required>
+            </div>
+          </div>
+        </div>
+        <!-- end: first row -->
+
+        <!-- second row -->
+        <div class="form-row">
+          <div class="col-md-6 mb-3">
+            <label for="validationDefault03">City</label>
+            <input type="text" class="form-control" id="validationDefault03" required>
+          </div>
+          <div class="col-md-3 mb-3">
+            <label for="validationDefault04">State</label>
+            <select class="form-control" id="validationDefault04" required>
+              <option selected disabled valued="">Choose...</option>
+              <option>...</option>
+            </select>
+          </div>
+          <div class="col-md-3 mb-3">
+            <label for="validationDefault05">Zip</label>
+            <input type="text" class="form-control" id="validationDefault05" required>
+          </div>
+        </div>
+        <!-- end: second row -->
+
+        <!-- third row: implicit -->
+        <div class="form-group">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="invalidCheck2" required>
+            <label class="form-check-label" for="invalidCheck2">
+              Agree to terms and conditions
+            </label>
+          </div>
+        </div>
+        <button class="btn btn-primary" type="submit">Submit form</button>
+        <!-- end: third row: implicit -->
+      </form>
+    </div>
+    <!-- end: Validating Forms with HTML5 -->
+
+
+    <!-- Visual Feedback when Validating Forms with HTML5 -->
+    <div class="container">
+      <h2>Validating Forms <small class="text-muted"> visual feedback for validations</small></h2>
+      <form novalidate>
+        <!-- first row -->
+        <div class="form-row">
+          <div class="col-md-4 mb-3">
+            <label for="validationServer01">First name</label>
+            <input type="text" class="form-control is-valid" id="validationServer01" value="Jason" required>
+            <div class="valid-feedback">
+              Hello to Jason
+            </div>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="validationServer02">Last name</label>
+            <input type="text" class="form-control is-valid" id="validationServer02" value="Isaacs" required>
+            <div class="valid-feedback">
+              Hello to Mr. Isaacs
+            </div>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="validationServerUsername">Username</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroupPrepend3">@</span>
+              </div>
+              <input type="text" class="form-control is-invalid" id="validationServerUsername" aria-describedby="inputGroupPrepend3" required>
+              <div class="invalid-feedback">
+                Please choose a username.
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- end: first row -->
+
+        <!-- second row -->
+        <div class="form-row">
+          <div class="col-md-6 mb-3">
+            <label for="validationServer03">City</label>
+            <input type="text" class="form-control is-invalid" id="validationServer03" required>
+            <div class="invalid-feedback">
+              Please provide a valid city.
+            </div>
+          </div>
+          <div class="col-md-3 mb-3">
+            <label for="validationServer04">State</label>
+            <select class="form-control is-invalid" id="validationServer04" required>
+              <option selected disabled valued="">Choose...</option>
+              <option>...</option>
+              <div class="invalid-feedback">
+                Please select a valid state.
+              </div>
+            </select>
+          </div>
+          <div class="col-md-3 mb-3">
+            <label for="validationServer05">Zip</label>
+            <input type="text" class="form-control is-invalid" id="validationServer05" required>
+            <div class="invalid-feedback">
+              Please provide a valid zip.
+            </div>
+          </div>
+        </div>
+        <!-- end: second row -->
+
+        <!-- third row: implicit -->
+        <div class="form-group">
+          <div class="form-check">
+            <input class="form-check-input is-invalid" type="checkbox" value="" id="invalidCheck3" required>
+            <label class="form-check-label" for="invalidCheck3">
+              Agree to terms and conditions
+            </label>
+            <div class="invalid-feedback">
+              You must agree before submitting.
+            </div>
+          </div>
+        </div>
+        <!-- end: third row: implicit -->
+        <button class="btn btn-primary" type="submit">Submit form</button>
+
+      </form>
+    </div>
+    <!-- end: Visual feedback when Validating Forms with HTML5 -->
+
+
+    <!-- Using tooltips -->
+    <div class="container">
+      <h2>Validating Forms <small class="text-muted"> visual feedback with tooltips</small></h2>
+      <form novalidate>
+        <!-- first row -->
+        <div class="form-row">
+          <div class="col-md-4 mb-3">
+            <label for="validationTooltip01">First name</label>
+            <input type="text" class="form-control is-valid" id="validationTooltip01" value="Jason" required>
+            <div class="valid-tooltip">
+              Hello to Jason
+            </div>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="validationServer02">Last name</label>
+            <input type="text" class="form-control is-invalid" id="validationTooltip02" value="Isaacs" required>
+            <div class="invalid-tooltip">
+              Hello to Mr. Isaacs
+            </div>
+          </div>
+        </div>
+        <!-- end: first row -->
+
+        <button class="btn btn-primary" type="submit">Submit form</button>
+
+      </form>
+    </div>
+    <!-- end: Validating Forms with HTML5 -->
+
+    <!-- Custom forms -->
+    <div class="container">
+      <h2>Custom Forms <small class="text-muted"> non-default elements provided by Bootstrap framework</small></h2>
+      <form novalidate>
+        <!-- Checkbox -->
+        <div class="form-group">
+          <div class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input" id="customCheck1">
+            <label class="custom-control-label" for="customCheck1">Check this custom checkbox</label>
+          </div>
+        </div>
+
+        <!-- Radios -->
+        <div class="form-group">
+          <div class="custom-control custom-radio">
+            <input type="radio" id="customRadio1" name="customRadio" class="custom-control-input">
+            <label class="custom-control-label" for="customRadio1">Toggle this custom radio</label>
+          </div>
+          <div class="custom-control custom-radio">
+            <input type="radio" id="customRadio2" name="customRadio" class="custom-control-input">
+            <label class="custom-control-label" for="customRadio2">Or toggle this other custom radio</label>
+          </div>
+        </div>
+
+        <!-- Inline Radios -->
+        <div class="form-group">
+          <div class="custom-control custom-radio custom-control-inline">
+            <input type="radio" id="customRadioInline1" name="customRadioInline1" class="custom-control-input">
+            <label class="custom-control-label" for="customRadioInline1">Toggle this custom radio</label>
+          </div>
+          <div class="custom-control custom-radio custom-control-inline">
+            <input type="radio" id="customRadioInline2" name="customRadioInline1" class="custom-control-input">
+            <label class="custom-control-label" for="customRadioInline2">Or toggle this other custom radio</label>
+          </div>
+          <div class="custom-control custom-radio custom-control-inline">
+            <input type="radio" id="customRadioInline3" name="customRadioInline1" class="custom-control-input" disabled>
+            <label class="custom-control-label" for="customRadioInline3">Or toggle this other custom radio</label>
+          </div>
+        </div>
+
+        <!-- Switches -->
+        <div class="form-group">
+          <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" id="customSwitch1">
+            <label class="custom-control-label" for="customSwitch1">Toggle this switch</label>
+          </div>
+          <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" id="customSwitch2" disabled>
+            <label class="custom-control-label" for="customSwitch2">Toggle this disabled switch</label>
+          </div>
+        </div>
+
+        <!-- Select -->
+        <div class="form-group">
+          <select class="custom-select">
+            <option selected>Open this select menu</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <select class="custom-select custom-select-lg mb-3">
+            <option selected>Open this large select menu</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <select class="custom-select custom-select-sm">
+            <option selected>Open this freakishly small select menu</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <select class="custom-select" multiple>
+            <option selected>Open multiple select menu</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <select class="custom-select" size="2">
+            <option selected>Open this size=2 select menu</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+          </select>
+        </div>
+
+        <!-- Range -->
+        <div class="form-group">
+          <label for="customRange1">Example Range</label>
+          <input type="range" class="custom-range" id="customRange1">
+        </div>
+
+        <div class="form-group">
+          <label for="customRange2">Example Range with custom min/max values</label>
+          <input type="range" class="custom-range" min="0" max="5" id="customRange2">
+        </div>
+
+        <div class="form-group">
+          <label for="customRange3">Example Range with custom min/max and step values</label>
+          <input type="range" class="custom-range" min="0" max="5" step="0.5" id="customRange3">
+        </div>
+
+        <!-- File input -->
+        <div class="form-group">
+          <div class="custom-file">
+            <input type="file" class="custom-file-input" id="custom-file">
+            <label class="custom-file-label" for="customFile">Choose file (custom)</label>
+          </div>
+        </div>
+
+      </form>
+    </div>
+    <!-- end: Custom forms -->
+
 
     <!-- Bootstrap JavaScript for behavior -->
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
