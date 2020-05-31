@@ -34,9 +34,136 @@
 
     <!-- Basic Example -->
     <div class="container">
-      <h2>Basic Example</h2>
+      <h2>Basic Example <small class="text-muted">add-on's or buttons on either side of an input</small></h2>
+      <!-- Input group with an @ addon prepending the field-->
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="basci-addon1">@</span>
+        </div>
+        <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+      </div>
+
+      <!-- Input group with trailing addon -->
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="Recipient's Username" aria-label="Recipient's Username" aria-describedby="basic-addon2">
+        <div class="input-group-append">
+          <span class="input-group-text" id="basci-addon2">@example.com</span>
+        </div>
+      </div>
+
+      <!-- Input group with both heading and trailing add-on -->
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">$</span>
+        </div>
+        <input type="text" class="form-control" aria-label="Amount to the nearest euro">
+        <div class="input-group-append">
+          <span class="input-group-text">.00</span>
+        </div>
+      </div>
+
+      <!-- It can be applied to textareas too -->
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text">With textarea</span>
+        </div>
+        <textarea class="form-control" aria-label="With textarea"></textarea>
+      </div>
+
+      <!-- and support different sizing: note that the lack of margin with prev textarea! -->
+      <div class="input-group input-group-sm mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="inputgroup-sizing-sm">small</span>
+        </div>
+        <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputgroup-sizing-sm">
+      </div>
+
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="inputgroup-sizing-default">default</span>
+        </div>
+        <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputgroup-sizing-default">
+      </div>
+
+      <div class="input-group input-group-lg mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="inputgroup-sizing-large">Large</span>
+        </div>
+        <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputgroup-sizing-large">
+      </div>
+      <!-- end sizing -->
+
     </div>
     <!-- end: Basic Example -->
+
+    <!-- Checkboxes and radios -->
+    <div class="container">
+      <h2>Checkboxes and Radios <small class="text-muted">prepending checkboxes and radios</small></h2>
+
+      <!-- Prepending checkbox -->
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <div class="input-group-text">
+            <input type="checkbox" aria-label="Checkbox for following text input">
+          </div>
+        </div>
+        <input type="text" class="form-control" aria-label="Text input with checkbox">
+      </div>
+
+      <!-- Prepending radio -->
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <div class="input-group-text">
+            <input type="radio" aria-label="Radio button for following text input">
+          </div>
+        </div>
+        <input type="text" class="form-control" aria-label="Text input with radio button">
+      </div>
+    </div>
+    <!-- end: checkboxes and radios -->
+
+    <!-- Multiple Inputs -->
+    <div class="container">
+      <h2>Multiple Inputs <small class="text-muted">add-on prepending side-to-side inputs</small></h2>
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text">First and Last Name</span>
+        </div>
+        <input type="text" aria-label="First name" class="form-control">
+        <input type="text" aria-label="Last name" class="form-control">
+      </div>
+    </div>
+    <!-- Multiple inputs end -->
+
+    <!-- Multiple Add-ons -->
+    <div class="container">
+      <h2>Multiple Add-ons <small class="text-muted">sets of add-ons heading or trailing an input</small></h2>
+      <!-- prepending addons -->
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">$</span>
+          <span class="input-group-text">0.00</span>
+        </div>
+        <input type="text" class="form-control" aria-label="euro amount">
+      </div>
+
+      <!-- appending addons -->
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" aria-label="euro amount">
+        <div class="input-group-prepend">
+          <span class="input-group-text">$</span>
+          <span class="input-group-text">0.00</span>
+        </div>
+      </div>
+    </div>
+    <!-- end: multiple add-ons -->
+
+    <!-- Button addons -->
+    <div class="container">
+      <h2>Button addons</h2>
+    </div>
+    <!-- end: button addons-->
+
 
 
     <!-- Bootstrap JavaScript for behavior -->
