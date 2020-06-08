@@ -1,6 +1,6 @@
 # Functional Programming for Java (yes, Java) &mdash; 03: Data Structures and Algorithms
 ## 02 &mdash; Lists
-> defining the fundamental principles and concepts of Functional Programming
+> practising lists
 
 ### Intro
 This section delves into how functional programming influences the design of data structures and algorithms.
