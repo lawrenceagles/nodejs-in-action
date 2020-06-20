@@ -17,32 +17,37 @@
     <title>Color Flipper</title>
   </head>
   <body>
-    <div class="container-fluid">
-      <!-- Branded Navbar -->
-      <nav class="navbar navbar-light bg-light">
-        <span class="navbar-brand mb-0 h1">Color Flipper</span>
-      </nav>
-    </div>
 
-    <div class="container" id="nonNavArea">
-      <!-- Jumbotron -->
-      <div class="jumbotron">
-        <h1>Background Color: <span id="colorName">default</span></h1>
-        <button type="button" class="btn btn-primary">Click Me</button>
+    <!-- Bootstrap Navbar component with nav elements -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <a class="navbar-brand" href="#">Color Flipper</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarContent">
+        <div class="navbar-nav">
+          <a class="nav-item nav-link active" href="#">Simple <span class="sr-only">(current)</span></a>
+          <a class="nav-item nav-link" href="#">Hex</a>
+        </div>
+      </div>
+    </nav>
+
+    <div id="nonNavArea" style="min-height: calc(100vh - 3.5rem); background: #f1f5f8;">
+      <div class="container" id="nonNavArea" style="height: 90vh;">
+        <div class="row align-items-center h-100">
+          <div class="col-8 mx-auto">
+            <div class="card text-center text-white bg-dark mb-3" style="width: 100%">
+              <div class="card-body">
+                <h2 class="card-title">Background Color: <span id="colorName" style="color:rgba(73, 166, 233, 1)">#f1f5f8</span></h2>
+              </div>
+            </div> <!-- card -->
+            <div class="row justify-content-center">
+              <button type="button" id="changeColorBtn" class="btn btn-lg btn-outline-dark">Click Me</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-
-
-<!--
-    <style>
-      .dot {
-        height: 8px;
-        width: 8px;
-        border-radius: 4px;
-        background: blue;
-        position: absolute;
-      }
-    </style> -->
 
     <!-- JavaScript-->
     <script src="javascript/app.js" type="module"></script>
