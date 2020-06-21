@@ -1,14 +1,31 @@
 'use strict';
 
+import appState from './models/app-state.js';
+
 const nonNavArea=document.querySelector('#nonNavArea');
-let currentColorIndex = -1;
-const colors = [ '#f15025', 'green', 'red', 'rgba(133, 122, 200)', 'hsl(205, 78%, 60%)' ];
 const colorName = document.querySelector('#colorName');
 const btn = document.querySelector('#changeColorBtn');
+const navBar = document.querySelector('#navBar');
 
 
 btn.addEventListener('click', () => {
-  currentColorIndex = (currentColorIndex + 1) % colors.length;
-  nonNavArea.style.background = colors[currentColorIndex];
-  colorName.textContent = colors[currentColorIndex];
+  appState.switchColor();
+  resetColorIndicator();
 });
+
+navBar.addEventListener('click', evt => {
+  for (let item of [...navBar.children]) {
+    item.classList.remove('active');
+  }
+
+  const itemClicked = evt.target;
+  itemClicked.classList.add('active');
+
+  appState.appMode = itemClicked.textContent;
+  resetColorIndicator();
+});
+
+function resetColorIndicator() {
+  nonNavArea.style.background = appState.backgroundColor;
+  colorName.textContent = appState.backgroundColor;
+}

@@ -1,13 +1,15 @@
 # 02 &mdash; Color Flipper
-> A simple JavaScript project that changes the color of a div at the click of a button
+> A simple Vanilla JavaScript project that changes the color of the visible area at the click of the button
 
 ## Color Flipper
+Color Flipper is a simple vanilla JavaScript application that features a navigation bar with to items that control the application operation modes, and a clickable button in the center of the screen.
 
+In the simple mode, when the button is clicked the background color of the visible area (minus the navbar) is chosen randomly from a set of predefined colors.
 
-[X] Barebones color flipper for now
-[ ] improve NavBar to include options
-[ ] make the container expand all the visible area (why is it taking that small portion?)
-[ ] make more generic colors (not only names)
-[ ] Include the random color generation
+In the hex mode, when the button is clicked, the background color is chosen as a random rgb hex color.
 
-
+### Interesting Takeaways
++ How the container showing the current color is aligned vertically in the screen
++ Management of the application state
++ Basic usage of ES modules
++ Basic use of DOM and event handling techniques
