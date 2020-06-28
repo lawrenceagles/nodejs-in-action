@@ -8,3 +8,6 @@ Refreshing basic Bootstrap CSS concepts (using Bootstrap v4.4).
 
 ## [02-color-flipper](./02-color-flipper/)
 An implementation of the *Color Flipper* project from *Vanilla JavaScript projects* at https://www.vanillajavascriptprojects.com/.
+
+## [03-simple-counter](./03-simple-counter/)
+An implementation of the *Simple Counter* project from *Vanilla JavaScript projects* at https://www.vanillajavascriptprojects.com/.
