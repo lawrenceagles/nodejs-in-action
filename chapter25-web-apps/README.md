@@ -11,3 +11,6 @@ An implementation of the *Color Flipper* project from *Vanilla JavaScript projec
 
 ## [03-simple-counter](./03-simple-counter/)
 An implementation of the *Simple Counter* project from *Vanilla JavaScript projects* at https://www.vanillajavascriptprojects.com/.
+
+## [04-quotes](./04-quotes/)
+An implementation of the *Reviews/Quotes* project from *Vanilla JavaScript projects* at https://www.vanillajavascriptprojects.com/.
