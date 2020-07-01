@@ -1,6 +1,12 @@
 # 04 &mdash; Quotes
 > A simple Vanilla JavaScript project that features a carousel of quotes
 
+## Status
+[X] Styling
+[ ] Make it work with all content on the browser
+[ ] Learn how to serve info from server
+[ ] Make it work all together
+
 ## Quotes (TBD)
 Simple Counter is a simple vanilla JavaScript application that displays on the page the current value of an integer counter and provides three buttons to decrease, reset and increase the value of the counter.
 
