@@ -185,6 +185,8 @@ A discussion on building modules using a custom way, and CommonJS modules.
 ## [60-ydkjs-02-ecmascript-modules/](60-ydkjs-02-ecmascript-modules/)
 Practising ECMAScript modules.
 
+## [61-native-date-and-time/](61-native-date-and-time/)
+Practising recent ECMAScript support for handling dates and times in the same way as `moment.js` and `date-fns`.
 
 ## [e01-dice-experiment-infinite-sequences](e01-dice-experiment-infinite-sequences/)
 Illustrates a simple use case of infinite iterators modeling the experiment of throwing dice repeateadly and printing the results.
