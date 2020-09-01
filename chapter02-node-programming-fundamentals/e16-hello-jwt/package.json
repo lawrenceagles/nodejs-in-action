@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "debug": "3.1.0",
-    "njwt": "0.4.0"
+    "njwt": "1.0.0"
   },
   "scripts": {
     "setup": "rm -rf node_modules && rm -f package-lock.json && rm -rf .nyc_output coverage && npm install",
