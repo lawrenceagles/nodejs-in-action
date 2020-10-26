@@ -36,3 +36,6 @@ Additional examples are my own :)
 
 + Part 3 &mdash; Flavors and Frameworks
   + [Chapter 26 &mdash; Functional Programming](chapter26-functional-programming/)
+
++ Part 4 &mdash; Advanced Patterns and Techniques
+  + [Chapter 27 &mdash; Deep dive into the Node.js platform fundamentals](chapter27-nodejs-platform-fundamentals/)
