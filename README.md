@@ -39,3 +39,4 @@ Additional examples are my own :)
 
 + Part 4 &mdash; Advanced Patterns and Techniques
   + [Chapter 27 &mdash; Deep dive into the Node.js platform fundamentals](chapter27-nodejs-platform-fundamentals/)
+  + [Chapter 28 &mdash; Node.js' Module System in depth](chapter28-nodejs-module-system/)
