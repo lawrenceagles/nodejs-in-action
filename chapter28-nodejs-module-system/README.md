@@ -905,7 +905,108 @@ console.log(counter); // now 1, but now it is the exporting module the one that 
 | You can find in [12 &mdash; ES modules read-only live bindings](./12-read-only-live-bindings/) and in [e02 &mdash; CommonJS does not have read-only live bindings](./e02-commonjs-no-read-only-live-bindings/) examples that demonstrates the difference in handling of exported bindings in *ES modules* and *CommonJS*. |
 
 ##### Circular dependency resolution
-In this section we will reimplement the same circular dependency scenario that we explored using *CommonJS*.
+In this section we will reimplement the same circular dependency scenario that we explored using *CommonJS*, but this time using *ES modules*.
+
+![Circular dependency](images/circular_dependency_esm.png)
+
+When we run the program we will get:
+
+```
+a -> <ref *1> [Module] {
+  b: [Module] { a: [Circular *1], loaded: true },
+  loaded: true
+}
+b -> <ref *1> [Module] {
+  a: [Module] { b: [Circular *1], loaded: true },
+  loaded: true
+}
+```
+
+The first thing to note is that because of read-only live bindings, we can no longer do `JSON.stringify(a)` because `a` contains an actual reference to `b` and `b` to `a` so `JSON.stringify(...)` will complain about a `TypeError`.
+
+Also, we see that both `a` and `b` have a consistent picture of each other, which didn't happen with *CommonJS*.
+
+Finally, we can also see that if we change the order in which `a` and `b` are loaded, the final picture does not change:
+
+```
+a -> <ref *1> [Module] {
+  b: [Module] { a: [Circular *1], loaded: true },
+  loaded: true
+}
+b -> <ref *1> [Module] {
+  a: [Module] { b: [Circular *1], loaded: true },
+  loaded: true
+}
+```
+
+Let's do a deep-dive on the three phases of module resolution for this scenario, to understand why *ES modules* is able to correctly solve the cycle in a consistent manner.
+
+###### Phase 1: Parsing
+As elaborated earlier, during the parsing phase the code is explored starting fromt he entry point `index.js`. The interpreter looks only for `import` statements to find all the necessary modules and to load the source code from the module files.
+
+The dependency graph is explored in a *depth-first* fashion, and every module is visited only once. Thus, the interpreter will build a dependency for our scenario that looks as the following picture:
+
+![ESM Circular dependency scenario: Parsing](images/esm_circular_deps_parsing.png)
+
+1. From `index.js`, the first import found leads us into `a.js`. As we're doing a depth-first traversing, we leave the current file and jump to explore the import.
+2. In `a.js` we find an import pointing to `b.js`. Again, we leave the current module file and jump into `b.js`.
+3. In `b.js` we find an import back into `a.js`. Since `a.js` has already been visited, this path is not explored again. That is why the arrow in the diagram is not drawn with a solid pattern.
+4. As no further imports are found, the exploration starts to wind back: `b.js` does not have other imports, so we go back to `a.js`, which also doesn't have other imports, so we go back to `index.js`. In `index.js` we find another import pointing to `b.js`, but at this module has been explored already, the path is ignored.
+
+All in all, only the solid arrows are kept in the dependency graph, which is a directed graph that points from `index.js` to `a.js` to `b.js`.
+
+![ESM final directed-dependency graph](images/esm_directed_dependency_graph.png)
+
+###### Phase 2: Instantiation
+In this phase, the interpreter walks the tree view obtained from the previous phase from the bottom to the top. For every module visited, the interpreter looks for all the exported properties and builds a map of the exported names in memory.
+
+![ESM Circular Dependencies: Instantiation](images/esm_circular_deps_instantiation.png)
+
+Note that at this point, the exports map just keep track of the exported names only &mdash; their associated values are considered uninitialized for now.
+
+Once the exports map has been created, there will be a 2nd pass of the tree to link the exported names to the modules that import them, so that we have a view of who is using what.
+
+In our case this information will be summarized as:
+1. Module `b.js` will link the exports from `a.js` through the `aModule` name
+2. Module `a.js` will link to all the exports from `b.js` using the `bModule` name
+3. `index.js` will link to all the exports from `a` and `b` referring them as `a` and `b`.
+
+![ESM Circular Dependencies: Linking](images/esm_circular_deps_instantiation_linking.png)
+
+###### Phase 3: Evaluation
+The last step is the evaluation phase. In this phase, all the code in every file is finally executed following a bottom-up fashion respecting the post-order depth-first visit of the original dependency graph. 
+
+As a result, `b.js` will be executed first, then `a.js` and `index.js` will be the last file to be executed. Doing so ensures that all the exported values have been initialized before we start execution our main business logic directed by `index.js`.
+
+The process is as follows:
+1. `b.js` 
+  1. The execution starts from the *exports*, as the *imports* have already been initialized. First of all, the `loaded` variable will be initialized to `false`.
+  2. Then we get to the definition of `a` which will be evaluated as a reference to the module in the `exports` object that represents the `a.js` module.
+  3. The `loaded` property is set to `true`, and the module `b` has been fully evaluated.
+2. `a.js`
+  1. The execution starts from the *exports*, as the *imports* have already been initialized. First of all, the `loaded` variable will be initialized to `false`.
+  2. Then we get to the definition of `b` which will be evaluated as a reference to the module in the `exports` object that represents the `b.js` module.
+  3. The `loaded` property is set to `true`, and the module `a` has been fully evaluated.
+3. `index.js`
+  1. The execution starts importing `a` which is taken as a variable definition that references the properties exported from `a.js` and that has been fully evaluated.
+  2. Similarly, `b` will be defined as a reference of the properties exported from `b.js` and that has been fully evaluated.
+  3. Then, we print the values for `a` and `b` which have sensible values even in the presence of circular dependencies.
+
+![ESM Circular Dependencies: Evaluation](images/esm_circular_deps_evaluation_final.png)
+
+#### Modifying other modules
+We have demonstrated that entities imported through ES modules are *read-only live bindings* and therefore, we cannot reassign them from an external module.
+
+However, if the default export or named export is an object, we will still be able to mutate the object itself by reassigning some of the object properties.
+
+That technique might come in handy when we need to alter the behavior of a particular module, especially in tests, etc.
+
+| EXAMPLE: |
+| :------- |
+| You can review [14 &mdash; ESM monkey patching](./14-esm-monkey-patching) for a simple runnable example. |
+
+Let's review the caveats of the example code:
+
 
 ### You know you've mastered this chapter when...
 + history of modules
