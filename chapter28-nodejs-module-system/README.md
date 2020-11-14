@@ -1,8 +1,8 @@
 # Part 4: Node.js avanced patterns and techniques
 ## Chapter 28 &mdash; Node.js' module system in depth 
-> TBD
+> Understanding *CommonJS* and *ES modules* in depth
 
-### Contents (from the intro, MUST REVIEW) 
+### Contents
 + Why modules are necessary and the different module system available in Node.js
 + CommonJS internals and module patterns
 + ES Modules (ESM) in Node.js
@@ -23,7 +23,7 @@ Modules are important to address the following fundamental concerns of software 
 + Encapsulation (or information hiding) &mdash; keeping the private part of the code hidden while exposing a public interface.
 + Managing dependencies &mdash; facilitating module developers to build on top of existing ones with functionalities like importing the chain of dependencies.
 
-The module system also plays an important role in building modules, as it defines the systan and tooling that will facilitate the development and consumption.
+The module system also plays an important role in building modules, as it defines the system and tooling that will facilitate the development and consumption.
 
 ### Module systems in JavaScript and Node.js
 When Node.js was created, it was conceived as a server runtime for JavaScript with direct access to the underlying filesystem, which represented a unique oportunity to introduce a different way to manage modules that would not rely on the `<script>` tag.
@@ -1006,18 +1006,224 @@ That technique might come in handy when we need to alter the behavior of a parti
 | You can review [14 &mdash; ESM monkey patching](./14-esm-monkey-patching) for a simple runnable example. |
 
 Let's review the caveats of the example code:
++ We have done `import fs from 'fs'` but we could have as well done `import * as fs from 'fs'` or `import { readFile } from 'fs'`.  In both cases, we would have gotten read-only live bindings, and therefore, we wouldn't have been able to mutate as we did.
++ Again, if we would have done similarly when importing the module in our `index.js` we would have ended up not using the mocked functionality.
 
+The reason for both is our mocking module is altering only the copy of `readFile(...)` registered inside the object exported as the default export, but not the one available as a named module at the top level of the module.
+
+
+
+| NOTE: |
+| :---- |
+| *Monkey patching* is trickier in the context of ESM. Some frameworks such as *Jest* provide special functionalities to mock ES modules more reliably than in the example we've seen. Another approach is to use the `module` hooks like *Mocku* does. |
+
+###### Exercise 28.4
+
+Demonstrate the fragility of the monkey patching approach taken in [14 &mdash; ESM monkey patching](./14-esm-monkey-patching).
+
+You can review the exercise in [e03 &mdash; ESM monkey patching fragility](./e03-esm-monkey-patching-fragility)
+
+It is demonstrated that:
++ It works when importing the *default* exported object from `fs`
++ It fails when importing the named export `readFile`
++ It fails when doing the namespace import of `fs`.
+
+An alternative solution consists in using the `syncBuiltinESMExports(...)` from the `module` package. This function makes the value of the properties in the default exports object to get mapped again into the equivalent named exports, effectively allowing us to propagate any external change applied to the module even to named exports.
+
+```javascript
+import fs, { readFileSync } from 'fs';
+import { syncBuiltinESMExports } from 'module';
+
+fs.readFileSync = () => Buffer.from('Hello to Jason!');
+syncBuiltinESMExports();
+
+console.log(fs.readFileSync === readFileSync);
+
+const data = fs.readFileSync('fake-path');
+console.log(`data: `, data.toString());
+```
+
+| NOTE: |
+| :---- |
+| `syncBuiltinESMExports()` works only for core, built-in Node.js modules like `fs`. |
+
+###### Exercise 28.5
+
+Use the recently learnt technique `syncBuiltinESMExports()` to improve the robustness of [14 &mdash; ESM monkey patching](./14-esm-monkey-patching).
+
+It is demonstrated in [e04 &mdash; ESM monkey patching with `syncBuiltinESMExports`](./e04-esm-monkey-patching-sync-builtin-esm-exports/)
+
+### ESM and CommonJS differences and interoperability
+Let's discuss and summarize the most important differences between *ES modules* and *CommonJS*.
+
+#### File Extensions and `package.json`.
+We have already mentioned that when using *ESM* you have to explicitly specify the file extension in imports, while extensions are optional in *CommonJS*. Also, you have to remember to include the `"type": "module"` property specification in your `package.json`. Additionally, you need to update your `.eslintrc` rules.
+
+#### ESM runs in strict mode
+ES modules run implicitly in strict mode. You don't have to use `'use strict';` at the beginning of every file.
+
+#### Missing references in *ESM*
+In *ESM*, some important *CommonJS* references are not defined:
++ `require`
++ `exports`
++ `module.exports`
++ `__filename`
++ `__dirname`
+
+Especially, `__filename` and `__dirname` which represent the absolute path to the current module file and the absolute path to its parent folder are very useful but will through `ReferenceError` when using in the context of *ESM*.
+
+In *ESM*, you can get a reference to the current file URL using the special object `import.meta`. Specifically, `import.meta.url` will return a reference to the current module path in the format `file:///path/to/current_module.js` which can be used to reconstruct `__filename` and `__dirname`.
+
+It is also possible to recreate the `require(...)` function using which would let us import functionality coming from *CommonJS* modules in the context of ES modules.
+
+Another difference is that in the global scope of an ES module, `this` is undefined, while in *CommonJS*  this is a reference to `exports`.
+
+| EXAMPLE: |
+| :------- |
+| You can find how to reconstruct these references in [16 &mdash; ESM missing references](./16-esm-missing-references/) for a simple runnable example. |
+
+#### Interoperability
+*ES modules* allows you to import *CommonJS* modules using the standard import syntax. Note that the only available syntax style for importing *CommonJS* modules is the default exports:
+
+```javascript
+import packageMain from 'commonjs-package'; // OK
+```
+
+Importing named exports or using the import namespace syntax is not allowed:
+
+```javascript
+import { method } from 'commonjs-package'; // ERROR
+import * from 'commonjs-package'; // ERROR
+```
+
+Also, *ESM* cannot import JSON files directly as modules:
+```javascript
+import data from './data.json'; // ERROR
+```
+
+This can be worked around using the `createRequire(...)` utility.
+
+```javascript
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const data = require('./data.json');
+console.log(data);
+```
+
+| NOTE: |
+| :---- |
+| There is ongoing work to support JSON module loading natively in ESM. |
+
+You can review the following examples:
++ [17 &mdash; Interoperability with `type: module` at the top-level](./17-esm-commonjs-interoperability/)
++ [18 &mdash; Interoperability without `type: module` at the top-level](./18-esm-commonjs-interoperability-no-type-module/)
+
+Note that while the support is the same in both examples, the changes you have to do in either your project, or the modules you import are different in each case. The second option is the most flexible one, as you don't need to change the extension of the *CommonJS* modules you import.
 
 ### You know you've mastered this chapter when...
-+ history of modules
-+ commonjs internals
-+ familiar with exports vs. module.exports
-+ Module definition patterns: least known things as monkey-patching, etc.
++ You're aware of the history of modules and understand why modules are the pillars for structuring any non-trivial application.
++ You understand the **revealing module** pattern, which encapsulates functionality without polluting the *global scope*.
++ You understand thoroughly the *CommonJS* internals:
+  + You understand the fundamentals pieces:
+    + `require(...)`
+    + `exports` and `module.exports`
+    + the module loader
+    + the module cache
+  + You are no longer confused by `exports` and `module.exports` and understand that `exports` is a reference to `module.exports`, and that in the *CommonJS* system, the module in the cache is defined as `module = { exports: {}, id}`, with `id` being a reference to the module being loaded.
+  + You know about the caveats of circular dependencies in *CommonJS*.
+  + You understand the module definition patterns in *CommonJS*:
+    + named exports
+    + exporting a function
+    + the **substack** pattern
+    + exporting a class
+    + exporting an instance of an object
+  + You're aware of the concept of *monkey patching* (modifying other modules or the global scope from other modules).
++ You're comfortable with *ES modules*
+  + You can configure and run a project using *ES modules* instead of *CommonJS*
+  + You're comfortable using the different export definition patterns in *ESM*:
+    + named exports `export function logger(...) { /* ... */ }`
+    + default exports `export default class Logger { /* ... */ }`
+    + mixing named and default exports
+
+  + You're comfortable using the different import definition patterns in *ESM*:
+    + namespace import `import * as loggerModule from './logger.js'`
+    + importing a single entity `import { log } from './logger.js'`
+    + importing several entities `import { log, Logger } from './logger.js'`
+    + importing and renaming `import { log as loggingFn, Logger as LoggerClass } from './logger.js'`
+    + importing a default export `import MyLogger from './logger.js'`
+    + importing default and named exports `import myLog, { info } from './logger.js'`
+  + You're aware that *named exports* are in generally recommended over *default exports*.
+  + You're aware that *ES modules* are static, and that `import` statements should be found at the top of the modules. When dynamic imports are needed, you know that you have to rely on the special `import()` operation.
+  + You understand in depth the *ES module* loading phases: construction (or parsing), instantiation and evaluation.
+  + You understand that *ESM* provide *read-only live bindings* to the exported entities.
+  + You're aware that circular-dependency resolution in *ESM* is much more robust than in *CommonJS*.
+  + You understand how to do *monkey patching* in *ESM* and understand the caveats.
++ You understand the differences between the *ESM* and *CommonJS* systems and are comfortable *importing* *CommonJS* packages into *ESM* programs.
 
 ### Code and Exercises
 
-## [01 &mdash; *Revealing module* pattern](./01-revealing-module-pattern/)
+#### [01 &mdash; *Revealing module* pattern](./01-revealing-module-pattern/)
 Illustrates the **revealing module** pattern that serves as the underlying concept behind the *CommonJS* module system of Node.js.
 
-## [02 &mdash; Circular Dependencies with *CommonJS*](./02-circular-dependencies-scenario/)
+#### [02 &mdash; Circular Dependencies with *CommonJS*](./02-circular-dependencies-scenario/)
 Illustrates a circular dependencies scenario.
+
+#### [03 &mdash; Named exports with *CommonJS*](./03-named-exports/)
+Illustrates the **named exports** pattern for module definition on which you add properties to the object referenced by `exports` (or directly to `module.exports`) to expose the public API of the module.
+
+#### [04 &mdash; The **substack pattern** in *CommonJS*](./04-substack-pattern/)
+Illustrates the **substack** pattern for module definition which consists in exporting a single function from the module assigning it to `module.exports` while exporting internal or secondary functionalities as properties of the exported function.
+
+#### [05 &mdash; Exporting a class in *CommonJS*](./05-exporting-a-class/)
+Exporting a class, so that the end user can create instances and also forge new classes by extending its prototype.
+
+#### [06 &mdash; Exporting an instancein *CommonJS*](./06-exporting-an-instance/)
+Leveraging `require(...)` cache to export a stateful instance that can be shared across different modules
+
+#### [07 &mdash; Monkey Patching in *CommonJS*](./07-monkey-patching/)
+Illustrates how to do **monkey patching** in *CommonJS*, the technique used to modify objects at runtime to change or extend their behavior or apply temporary fixes.
+
+#### [08 &mdash; ESM named exports and imports](./08-esm-named-exports-and-imports/)
+Illustrates basic scenarios for *ES modules* `export` and `import`.
+
+#### [09 &mdash; Default exports](./09-export-default/)
+Illustrates how to follow the *single responsibility principle* (SRP) in ESM with default exports.
+
+#### [10 &mdash; mixed exports](./10-mixed-exports/)
+Illustrates how to mix default and named exports with ESM.
+
+#### [11 &mdash; Hello, dynamic import](./11-hello-dynamic-import/)
+Introduces async imports (also called dynamic imports).
+
+#### [12 &mdash; ES modules read-only live bindings](./12-read-only-live-bindings/)
+Illustrates the concept of *read-only live bindings* in ES modules.
+
+#### [13 &mdash; Circular dependency scenario in *ESM*](./13-esm-circular-dependency-scenario)
+Fabricated circular dependency scenario to illustrate the mechanisms that ES module uses to address circular dependencies.
+
+#### [14 &mdash; ESM monkey patching](./14-esm-monkey-patching)
+How to modify other modules when using ES modules.
+
+#### [15 &mdash; ESM monkey patching using `syncBuiltinESMExports`](./14-esm-monkey-patching)
+Illustrates how to modify other modules when using ES modules in a more reliable way using `syncBuiltinESMExports(...)`.
+
+#### [16 &mdash; ESM missing references](./16-esm-missing-references/)
+Illustrates how you can reconstruct some missing references available in *CommonJS* in the context of *ES modules*.
+
+#### [17 &mdash; Interoperability with `type: module` at the top-level](./17-esm-commonjs-interoperability/)
+Illustrates the different ways in which you can work with *CommonJS* modules in the context of *ESM*.
+
+#### [18 &mdash; Interoperability without `type: module` at the top-level](./18-esm-commonjs-interoperability-no-type-module/)
+Illustrates the different ways in which you can work with *CommonJS* modules in the context of *ESM*, in this case without setting `"type": "module"`.
+
+#### [e01 &mdash; Functions are objects](./e01-functions-are-objects/)
+Explain the underlying concept that allowss the **substack** pattern  to work &mdash; leveraging the fact that functions are objects in JavaScript and therefore can hold other functions and properties.
+
+#### [e02 &mdash; CommonJS does not have read-only live bindings](./e02-commonjs-no-read-only-live-bindings/) 
+Demonstrates that *CommonJS* does not have read-only live bindings as *ES modules* do.
+
+#### [e03 &mdash; ESM monkey patching fragility](./e03-esm-monkey-patching-fragility)
+Illustrates the fragility of the way in which we mocked the `fs.readFile(...)` function in `mock-read-file.js`
+
+#### [e04 &mdash; ESM monkey patching with `syncBuiltinESMExports`](./e04-esm-monkey-patching-sync-builtin-esm-exports/)
+Illustrates how the robustness of the monkey patching of `fs.readFile` can be improved by invoking `module.syncBuiltinESMExports` before and after enabling and disabling the mock.
