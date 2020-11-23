@@ -330,48 +330,244 @@ timers executed before I/O callbacks
 I/O callbacks executed before setImmediate()
 
 #### Node.js callback conventions
-(page 102/661 ~ 15%)
+In Node.js, CPS APIs and callbacks follows some specific conventions that are used not only by the core modules but also by the vast majority of modules and applications.
 
+##### The callback comes last
+In Node.js, when a function accepts a callback as input, this has to be passed as the last argument:
+
+```javascript
+readFile(filename, [options], callback)
+```
+
+The reason for the callback to be received as the last argument is to ensure better readibility in case that the callback is defined *in place*.
+
+##### Any error always comes first
+In *CPS*, errors are propagated as any other type of result. This means not by *returning* the error, but rather by passing it to the callback.
+
+In Node.js, any error produced by a CPS function is always passed as the first argument of the callback, and any actual result is passed starting from the second argument.
+
+If the operation finishes without errors, the first argument will be `null` or `undefined`.
+
+```javascript
+// Following Node.js conventions:
+// callback:
+//   * passed as last arg
+//   * first param is the error
+//   * results after the error
+readFile('foo.txt', 'utf8', (err, data) => {
+  if (err) {
+    handleError(err);
+  } else {
+    processData(data);
+  }
+});
+```
+
+It is best practice to always check for the presence of an error. Also, the error must be of type `Error` &mdash; using simple strings or numbers as errors is discouraged.
+
+##### Propagating errors
+While propagating errors using direct-style functions is done with the `throw` statement, async CPS requires a different approach.
+
+In asynchronous CPS, proper error propagations is done by simply passing the error to the next callback in the chain.
+
+The typical pattern looks as follows:
+```javascript
+import { readFile } from 'fs';
+
+function readJSON(filename, callback) {
+  readFile(filename, 'utf8', (err, data) => {
+    let parsed;
+    if (err) {
+      return callback(err); // propagate the error and exit
+    }
+
+    // sync errors are handled the traditional catch/block
+    try {
+      parsed = JSON.parse(data);
+    } catch (err) {
+      return callback(err);
+    }
+
+    // everything went well, return data
+    callback(null, parsed);
+  });
+}
+```
+
+| NOTE: |
+| :---- |
+| The final callback that returns the data has not been included in the try block on purpose &mdash; doing so will cause the try block to catch errors thrown by the callback execution itself, which is not what we typically want in this case. |
+
+
+| EXAMPLE: |
+| :------- |
+| You can find a runnable example in [07 &mdash; Error handling in *CPS*](./07-cps-error-handling/).
+
+##### Uncaught exceptions
+When using CPS, if an error is thrown and not caught within the callback of an async function the error would be propagated up to the event loop causing the Node.js app to crash with a non-zero exist code.
+
+This can be easily simulated if, for example, remove the try-catch block when parsing the JSON in the example above:
+
+```javascript
+function readJSONThrows(filename, callback) {
+  readFile(filename, 'utf8', (err, data) => {
+    if (err) {
+      return callback(err);
+    }
+    callback(null, JSON.parse(data));
+  });
+}
+```
+
+There is no way to catch an exception coming from that function: the callback will never get called and the application will crash.
+
+```
+$ npm start --silent 
+...
+SyntaxError: Unexpected token # in JSON at position 0
+    at JSON.parse (<anonymous>)
+    at file:///.../main.js:11:19
+    at FSReqCallback.readFileAfterClose [as oncomplete] (node:internal/fs/read_file_context:73:3)
+$
+```
+
+Note that the stack trace starts from within the `fs` module implementation, exactly from the point in which the native API has completed reading and returned its result back to `fs.readFile(...)` via the event loop.
+
+Also, wrapping our invocation in a try-catch block won't help either:
+
+```javascript
+
+// useless!!!
+try {
+  readJSON('README.md', (err, data) => {
+    if (err) {
+      console.log(`ERROR: could not read: ${ err.message }`);
+      process.exit(1);
+    }
+    console.log(`data: ${ data }`);
+  });
+} catch (err) {
+  console.log(`ERROR: err found while executing readJSON: ${ err.message }`);
+}
+```
+
+This happens because the stack in which the block operates is different from the one in which our callback is invoked &mdash; the JSON parsing error will travel up the call stack in the event loop call stack, and not in the function that triggered the asynchronous operations.
+
+Node.js will emit a special event `'uncaughtException'` that will give us the chance to perform some cleanup. However, an uncaught exception leaves the application in an state that is not guaranteed to be consistent. Therefore, it is recommended not to leave the application running and instead the process should exit immediately after proper logging, cleanup tasks, etc.
+
+It should be responsibility of a higher-level process to restart the application under such circumstance (as a Kubernetes controller, or Cloud Foundry would do after a crash).
+
+The following snippet illustrates how this event can be caught.
+
+```javascript
+process.on('uncaughtException', err => {
+  console.error(`FATAL: unrecoverable error in the application: ${ err.message }`);
+  console.error(`...exiting...`);
+  process.exit(1);
+});
+```
+
+And this will the output:
+```
+$ npm start
+FATAL: unrecoverable error in the application: Unexpected token # in JSON at position 0
+...exiting...
+$
+```
+
+| EXAMPLE: |
+| :------- |
+| You can find a runnable example in [08 &mdash; Uncaught exception in *CPS*](./08-cps-uncaught-exception/).
+
+### The Observer pattern
+The **Observer** pattern is another fundamental pattern in the asynchronous world of Node.js. It is the ideal solution for modeling the reactive pattern of Node.js and a perfect complement for callbacks.
+
+> The **Observer** pattern defines an object (called *subject*) that can notify a set of *observers* (or *listeners*) when a change in state occurs.
+
+While the **Callback** pattern when used in a *CPS* style propagate the result of an operation to a single *listener*; the **Observer** can actually notify multiple *observers*.
+
+#### The `EventEmitter`
+In traditional OOP, the **Observer** pattern requires interfaces, concrete classes and a hierarchy.
+
+In Node.js everything is much simpler, as you can rely on the core class `EventEmitter` which allows us to register one or more *functions* as *listeners*, which will be invoked when a particular *event* is fired.
+
+![Observer Pattern](images/Observer.png)
+
+
+The following snippet shows how you can instantiate an `EventEmitter`:
+
+```javascript
+import { EventEmitter } from `events`;
+const emitter = new EventEmitter();
+```
+
+And the essential methods of the `EventEmitter` class are as follows:
+
+| EventEmitter method | Description |
+| :------------------ | :---------- |
+| `on(event, listener)` | allows us to register a new listener (function) for the given event type (string). |
+| `once(event, listener)` | registers a new listener, that will be removed after the given event is fired for the first time. |
+| `emit(event, [arg1], [arg2], ...)` | produces a new event and provides the given additional arguments that will be passed to the listeners. |
+| `removeListener(event, listener)` | reomves a listener for the specified event type. |
+
+
+All the preceding methods will return the `EventEmitter` instance to allow method chaining. The listeners have the signature `function([arg1], [arg2],...)`.
+
+| NOTE: |
+| :---- |
+| The *listeners* registered with an `EventEmitter` differ from standard Node.js callbacks in that the first argument is not an error object. |
+
+#### Creating and using the `EventEmitter`
+
+The simplest way to use an `EventEmitter` is to create a new instance and use it immediately.
+
+The following example defines a function that accepts a list of files and a regex and that notifies its subscribers when the regex is found in a file:
+```javascript
+import { EventEmitter } from 'events';
+import { readFile } from 'fs';
+
+function findRegex(files, regex) {
+  const emitter = new EventEmitter();
+
+  for (const file of files) {
+    readFile(file, 'utf8', (err, content) => {
+      if (err) {
+        console.error(`ERROR: could not read file: ${ err.message }`);
+        return emitter.emit('error', err);
+      }
+      emitter.emit('fileread', file);
+      const match = content.match(regex);
+      if (match) {
+        match.forEach(elem => emitter.emit('found', file, elem));
+      }
+    });
+  }
+  return emitter;
+}
+```
+
+The following events are produced:
+* `fileread` &mdash; when a file is being read
+* `found` &mdash; when a match is found
+* `error` &mdash; when an error is found while the file is being read
+
+
+The function can be used in a pretty straight-forward way:
+
+```javascript
+findRegex(['package.json', 'package-lock.json'], /chalk.+/g)
+  .on('fileread', file => console.log(`${ file } was read`))
+  .on('found', (file, match) => console.log(`Matched ${ match } in ${ file }`))
+  .on('error', err => console.error(`Error emitted: ${ err.message }`));
+```
+
+The code above register a listener for each of the events fired from the `findRegex(...)` function.
+
+#### Propagating errors
+(109)
 
 ### You know you've mastered this chapter when...
-+ You're aware of the history of modules and understand why modules are the pillars for structuring any non-trivial application.
-+ You understand the **revealing module** pattern, which encapsulates functionality without polluting the *global scope*.
-+ You understand thoroughly the *CommonJS* internals:
-  + You understand the fundamentals pieces:
-    + `require(...)`
-    + `exports` and `module.exports`
-    + the module loader
-    + the module cache
-  + You are no longer confused by `exports` and `module.exports` and understand that `exports` is a reference to `module.exports`, and that in the *CommonJS* system, the module in the cache is defined as `module = { exports: {}, id}`, with `id` being a reference to the module being loaded.
-  + You know about the caveats of circular dependencies in *CommonJS*.
-  + You understand the module definition patterns in *CommonJS*:
-    + named exports
-    + exporting a function
-    + the **substack** pattern
-    + exporting a class
-    + exporting an instance of an object
-  + You're aware of the concept of *monkey patching* (modifying other modules or the global scope from other modules).
-+ You're comfortable with *ES modules*
-  + You can configure and run a project using *ES modules* instead of *CommonJS*
-  + You're comfortable using the different export definition patterns in *ESM*:
-    + named exports `export function logger(...) { /* ... */ }`
-    + default exports `export default class Logger { /* ... */ }`
-    + mixing named and default exports
 
-  + You're comfortable using the different import definition patterns in *ESM*:
-    + namespace import `import * as loggerModule from './logger.js'`
-    + importing a single entity `import { log } from './logger.js'`
-    + importing several entities `import { log, Logger } from './logger.js'`
-    + importing and renaming `import { log as loggingFn, Logger as LoggerClass } from './logger.js'`
-    + importing a default export `import MyLogger from './logger.js'`
-    + importing default and named exports `import myLog, { info } from './logger.js'`
-  + You're aware that *named exports* are in generally recommended over *default exports*.
-  + You're aware that *ES modules* are static, and that `import` statements should be found at the top of the modules. When dynamic imports are needed, you know that you have to rely on the special `import()` operation.
-  + You understand in depth the *ES module* loading phases: construction (or parsing), instantiation and evaluation.
-  + You understand that *ESM* provide *read-only live bindings* to the exported entities.
-  + You're aware that circular-dependency resolution in *ESM* is much more robust than in *CommonJS*.
-  + You understand how to do *monkey patching* in *ESM* and understand the caveats.
-+ You understand the differences between the *ESM* and *CommonJS* systems and are comfortable *importing* *CommonJS* packages into *ESM* programs.
 
 ### Code and Exercises
 
@@ -389,3 +585,9 @@ Illustrates the kind of problems that can be found when relying on functions tha
 
 #### [05 &mdash; Solving the inconsistency with sync implementation](./05-inconsistent-function-sync/)
 Illustrates how to solve the function from [04 &mdash; An inconsistent function](./04-sync-async-inconsistent-function/) with a synchronous implementation.
+
+#### [06 &mdash; Solving the inconsistency with an async implementation](./06-inconsistent-function-async/)
+Illustrates how to solve the function from [04 &mdash; An inconsistent function](./04-sync-async-inconsistent-function/) with an asynchronous implementation.
+
+#### [07 &mdash; Error handling in *CPS*](./07-cps-error-handling/)
+Introduces a template for robust error control when using *CPS* functions.
