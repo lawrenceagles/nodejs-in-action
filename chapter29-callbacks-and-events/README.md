@@ -563,8 +563,269 @@ findRegex(['package.json', 'package-lock.json'], /chalk.+/g)
 
 The code above register a listener for each of the events fired from the `findRegex(...)` function.
 
+| EXAMPLE: |
+| :------- |
+| You can find a runnable example in [09 &mdash; `EventEmitter` in action](./09-event-emitter-in-action/). |
+
 #### Propagating errors
-(109)
+As with *callbacks*, when using `EventEmitter` we can't just throw an exception in case of an error. 
+
+Instead, the convention is to emit a special event called `'error'`, and pass an `Error` object as an argument:
+
+```javascript
+readFile(file, 'utf8', (err, content) => {
+  if (err) {
+    console.error(`ERROR: could not read file: ${ err.message }`);
+    return emitter.emit('error', err);
+  }
+```
+
+| NOTE: |
+| :---- |
+| The `EventEmitter` treats the `'error'` event in a special way &mdash; an exception will be thrown the application will terminate if there is no listener found. As a consequence, it is recommended to **always register a listener** for the 'error'` event. |
+
+#### Making any object observable
+In the real-world, it's quite uncommon to find an `EventEmitter` used on its own. Instead, you will typically create classes that extend from it, thus inheriting the capabilities of the `EventEmitter` and ultimately making the class a factory of *observable* objects.
+
+The following snippet illustrates this approach:
+
+```javascript
+import { EventEmitter } from 'events';
+...
+
+// class inherits from `EventEmitter` to become an observable class
+class FindRegex extends EventEmitter {
+  constructor(regex) {
+    // call super() to initialize EventEmitter internals
+    super(); 
+    ...
+  }
+
+  ...
+
+  find() {
+    for (const file of this.files) {
+      readFile(file, 'utf8', (err, content) => {
+        // if an error is found, fire 'error' event
+        if (err) {
+          console.log(`ERROR: FindRegex: couldn't read file: ${ err.message }`);
+          return this.emit(err);
+        }
+
+        // fire 'fileread' to notify that file has been successfully read
+        this.emit('fileread', file);
+
+        const match = content.match(this.regex);
+        if (match) {
+          // fire 'found' event for each hit
+          match.forEach(hit => this.emit('found', file, hit));
+        }
+      });
+    }
+    return this;
+  }
+}
+```
+
+The following example demonstrates how to use the *observable* class we've just defined:
+
+```javascript
+const findRegexInstance = new FindRegex(/babel.+/g);
+findRegexInstance
+  .addFile('./package.json')
+  .addFile('./package-lock.json')
+  .find()
+  .on('fileread', file => console.log(`About to scan ${ file }`))
+  .on('found', (file, match) => console.log(`HIT: ${ file } : ${ match }`))
+  .on('error', err => console.error(`ERROR: error found while scanning: ${ err.message }`));
+```
+
+Note how by extending the `EventEmitter` class we've been able to provide event-related capabilities to our custom class. This is a pretty common pattern in Node.js ecosystem (e.g. the core `Server` object from the `http` module, or the Node.js *streams* inherit from that class).
+
+| EXAMPLE: |
+| :------- |
+| You can find a runnable example in [10 &mdash; Observable objects](./10-observable-objects/). |
+
+#### `EventEmitter` and memory leaks
+When subscribing to observables with a long life span, it is very important to **unsubscribe** our listeners once they are no longer needed. This will prevent memory leaks associated with chunks of memory that are kept event when those will no longer be needed.
+
+| NOTE: |
+| :---- |
+| Unreleased listeners are the main source of memory leaks in Node.js (and JavaScript in general). |
+
+Consider the following snippet which represents a textbook definition of a memory leak:
+
+```javascript
+const thisTakesMemory = 'big string.....';
+const listener = () => { console.log(thisTakesMemory); }
+emitter.on('an_event', listener);
+```
+
+The listener function references `thisTakesMemory`, and therefore, will not be subject of being claimed as free memory by the garbage collector. Only if the *emitter* is garbage collected, or if we explicitly release the listener the memory will be reclaimed.
+
+> A memory leak is a software defect whereby memory that is no longer needed is not released, cause the memory usage of an application to grow indefinitely.
+
+As a consequence, an `EventEmitter` that remains reachable for the entire duration of the application, all its listeners, and all the memory they reference will take some precious memory.
+
+A listener can be removed when no longer needed using:
+
+```javascript
+emitter.removeListener('the_event', listener);
+```
+
+By default, the `EventEmitter` has a simple built-in mechanism that warns the developer about possible memory leaks of this type by reporting if the amount of listeners registered for a given event exceeds a specific amount (10 by default). The value can be adjusted using `setMaxListeners(...)`.
+
+Also, we can also use the convenience method `once(event, listener)` to automatically unregister a listener after the event is received for the first time. Note however, that if the *event* is never fired, it might create a memory leak.
+
+#### Synchronous and asynchronous events
+As with callbacks, events can also be emitted synchronously or asynchronously with respect to the moment the task that produce them are triggered.
+
+> It is crucial that we never mix the sync and async approach in the same `EventEmitter`, and that we don't emit the same event type using a mix of synchronous and asynchronous code.
+
+The main difference between emitting synchronous and asynchronous events lies in the way listeners can be registered.
+
+When events are emitted asynchronously, we can register new listeners even after the task that produces the events has been invoked, up until the current stack yields to the event loop. This is because events are guaranteed not to be fired until the next cycle of the event loop.
+
+For example, our `FindRegex` class emits its events asynchronously after the `find()` method is invoked. This is why we can register listeners after the `find()` method is invoked:
+
+```javascript
+const findRegexInstance = new FindRegex(/babel.+/g);
+findRegexInstance
+  .addFile(...)
+  .find()
+  .on('fileread', ...)
+  .on('found', ...)
+  .on('error', ...);
+```
+
+| NOTE: |
+| :---- |
+| In this case, `find(...)` emits the events asynchronously in the `readFile(...)` callback. |
+
+On the other hand, if we emit our events synchronously after the task is launched, we need to register the listeners *before* we launch the task, or we will miss all the events.
+
+The following example illustrates a synchronous implementation of the `find(...)` method, which will fire the events synchronously.
+
+```javascript
+find() {
+    for (const file of this.files) {
+      let content;
+      try {
+        content = readFileSync(file, 'utf8');
+      } catch (err) {
+        return this.emit(err);
+      }
+      
+      this.emit('fileread', file);
+      const match = content.match(this.regex);
+      if (match) {
+        match.forEach(hit => this.emit('found', file, hit));
+      }
+    }
+    return this;
+  }
+```
+
+If we use the class as below, the listeners won't get a change to get registered before `find()` completes:
+
+```javascript
+const findRegexInstance = new FindRegex(/babel.+/g);
+findRegexInstance
+  .addFile('./package.json')
+  .addFile('./package-lock.json')
+  .find()
+  .on('fileread', file => console.log(`About to scan ${ file }`))
+  .on('found', (file, match) => console.log(`HIT: ${ file } : ${ match }`))
+  .on('error', err => console.error(`ERROR: error found while scanning: ${ err.message }`));
+```
+
+which demonstrates that they have to registered before `find()`:
+
+```javascript
+const findRegexInstance = new FindRegex(/babel.+/g);
+findRegexInstance
+  .addFile('./package.json')
+  .addFile('./package-lock.json')
+  .on('found', (file, match) => console.log(`HIT: ${ file } : ${ match }`))
+  .find();
+```
+
+> As a best practice, you should always emit events in an asynchronous fashion, to prevent caveats like the one seen above. The emission of events from synchronous events can be deferred with `process.nextTick()`.
+
+| EXAMPLE: |
+| :------- |
+| You can find a runnable example in [11 &mdash; Firing events synchronously](./11-firing-events-synchronously/). |
+
+#### `EventEmitter` vs. *Callbacks*
+The general differentiating rule to decide whether to use an `EventEmitter` or accepting a callback is semantic:
+> Use a callback when a result must be returned in an asynchronous way, while events should be used when there is a need to communicate that something has happened to external observers.
+
+Besides the semantics, both aproaches can be very similar as illustrated in the example below:
+
+```javascript
+import { EventEmitter } from 'events';
+
+function helloEvents() {
+  const eventEmitter = new EventEmitter();
+  setTimeout(() => eventEmitter.emit('complete', 'Hello to Jason Isaacs!', 100));
+  return eventEmitter;
+}
+
+function helloCallback(cb) {
+  setTimeout(() => cb(null, 'Hello to Jason Isaacs!'), 100);
+}
+
+helloEvents().on('complete', message => console.log(`using events: ${ message }`));
+helloCallback((err, message) => console.log(`using callbacks: ${ message }`));
+```
+
+In this example, both functions perform the same task using events and callbacks: passing a certain message to an external function after a certain time.
+
+| EXAMPLE: |
+| :------- |
+| You can find a runnable example in [12 &mdash; Similarities in events and callbacks](./12-similarities-in-events-and-callbacks/). |
+
+
+As a result, you can use the following criteria when deciding to implement an API using callbacks or events:
+
++ Use *events* when you need to communicate different types of situations (e.g. `'fileread'`, `'complete'`, '`match`'...)*Callbacks* have some limitations when it comes to supporting different types of events. For example, in the sample above we just communicate the result not the type of event. Although this can be modeled as an extra argument in the callback, it will not make an elegant API.
++ Use *events* when a situation can occur a multiple number of times, or may not occur at all. *Callbacks* are expected to be invoked exactly once, whether the operation is successful or not. If you are using callbacks for a situation that that is repetitive in nature, reconsider if an *event* based approach would be more appropriate.
++ Use *callbacks* for an API that has to communicate a given result to exactly one interested party. If a given result should be communicated to more than one parties, use *events* instead.
+
+#### Combining *callbacks* and *events*
+In some circumstances, using an `EventEmitter` in conjunction with callbacks is an extremely powerful pattern. 
+> Using both a callback and an `EventEmitter` allows us to pass a result asynchronously using a callback, and at the same time providing a more detailed account on the status of the asynchronous process using events.
+
+As an example, the [`glob`](https://www.npmjs.com/package/glob) package exports the following entry point:
+
+```javascript
+const eventEmitter = glob(pattern, [options], callback);
+```
+
+The function accepts a *callback* that is invoked with the list of all files on which the provided pattern is found. At the same time, the function returns an `EventEmitter` which can be used to obtain a real-time status about how the search process is going.
+
+```javascript
+import glob from 'glob';
+
+glob('./**/*.md', (err, files) => {
+  if (err) {
+    console.error(`ERROR: glob cb: could not complete globbing: ${ err.message }`);
+    process.exit(1);    
+  }
+  console.log(`The following files were found: ${ files }`);
+}).on('match', match => console.log(`glob (match event): ${ match }`));
+
+```
+
+| EXAMPLE: |
+| :------- |
+| You can find a runnable example in [13 &mdash; Using callbacks and events together](./13-using-callbacks-and-events-together/). |
+
+
+| NOTE: |
+| :---- |
+| The `EventEmitter` can also be combined with other async mechanisms such as promises. In this case, the function can just return an object containing the promise and the `EventEmitter` so that the consumer can destructure it: `{ promise, events } = foo`. |
+
 
 ### You know you've mastered this chapter when...
 
@@ -591,3 +852,25 @@ Illustrates how to solve the function from [04 &mdash; An inconsistent function]
 
 #### [07 &mdash; Error handling in *CPS*](./07-cps-error-handling/)
 Introduces a template for robust error control when using *CPS* functions.
+
+#### [08 &mdash; Uncaught exception in *CPS*](./08-cps-uncaught-exception/)
+Demonstrates that not catching errors in a CPS function lead to an unrecoverable state that will crash the application.
+
+#### [09 &mdash; `EventEmitter` in action](./09-event-emitter-in-action/)
+Illustrates the **Observer** pattern using an `EventEmitter` in a simple example.
+
+#### [10 &mdash; Observable objects](./10-observable-objects/)
+Illustrates how to make objects *observable* by creating classes that inherit from `EventEmitter`.
+
+#### [11 &mdash; Firing events synchronously](./11-firing-events-synchronously/)
+Demonstrates that when the function that fires the events are synchronous, the listeners have to be registered before that functions is called.
+
+#### [12 &mdash; Similarities in events and callbacks](./12-similarities-in-events-and-callbacks/)
+Demonstrates that using events and callbacks are very similar approaches in nature-
+
+#### [13 &mdash; Using callbacks and events together](./13-using-callbacks-and-events-together/)
+Illustrates how under some circumstances, using callbacks and events together can become a very powerful pattern.
+
+TODO exercises:
++ example creating a memory leak by not unsubscribing, then fixing it unsubscribing
++ example using `once` and setMaxListeners.
