@@ -845,6 +845,7 @@ In order to preserve the asynchronous behavior, that extra `'tick'` is emitted a
 #### Exercise 4: [Playing with errors](./e04-playing-with-errors/)
 Modify the function created in [Exercise 3](./e03-simple-modification/) so that it produces an error if the timestamp at the moment of a *tick* (including the extra one at the beginning) is divisible by 5. Propagate the error using both the *callback* and the *event emitter*.
 
+This is a bit trickier as you need to ensure the function behaves asynchronously and that no `setTimeout()` is scheduled even when you know you're going to fail in the next cycle of the event loop.
 
 ### You know you've mastered this chapter when...
 
