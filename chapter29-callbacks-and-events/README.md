@@ -827,6 +827,25 @@ glob('./**/*.md', (err, files) => {
 | The `EventEmitter` can also be combined with other async mechanisms such as promises. In this case, the function can just return an object containing the promise and the `EventEmitter` so that the consumer can destructure it: `{ promise, events } = foo`. |
 
 
+### Exercises
+
+#### Exercise 1: [A simple event](./e01-a-simple-event/)
+Modify the asynchronous `FindRegex` class from [10 &mdash; Observable objects](./10-observable-objects/) so that it emits an event when the find process starts, passing the input files list as an argument of the event. Ellaborate why there is a chance of creating an inconsistency between synchronous and asynchronous behavior?
+
+As the requested event is not associated with any asynchronous behavior we need to use `process.nextTick(...)` to give a chance to listeners to register for this event.
+
+#### Exercise 2: [Ticker](./e02-ticker/)
+Write a function that accepts a number and a callback as the arguments. The function will return an `EventEmitter` that emits an event called `'tick'` every 50 milliseconds until the number of milliseconds is passed from the invocation of the function. The function will also call the callback when the number of milliseconds has passed providing as the result the total count of `'tick'` events emitted. Hint: you can use `setTimeout()` to schedule another `setTimeout()` recursively.
+
+#### Exercise 3: [A simple modification](./e03-simple-modification/)
+Modify the function from [Exercise 2](./e02-ticker/) so that it emits a tick event immediately after the function is invoked.
+
+In order to preserve the asynchronous behavior, that extra `'tick'` is emitted asynchronously using `process.nextTick(...)`.
+
+#### Exercise 4: [Playing with errors](./e04-playing-with-errors/)
+Modify the function created in [Exercise 3](./e03-simple-modification/) so that it produces an error if the timestamp at the moment of a *tick* (including the extra one at the beginning) is divisible by 5. Propagate the error using both the *callback* and the *event emitter*.
+
+
 ### You know you've mastered this chapter when...
 
 
