@@ -1,13 +1,14 @@
 # Part 4: Node.js avanced patterns and techniques
 ## Chapter 29 &mdash; Callbacks and Events in depth 
-> TBD
+> first steps into asynchronous programming: *callbacks* and *events* 
 
-### Contents (TBD)
-+ The **Callback** pattern &mdash; conventions and pitfalls
-+ The **Observer** pattern in Node.js
+### Contents
++ Introduction to asynchronous code
++ Callbacks and events: use cases, conventions and patterns.
++ The **observer** pattern in Node.js using the `EventEmitter` class.
 
 ### Intro
-In synchronous progreamming, code can be seen as the execution of a series of consecutive computing steps that solve a specific problem. Every operation is blocking, meaning that only when an operation is completed, it is possible to advance to the next one.
+In synchronous programming, code can be seen as the execution of a series of consecutive computing steps that solve a specific problem. Every operation is blocking, meaning that only when an operation is completed, it is possible to advance to the next one.
 
 By contrast, in asynchronous programming, certain operations are performed *in the background*. These operations are non-blocking, meaning that When we invoke an asynchronous operation, the instruction that follows is executed immediately after, even if the previous one hasn't finished yet. 
 In this scenario, we need to get notified when that background operation completes, and the most basic mechanism is the **callback** &mdash; a function that will be invoked by the runtime with the result of the asynchronous operation when it has completed.
@@ -313,21 +314,12 @@ Using `setTimeout(cb, 0)` has a similar effect to that of `setImmediate()`, but 
 
 The reason lies in the fact that the event loop handles event callback execution in different phases:
 1. Timer events scheduled with `setTimeout(...)`
-2. microtasks scheduled with `process.nextTick(...)`
+2. Microtasks scheduled with `process.nextTick(...)`
 3. I/O events
-4. tasks scheduled with `setImmediate(...)`
-5. closing tasks such as `socket.on('close', ...)`
+4. Tasks scheduled with `setImmediate(...)`
+5. Closing tasks such as `socket.on('close', ...)`
 
 Using `setImmediate()` gives you a chance to see your callback executed in the current loop cycle. By contrast, when using `setTimeout(0, cb)` most surely cb will not have a chance to be executed until the next cycle.
-
-As a consequence, if we do:
-
-```javascript
-setTimeout(0, () => setImmediate())
-```
-
-timers executed before I/O callbacks
-I/O callbacks executed before setImmediate()
 
 #### Node.js callback conventions
 In Node.js, CPS APIs and callbacks follows some specific conventions that are used not only by the core modules but also by the vast majority of modules and applications.
@@ -847,8 +839,47 @@ Modify the function created in [Exercise 3](./e03-simple-modification/) so that 
 
 This is a bit trickier as you need to ensure the function behaves asynchronously and that no `setTimeout()` is scheduled even when you know you're going to fail in the next cycle of the event loop.
 
-### You know you've mastered this chapter when...
+#### Exercise 5: [Identifying memory leaks](./e05-identifying-memory-leaks/)
+Create a program that creates a memory leak by subscribing to an event and never unsubscribing from it.
+Identify the problem and fix it by unsubscribing.
 
+In the example, we use [`clinic`](https://www.npmjs.com/package/clinic) as a way to easily identify visually the memory leak.
+
+### You know you've mastered this chapter when...
++ You're comfortable explaining the differences between synchronous and asynchronous code, and understand when writing asynchronous code you need a mechanism to get notified when a *background* operation has completed.
++ You know that a *callback* is a function that is passed as an argument to other function and invoke to propagate the result of an operation.
++ You're familiar with the *continuation-passing style* (CPS) and understand that it can be used both for synchronous and asynchronous code.
++ You understand that not all callbacks are used for CPS coding &mdash; for example, functional operations like `map` or `filter` receive callbacks as arguments and are not CPS use cases.
++ You understand the caveats (*Zalgo*) of writing functions that behave synchronously or asynchronously depending on the situation.
++ You know that the best practice is:
+  > always choose a direct style for purely synchronous functions. It will eliminate any confusion regarding its async nature, and will be more efficient from the performance perspective.
++ You're also aware that you should be cautious of using long synchronous block of code as they *block the event loop* preventing the result of async operations from being completed and breaking Node.js concurrency model.
++ You're comfortable using the Node.js API to defer synchronous operation until the next event loop, and understand the use cases for which that is needed:
+  + `process.nextTick(fn)` &mdash; defers the execution of the given function after the currently running operation completes, that is, until the *event loop* takes control again.
+  + `setImmediate(fn)` &mdash; similar to `process.nextTick(...)` but the deferred task will not be placed in front of all other I/O operations.
+  + `setTimeout(fn, 0)` &mdash; similar to `setImmediate(...)` but scheduled to be processed in another phase of the event loop.
++ You're aware that the event loop is divided in several phases that process the async tasks depending on their nature:
+  1. Timer events scheduled with `setTimeout(...)`
+  2. Microtasks scheduled with `process.nextTick(...)`
+  3. I/O events
+  4. Tasks scheduled with `setImmediate(...)`
+  5. Closing tasks such as `socket.on('close', ...)`
++ You understand that the Node.js conventions for callbacks is to be received as the last argument to ensure better readability in case that the callback is defined *in place*, and that the callback should accept an error argument first, and then the data as in `readFile(file, [options], cb)` with `cb = (err, data) => { ... }`.
++ You're comfortable handling an propagating errors when using callbacks. You're aware that you cannot use *try-catch* blocks to capture errors when using CPS style code.
++ You known that an unhandled exception when using CPS will crash your application. Even listening to the `'uncaughtException'` event will not help as your application will be in an unstable state. However, you can register a listener for that event to bind some clean up processes before exiting from your application.
++ You understand how to leverage the **observer** pattern in Node.js through the `EventEmitter` class.
++ You're familiar with the most relevant methods of the `EventEmitter`: `on(...)`, `once(...)`, `emit(...)` and `removeListener(...)`.
++ You are aware of how errors should be propagated when using *events*.
++ You understand how powerful it is to make objects *observable* by making them inherit from `EventEmitter` and are aware of how the developer experience can be improved by returning the `EventEmitter` instance in the methods so that method calls can be chained.
++ You are aware why events are one of the major sources of memory leaks in JavaScript.
++ You understand that synchronous and asynchronous event logic should not be mixed:
+  > events should always be emitted either synchronously or asynchronously. Mixing them will create inconsistent behavior.
++ You know about the criteria about when to use callbacks vs. events vs. both:
+  + use a callback when you need to return a result in an async way.
+  + use events when you need to communicate that something has happened to one or multiple external observers.
+  + use events when you need to communicate different types of situations.
+  + use events when a situation might happen multiple times.
+  + use a callback when there is a single interested party.
 
 ### Code and Exercises
 
@@ -890,7 +921,3 @@ Demonstrates that using events and callbacks are very similar approaches in natu
 
 #### [13 &mdash; Using callbacks and events together](./13-using-callbacks-and-events-together/)
 Illustrates how under some circumstances, using callbacks and events together can become a very powerful pattern.
-
-TODO exercises:
-+ example creating a memory leak by not unsubscribing, then fixing it unsubscribing
-+ example using `once` and setMaxListeners.
