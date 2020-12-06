@@ -397,6 +397,154 @@ with:
 
 > The **sequential iterator pattern** lets you execute a list of tasks in sequence by creating a function named `iterator`, which invokes the next available task in the collection and makes sure to invoke the next step of the iteration when the current task completes.
 
+##### Parallel execution
+When the order of execution of a set of asynchronous tasks is not important, and all we want is to be notified when all those running tasks are completed we can run the tasks using a parallel execution flow:
+
+![Parallel execution](images/parallel_execution.png)
+
+Note that this is possible in Node.js single-threaded model thanks to the non-blocking nature of the engine.
+
+The details that explain how this *concurrent* or *parallel* execution is possible can be seen in the following sequence diagram. The diagram depicts how two asynchronous tasks *Task 1* and *Task 2* run in parallel in a Node.js program driven by *Main*:
+
+![Parallel Execution: Sequence Diagram](images/parallel_execution_sequence_diagram.png)
+
+1. The **Main** function triggers the execution of **Task 1** and **Task 2**. As they trigger a non-blocking asynchronous oepration, they immediately return control back to **Main**, which then returns to the **Event Loop**.
+
+2. When the asynchronous operation of **Task 1** is completed, the **Event Loop** gives control to it. When **Task 1** completes its internal synchronous processing as well, it notifies the **Main** function.
+
+3. When the asynchronous operation triggered by **Task 2** is complete, the **Event Loop** invokes its callback, giving control back to **Task 2**. At the end of **Task 2**, the **Main** function is notified once more. At this point, **Main** function knows that both **Task 1** and **Task 2** are complete, so it can continue its execution or return the results of the oeprations to another callback.
+
+| NOTE: |
+| :---- |
+| This is also easy to understand with our Node.js mental model based on the *event loop*, a *call stack*, an *event queue*, and a set of underlying *runtime APIs*. |
+
+Let's use this approach to build another version of our web crawler. In this case, instead of doing a sequential, recursive download of the linked pages, we will download all the linked pages in parallel.
+
+The only function we need to modify is `spiderLinks(...)` to change the previous sequential approach for the parallel one:
+
+```javascript
+function spiderLinks(currentUrl, body, nesting, cb) {
+  if (nesting === 0) {
+    // make sure the behavior of the function is always async
+    return process.nextTick(cb);
+  }
+
+  const links = getPageLinks(currentUrl, body);
+  if (links.length === 0) {
+    return process.nextTick(cb);
+  }
+
+  let completed = 0;
+  let hasErrors = false;
+
+  function done(err) {
+    if (err) {
+      hasErrors = true;
+      return cb(err);
+    }
+    if (++completed == links.length && !hasErrors) {
+      return cb();
+    }
+  }
+
+  links.forEach(link => spider(link, nesting - 1, done));
+}
+```
+
+Now the `spider(...)` tasks are started all at once by simply iterating over the links array and starting each task without waiting for the previous one to finish:
+
+```javascript
+links.forEach(link => spider(link, nesting - 1, done));
+```
+
+In order to control the status of the completed tasks, we provide `spider(...)` a custom callback that keeps track of the number of completed tasks and an error *guard*.
+
+| EXAMPLE: |
+| :------- |
+| You can review the full implementation in [05 &mdash; Web Crawler v3](./05-web-crawler-v3/). |
+
+##### The pattern for parallel execution over a collection of tasks
+We can extract the pattern for the parallel execution flow as follows:
+
+```javascript
+const tasks = [ /* ...collection of tasks... */]
+
+let completed = 0;
+tasks.forEach(task => {
+  task(() => {
+    if (++completed === tasks.length) {
+      finish();
+    }
+  });
+});
+
+
+function finish() {
+  // all the tasks have been completed
+}
+```
+
+This pattern can be adapted with small modifications to accumulate the results of each task into a collection, to filter or map the elements of an array, or to invoke the `finish()` callback as soon as one or any number of tasks complete, in what is called a **competitive race**.
+
+> The **unlimited parallel execution pattern** runs a set of asynchronous tasks in parallel by launching them all at once, and then waits for all of them to complete by counting the number of times their callbacks are invoked.
+
+##### Fixing race conditions with concurrent tasks
+When we have multiple tasks running in parallel, we might have *race conditions* &mdash; contention to access external resources such as files or database records.
+
+Identifying, and fixing race conditions in Node.js is a completely different story from the one you'd have for multithreaded programming languages. In those languages you would use *locks*, *mutexes*, *semaphores* and *monitors* to deal with task synchronization and race conditions. In Node.js, we don't need those synchronization mechanisms as everything runs on a single thread.
+
+> However, that does not mean that we can't have *race conditions* in Node.js. *Race conditions* are quite common in Node.js the root cause has to do with the delay between the invocation of an asynchronous operation and the notification of its result.
+
+In particular, our *Web Crawler v3* includes an obvious race condition:
+
+```javascript
+export function spider(url, nesting, cb) {
+  const filename = urlToFilename(url);
+  fs.readFile(filename, 'utf8', (err, fileContent) => {
+    if (err) {
+      if (err.code !== 'ENOENT') {
+        return cb(err);
+      }
+
+      // ENOENT: file did not previously existed
+      return downloadFile(url, filename, (err, requestContent) => {
+      ...
+```
+
+Two `spider(...)` tasks operating on the same URL might invoke `fs.readFile(...)` on the same file before one of the two tasks completes the download and creates a file, causing both tasks to start a `downloadFile(...)` operation:
+
+![Race condition example](images/race_condition_example.png)
+
+*Task 1* and *Task 2* are interleaved in a single thread of Node.js, and we see how we can get a race condition as two separate tasks will end up downloading and writing the same file.
+
+In this case, we can fix it using a `Set()` that would let us prevent downloading a given URL twice:
+
+```javascript
+const spidering = new Set();
+
+export function spider(url, nesting, cb) {
+  if (spidering.has(url)) {
+    console.log(`INFO: spider: skipping ${ url } as it has already been processed`);
+    return process.nextTick(cb);
+  }
+  spidering.add(url);
+```
+
+As Node.js is single threaded, and there is no background async operation involved when interacting with the `spidering` set, we can ensure that we won't trigger the execution of any URL download twice at any point in time, and therefore, we won't have the race condition anymore.
+
+| NOTE: |
+| :---- |
+| A possible optimization, especially if you're dealing with a large set, would be to remove the URL from `spidering` once the download has completed successfully, as then, the file itself would be used as the guard to control the URL is not processed again. |
+
+Race conditions can cause many problems, even in a single-threaded environment such as the one that provides Node.js. Race conditions are very difficult to spot because of their ephemeral nature, so it's considered a good practice to be proactive trying to identifying them before hand, by looking for situations on which asynchronous tasks are running in parallel and depend on the outcome of asynchronous operations.
+
+| EXAMPLE: |
+| :------- |
+| You can review the full implementation in [06 &mdash; Web Crawler v4: Fixing the race condition](./06-web-crawler-v4-race-condition-fix/). |
+
+#### Limited parallel execution
+
+
 ### You know you've mastered this chapter when...
 
 ### Code, Exercises and mini-projects
@@ -407,8 +555,17 @@ First version of a simple web crawler that takes in a web URL as input and downl
 #### [02 &mdash; Refactoring the simple web crawler](./02-refactored-simple-web-crawler/)
 Second version of the simple web crawler, in which the principles of the *callback discipline* have been applied.
 
-#### [03 &mdash; Static Sequencial Iteration](./03-static-sequential-iteration/)
+#### [03 &mdash; Static Sequential Iteration](./03-static-sequential-iteration/)
 Illustrates how to orchestrate a predefined set of asynchronous tasks, known in advanced, so that they are executed sequentially.
+
+#### [04 &mdash; Web Crawler v2](./04-web-crawler-v2/)
+The original example [01 &mdash; A simple web crawler](../01-a-simple-web-crawler) with some additional features and a recursive, sequential download of linked pages.
+
+#### [05 &mdash; Web Crawler v3](./05-web-crawler-v3/)
+The original example [01 &mdash; A simple web crawler](../01-a-simple-web-crawler) but applying a parallel downloading of linked pages.
+
+#### [06 &mdash; Web Crawler v4: Fixing the race condition](./06-web-crawler-v4-race-condition-fix/)
+An improvement over [05 &mdash; Web Crawler v3](../05-web-crawler-v3) that includes a fix for a possible race condition when two `spider()` tasks download the same file.
 
 + Mini-project: webcrawler that creates a simplified view of IMDB title page:
   + title
