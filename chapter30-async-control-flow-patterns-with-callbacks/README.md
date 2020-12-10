@@ -1,8 +1,11 @@
 # Part 4: Node.js avanced patterns and techniques
 ## Chapter 30 &mdash; Asynchronous Control Flow Patterns with Callbacks
-> tbd
+> controlling execution flow when using callback-style programs
 
-### Contents (TBD)
+### Contents
++ The difficulties of asynchronous programming
++ Learning to apply control flow patterns to Node.js code: sequential and paralell
++ Controlling the concurrency limits
 
 ### Intro
 Asynchronous code and continuation-passing style (CPS) can be frustrating:
@@ -543,9 +546,275 @@ Race conditions can cause many problems, even in a single-threaded environment s
 | You can review the full implementation in [06 &mdash; Web Crawler v4: Fixing the race condition](./06-web-crawler-v4-race-condition-fix/). |
 
 #### Limited parallel execution
+Spawning parallel tasks without control typically lead to excessive load, and ultimately crashes as the application runs out of resources.
 
+This can also be considered a security issues, as a server that spawns unbounded parallel tasks to handle a user request could be exploited with a **denial-of-service** (DoS) attack.
+
+Therefore, limiting the number of parallel tasks is, in general, a good practive that helps building more resilient applications.
+
+The following diagram depicts the approach, consisting in running a set of asynchronous tasks, in parallel, but with a defined concurrency limit (two parallel tasks in the picture):
+
+![Limited Parallel Execution](images/limited_parallel_execution.png)
+
+The strategy is as follows:
++ We spawn as many tasks as we can without exceeding the concurrency limit.
++ Every time a task is completed, we spawn one or more tasks until we reach the limit again.
+
+##### The pattern for limited concurrency
+
+Consider the following snippet, that executes a set of given tasks with limited concurrency:
+
+```javascript
+const tasks = [ /* async tasks to execute in parallel */];
+
+const concurrency = 2;
+let running = 0;
+let completed = 0;
+let index = 0;
+
+function next() {
+  while (running < concurrency && index < tasks.length) {
+    const task = tasks[index++];
+    task(() => {
+      if (++completed === tasks.length) {
+        return finish();
+      }
+      running--;
+      next();
+    });
+    running++;
+  }
+}
+
+next();
+
+function finish() {
+  /* all tasks executed */
+}
+```
+
+As you can see, the pattern is a mixture of the **sequential execution pattern** and the **parallel execution pattern**:
++ We have an iterator function `next(...)` and an inner loop that spawns as many tasks as possible in parallel while staying within the concurrency limit.
++ The callback that we pass to each task checks whether we have completed all the tasks in the list. If there are still tasks to run, it invokes `next()` to spawn another set of tasks.
+
+##### Globally limiting concurrency
+In some situations, the pattern described above will not be enough to control the number of operations running in the background. For example, in our *web crawler* example, that pattern won't work as we will be limiting the number of links downloaded from each page, but as each page will spawn another two downloads the grand total of download operations will end up being exponential.
+
+> The pattern for **limited concurrency pattern** works well when we have a predetermined set of tasks to execute, or when the set of tasks grow linearly over the time. That pattern is not suitable for limiting global concurrency in other circumstances.
+
+##### Queues to the rescue
+A suitable solution for controlling the global number of asynchronous operations makes uses of **queues** to limit the concurrency of multiple tasks.
+
+Let's consider the following module `TaskQueue` which will combine a queue with the limited concurrency algorithm:
+
+```javascript
+export class TaskQueue {
+  constructor(concurrency) {
+    this.concurrency = concurrency;
+    this.running = 0;
+    this.queue = [];
+  }
+
+  push(task) {
+    this.queue.push(task);
+    process.nextTick(this.next.bind(this));
+    return this;
+  }
+
+  next() {
+    while (this.running < this.concurrency && this.queue.length) {
+      const task = this.queue.shift();
+      task(() => {
+        this.running--;
+        process.nextTick(this.next.bind(this));
+      });
+      this.running++;
+    }
+  }
+}
+```
+
+The constructor of this class takes the concurrency limit and initializes the instance variables `running` (that will keep task of the pending running tasks) and `queue`, which is supported by an array that will keep track of the pending tasks.
+
+The `pushTask(...)` method adds a new task to the queue and bootstraps the execution of the worker by invoking `this.next()`.
+
+| NOTE: |
+| :---- |
+| we're forced to use `this.next.bind(this)` to ensure that `next(...)` won't lose the context when invoked by `process.nextTick()`. Recall that `bind(thisArg[, arg1[, arg2[, ...argN]]])` creates a new function that when called, has its `this` keyword set to the provided value. |
+
+The `next()` method spawns a set of tasks from the queue, ensuring that it does not exceed the concurrency limit.
+
+This approach has the following advantages over the **limited concurrency pattern**:
++ It allows us to add new tasks dynamically as we go along
++ We have a *central entity* defined that is responsible for the limitation of the concurrency of our tasks, which can be shared across all the instances of a function's execution, and therefore, capable of controlling the concurrency limit globally.
+
+##### Refining the `TaskQueue`
+The `TaskQueue` from the previous section needs additional features to make it production grade:
++ better error management to identify failed tasks
++ understand when all the work in the queue has been completed
+
+In order to add these features, we only need to modify the `next(...)` method of our previous `TaskQueue` implementation, and import the `EventEmitter` class:
+
+```javascript
+import { EventEmitter } from 'events';
+
+export class TaskQueue extends EventEmitter {
+  constructor(concurrency) {
+    super();
+    ...
+  }
+
+  next() {
+    if (this.running === 0 && this.queue.length === 0) {
+      return this.emit('empty');
+    }
+
+    while (this.running < this.concurrency && this.queue.length) {
+      const task = this.queue.shift();
+      task(err => {
+        if (err) {
+          console.log(`ERROR: TaskQueue: error processing task: ${ err.message }`);
+          this.emit('error', err);
+        }
+        this.running--;
+        process.nextTick(this.next.bind(this));
+      });
+      this.running++;
+    }
+  }
+}
+```
+
+Therefore, every time the `next()` function is called, we check that no task is running and whether the queue is empty to identify that the queue has been *drained* which we communicate through the `'empty'` event.
+
+In the task completion callback we check for errors and if an error is found we propagate it through an `'error'` event.
+
+| NOTE: |
+| :---- |
+| We are keeping the queue running in case of error in purpose, without stopping other tasks in progress or removing any pending tasks. This is quite common in queue-based systems. |
+
+##### Web crawler version 5
+
+Now we can modify our web crawler to make use of the `TaskQueue` as a work backlog: every URL that we want to crawl needs to be appended to the queue as a task.
+
+The queue will manage all the scheduling for us making sure that the number of tasks in progress is never greater than the concurrency limit.
+
+First of all, we rename our `spider(...)` function as `spiderTask(...)` and make it our generic crawling task:
+
+```javascript
+function spiderTask(url, nesting, queue, cb) {
+  const filename = urlToFilename(url);
+  fs.readFile(filename, 'utf8', (err, fileContent) => {
+    if (err) {
+      if (err.code !== 'ENOENT') {
+        return cb(err);
+      }
+
+      // ENOENT: file did not previously existed
+      return downloadFile(url, filename, (err, requestContent) => {
+        if (err) {
+          return cb(err);
+        }
+
+        spiderLinks(url, requestContent, nesting, queue);
+        return cb();
+      });
+    }
+
+    // file already existed and was correctly read: process the links
+    spiderLinks(url, fileContent, nesting, queue);
+    return cb();
+  });
+}
+```
+
+Note that:
++ the function signature has changed and now accepts a parameter called `queue`. This is an instance of `TaskQueue` that we need to carry over to be able to append new tasks when necessary.
++ the function responsible for adding new links to crawl is `spiderLinks(...)`, which is no longer async. This function also receives the `queue` instance.
+
+Now the `spiderLinks()` function gets greatly simplified, as it delegates task tracking to the `TaskQueue`. The function becomes synchronous now, as it will just invoke a new `spider(...)` function:
+
+```javascript
+function spiderLinks(currentUrl, body, nesting, queue) {
+  if (nesting === 0) {
+    return;
+  }
+
+  const links = getPageLinks(currentUrl, body);
+  if (links.length === 0) {
+    return;
+  }
+
+  links.forEach(link => spider(link, nesting - 1, queue));
+}
+```
+
+Now the entry point is the `spider(...)` function, which will be responsible for pushing every new discovered URL to the queue:
+
+```javascript
+const spidering = new Set();
+
+export function spider(url, nesting, queue) {
+  if (spidering.has(url)) {
+    console.log(`INFO: spider: skipping ${ url } as it has already been processed`);
+    return;
+  }
+  spidering.add(url);
+  queue.pushTask(done => {
+    spiderTask(url, nesting, queue, done);
+  });
+}
+```
+
+Finally, we adapt the `main` script so that it instantiates the queue and invokes the `spider(...)` entry point:
+
+```javascript
+import { spider } from './lib/spider.js';
+import { TaskQueue } from './lib/task-queue.js';
+
+
+const url = process.argv[2] ?? 'http://www.example.com';
+const nesting = Number.parseInt(process.argv[3], 10) || 1;
+const concurrency = Number.parseInt(process.argv[4], 10) || 1;
+
+
+const spiderQueue = new TaskQueue(concurrency);
+spiderQueue.on('error', console.error);
+spiderQueue.on('empty', () => console.log(`INFO: completed download of ${ url }`));
+
+spider(url, nesting, spiderQueue);
+```
+
+| EXAMPLE: |
+| :------- |
+| You can review the full implementation of the `TaskQueue` and the Web Crawler v5 in [07 &mdash; Web Crawler v5](./07-web-crawler-v5/). |
+
+
+### The `async` library
+The [`async`](https://www.npmjs.com/package/async) is a very popular utility module that implements the patterns we've seen in this chapter, and many other ones.
+
+The most important capabilities of this library are:
++ execute async functions over a collection of elements in series or in parallel, and with limited concurrency.
++ provides a queue abstraction that is functionally equivalent to our `TaskQueue` implementation.
++ additional sophisticated async patterns such as *race* which execute multiple async function in parallel and stops when the first one completes.
+
+In general, once you've grasped the fundamentals and rationale behind the patterns presented it is recommended to rely on battle-tested libraries such as `async` for your production applications.
 
 ### You know you've mastered this chapter when...
++ You understand the difficulties of asynchronous code and CPS programming: readability and efficiency
++ You are aware of the callback discipline rules, that will let you minimize the difficulties associated to asynchronous programming with callbacks:
+  + Do not abuse in-place definitions when using callbacks &mdash; use named functions instead.
+  + Exit as soon as possible instead of nesting.
+  + Modularize the code as much as possible, creating smaller, reusable, named functions.
++ You know how to manually *sequence* a predefined set of tasks when using CPS.
++ You're aware of the pattern for sequential iteration over a collection.
++ You're aware of the pattern for the unlimited parallel execution, and understand that in general, it is better to control concurrency so that the number of concurrent tasks do not grow out of control.
++ You understand what is race condition, and you know the general guidelines to identify where it might happen in Node.js, even when being single threaded (delay between the invocation of an asynchronous operation and the notification of the result).
++ You understand what can you do to limit the exposure to race conditions.
++ You know about the pattern for limited concurrency, and understand that is much better behaved than the one for unlimited parallel execution.
++ You're aware that the pattern for unlimited concurrency might be challenging when you cannot globally limit the concurrency.
++ You understand that implementing a *queue* to control the number of asynchronous operation is a robust way to limit the concurrency of parallel asynchronous operations. You're aware of how to use this pattern, and how to make it more robust through *events*.
++ You know that for production grade scenarios, `async` is a very good solution for implementing the aforementioned asynchronous patterns and many more.
 
 ### Code, Exercises and mini-projects
 
@@ -566,6 +835,19 @@ The original example [01 &mdash; A simple web crawler](../01-a-simple-web-crawle
 
 #### [06 &mdash; Web Crawler v4: Fixing the race condition](./06-web-crawler-v4-race-condition-fix/)
 An improvement over [05 &mdash; Web Crawler v3](../05-web-crawler-v3) that includes a fix for a possible race condition when two `spider()` tasks download the same file.
+
+#### [07 &mdash; Web Crawler v5](./07-web-crawler-v5/)
+The final version of the Web Crawler, that uses a `TaskQueue` to control the concurrency of parallel requests.
+
+#### Exercise 1: [File Concatenation](./e01-file-concatenation/)
+Write the implementation of `concatFiles(...)`, a callback-style function that takes two or more paths to text files in the file system and a destination file.
+
+This function must copy the contents of every source file into the destination file, respecting the order of the files as provided by the arguments list. Also, the function must be able to handle an arbitrary number of arguments.
+
+#### Exercise 2: [List files recursively](./e02-list-files-recursively/)
+Write `listNestedFiles()`, a callback-style function that takes as the input the path to a directory in the local filesystem, and that asynchronously iterates over all the subdirectories to eventually return a list of all the files discovered.
+
+
 
 + Mini-project: webcrawler that creates a simplified view of IMDB title page:
   + title
