@@ -847,7 +847,22 @@ This function must copy the contents of every source file into the destination f
 #### Exercise 2: [List files recursively](./e02-list-files-recursively/)
 Write `listNestedFiles()`, a callback-style function that takes as the input the path to a directory in the local filesystem, and that asynchronously iterates over all the subdirectories to eventually return a list of all the files discovered.
 
+#### Exercise 3: [Recursive find](./e03-recursive-find/)
+Write `recursiveFind()`, a callback-stule function that takes a path to a directory in the local filesystem and a keyword as per the following signature:
+```javascript
+function recursiveFind(dir, keyword, cb)
+```
 
+The function must find all the text files within the given directory that contain the given keyword in the file contents. The list of matching files should be returned using the callback when the search is completed. If not matching file is found, the callback must be invoked with an empty array.
+
+As an example test case, if you have the files `foo.txt` and `bar.txt` and `baz.txt` in `myDir` and the keyword `batman` is contained in the files `foo.txt`, and `baz.txt` making the call:
+
+```javascript
+recursiveFind('myDir', 'batman', console.log)
+// should print ['foo.txt', 'baz.txt']
+```
+
+The final solution must make the search recursive, so that it looks for files in any subdirectory of the given directory, and in parallel using a `TaskQueue` so that the number of parallel tasks don't grow out of control.
 
 + Mini-project: webcrawler that creates a simplified view of IMDB title page:
   + title
