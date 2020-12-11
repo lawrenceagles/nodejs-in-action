@@ -36,9 +36,5 @@
     "freshen-deps": "./scripts/freshen.sh"
   },
   "dependencies": {
-    "cheerio": "1.0.0-rc.3",
-    "mkdirp": "0.5.5",
-    "slug": "4.0.2",
-    "superagent": "6.1.0"
   }
 }

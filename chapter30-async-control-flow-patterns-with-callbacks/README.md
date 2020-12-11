@@ -693,6 +693,10 @@ In the task completion callback we check for errors and if an error is found we 
 | :---- |
 | We are keeping the queue running in case of error in purpose, without stopping other tasks in progress or removing any pending tasks. This is quite common in queue-based systems. |
 
+| EXAMPLE: |
+| :------- |
+| You have a very simple example in [Hello, `TaskQueue`](./e04-hello-task-queue) that would let you understand in a simple way the usage patterns of the `TaskQueue`. |
+
 ##### Web crawler version 5
 
 Now we can modify our web crawler to make use of the `TaskQueue` as a work backlog: every URL that we want to crawl needs to be appended to the queue as a task.
@@ -852,6 +856,9 @@ Write `recursiveFind()`, a callback-stule function that takes a path to a direct
 ```javascript
 function recursiveFind(dir, keyword, cb)
 ```
+
+#### Example 4: [Hello, `TaskQueue`](./e04-hello-task-queue)
+A very simple example demonstrating the usage pattern for our `TaskQueue` class. In the example, we use the `TaskQueue` to classify a large number of numbers into even and odd.
 
 The function must find all the text files within the given directory that contain the given keyword in the file contents. The list of matching files should be returned using the callback when the search is completed. If not matching file is found, the callback must be invoked with an empty array.
 

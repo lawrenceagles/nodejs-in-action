@@ -13,7 +13,7 @@ function listNestedFiles(dir, cb) {
   });
 }
 
-/* scanDir is a supporting function for passing files an objects as context */
+/* scanDir is a supporting function for passing files and objects as context */
 function scanDir(dir, files, objects, cb) {
   fs.readdir(dir, (err, dirEntries) => {
     if (err) {
