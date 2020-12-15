@@ -857,9 +857,6 @@ Write `recursiveFind()`, a callback-stule function that takes a path to a direct
 function recursiveFind(dir, keyword, cb)
 ```
 
-#### Example 4: [Hello, `TaskQueue`](./e04-hello-task-queue)
-A very simple example demonstrating the usage pattern for our `TaskQueue` class. In the example, we use the `TaskQueue` to classify a large number of numbers into even and odd.
-
 The function must find all the text files within the given directory that contain the given keyword in the file contents. The list of matching files should be returned using the callback when the search is completed. If not matching file is found, the callback must be invoked with an empty array.
 
 As an example test case, if you have the files `foo.txt` and `bar.txt` and `baz.txt` in `myDir` and the keyword `batman` is contained in the files `foo.txt`, and `baz.txt` making the call:
@@ -871,18 +868,5 @@ recursiveFind('myDir', 'batman', console.log)
 
 The final solution must make the search recursive, so that it looks for files in any subdirectory of the given directory, and in parallel using a `TaskQueue` so that the number of parallel tasks don't grow out of control.
 
-+ Mini-project: webcrawler that creates a simplified view of IMDB title page:
-  + title
-  + release year
-  + Director/Creator
-  + A few cast entries (the ones that appear in stars), plus the 5-10 initial ones
-
-+ Exercise:
-  + Implement 03 using the sequential iteration approach
-
-
-  + Implement `iterateSeries(collection, iteratorCallback, finalCallback)`.
-    + `collection` &mdash; the dataset you want to iterate over
-    + `iteratorCallback` &mdash; function that should be executed on every item
-    + `finalCallback` &mdash; function to be executed when all the items have been processed or in case of error while iterating
-    + reimplement the first exercise using the iterateSeries
+#### Example 4: [Hello, `TaskQueue`](./e04-hello-task-queue)
+A very simple example demonstrating the usage pattern for our `TaskQueue` class. In the example, we use the `TaskQueue` to classify a large number of numbers into even and odd.
