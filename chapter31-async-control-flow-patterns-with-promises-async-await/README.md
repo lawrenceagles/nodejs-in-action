@@ -496,7 +496,9 @@ A revision of the v2 version, using promises, in which the links are downloaded 
 A revision of the v3 version, using promises, in which the links are downloaded in parallel, but limited to the degree of concurrency with which a `TaskQueue` is created.
 
 #### Exercise 1: [File Concatenation](./e01-file-concatenation/)
-Write the implementation of `concatFiles(...)`, a callback-style function that takes two or more paths to text files in the file system and a destination file.
+Write the implementation of `concatFiles(...)`, a promise-based function that takes two or more paths to text files in the file system and a destination file.
+
+This function must copy the contents of every source file into the destination file, respecting the order of the files as provided by the arguments list. Also, the function must be able to handle an arbitrary number of arguments.
 
 
 
