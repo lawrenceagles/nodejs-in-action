@@ -221,14 +221,252 @@ randomBytesP(32)
 It must be noted that our implementation of the `promisify()` function is quite naive and has some missing features. The `util` package of Node.js provides a more robust version of `promisify()`.
 
 #### Sequential execution and iteration
-162
+At this point, we can start creating a promise-based version of our web crawler. To explore the patterns for sequential execution and iteration we will revert to the version which downloaded the links of a webpage in sequence.
+
+Let's begin with our `lib/spider.js` file which is the one doing the heavy lifting of crawling and downloading the pages and links.
+
+The first portion of the file contains all the necessary imports. Note that the main differences is that now we use the *promised-based* versions of the Node.js core module `fs`, and that we used the `util.promisify` to convert the callback-based APIs such as `mkdirp` into equivalent functions that return promises, so that we can chain them.
+
+| NOTE: |
+| :---- |
+| The functions in `lib/utils.js` are synchronous, so there's no need to intervene there. Also, the newer version of `mkdirp` works with promises, so we forced using the legacy version to illustrate how to use `util.promisify()`. |
+
+```javascript
+import { promises as fsPromises } from 'fs';
+import { dirname } from 'path';
+import superagent from 'superagent';
+import mkdirp from 'mkdirp';
+import { urlToFilename, getPageLinks } from './utils.js';
+import { promisify } from 'util';
+
+const mkdirpPromises = promisify(mkdirp);
+```
+
+The first function we will rewrite is `download(...)`. Since this new version leverages promises, the implementation is more straightforward and easier to follow.
+
+```javascript
+function download(url, filename) {
+  console.log(`Downloading ${ url } into '${ filename }'`);
+  let content;
+  return superagent.get(url)
+    .then(res => {
+      content = res.text;
+      return mkdirpPromises(dirname(filename));
+    })
+    .then(() => fsPromises.writeFile(filename, content))
+    .then(() => {
+      console.log(`INFO: download: ${ filename } from ${ url } downloaded and saved!`);
+      return content;
+    });
+}
+```
+
+As `superagent` is already promised-based, we can make the function return the result of invoking `superagent.get()` and chain the intermediate processing with `then()` invocations. The result of the top level promise (the `superagent.get()`) will be the result of the last `then()` of the chain. That is, the promise returned by the `download()` function will settle with the value of the `content` if everything goes according to plan, or rejected if any of the intermediate promises rejects.
+
+The next function to tackle is `spiderLinks()`. This is the one that deals with a sequential iteration over a dynamic set of asynchronous tasks.
+
+```javascript
+function spiderLinks(currentUrl, content, nesting) {
+  let promise = Promise.resolve();
+  if (nesting === 0) {
+    return promise;
+  }
+  const links = getPageLinks(currentUrl, content);
+  for (const link of links) {
+    promise = promise.then(() => spider(link, nesting - 1));
+  }
+  return promise;
+}
+```
+
+Note that first we define an *empty* promise that we use as a starting point for the chain of promises. Then we loop over the links of the page and chained them by doing:
+
+```javascript
+for (... of ...) {
+  promise = promise.then(...)
+}
+```
+
+At the end of the loop, the `promise` variable will have the promise of the last `then()` invocation, which is what we will return to the caller.
+
+Also, note that the execution will be sequential even when using promises because of the way in which we have chained them with the construct `promise = promise.then(iterLogic)`.
+
+The last part for `lib/spider.js` consists in rewriting the `spider(...)` function:
+
+```javascript
+export function spider(url, nesting) {
+  const filename = urlToFilename(url);
+  return fsPromises.readFile(filename, 'utf8')
+    .catch(err => {
+      if (err.code !== 'ENOENT') {
+        console.error(`ERROR: spider: could not read file ${ filename }: ${ err.message }`);
+        throw err;
+      }
+      return download(url, filename);
+    })
+    .then(content => spiderLinks(url, content, nesting));
+}
+```
+
+In the solution for `spider(...)` we are using `catch()` to handle any errors produced by `readFile()`. If the error has code `ENOENT`, it means the file has not been downloaded yet, and therefore we need to proceed to download it.
+
+Note that we chain the promise returned by `download(...)` that will be settled with the content of the page (if everything goes according to plan) which we will then channeled into `spiderLinks()` whose returned promise will become the promise we return from the function.
+
+Tha last part of the rewrite effort will consist in consuming the `spider(...)` function:
+
+```javascript
+spider(url, nesting)
+  .then(() => console.log(`INFO: ${ url } successfully processed!`))
+  .catch(err => console.error(`ERROR: main: ${ err.message }`));
+```
+
+The `catch()` handler at this level will intercept any error originating from the entire `spider()` process. This makes our code cleaner, as it relieves us from including any error propagation logic within the intermediate processes.
+
+
+As an alternative to the iteration construct seen before, we can use the more compact `reduce()` method as an alternative:
+```javascript
+const promise = tasks.reduce((prev, task) => {
+  return prev.then(() => {
+    return task();
+  });
+}, Promise.resolve());
+```
+
+| EXAMPLE: |
+| :------- |
+| You can find a runnable example in [03 &mdash; Web Crawler v2 with promises](03-web-crawler-v2-promises/). |
+
 #### Parallel execution
+The unlimited parallel execution flow becomes trivial with promises as you can use `Promise.all(iterablePromises)` to create a promise that fulfills only when all the promises received as input are fulfilled.
 
-#### Limited Parallel execution
+The logic behind those promises will be executed in parallel, provided those are independent (that is, if there is no causal relationship between them).
 
-##### Implementing the `TaskQueue`
+As a an example, let's rewrite our web crawler v3 capabilities using this approach:
+
+```javascript
+function spiderLinks(currentUrl, content, nesting) {
+  if (nesting === 0) {
+    return Promise.resolve();
+  }
+
+  const links = getPageLinks(currentUrl, content);
+  const promises = links.map(link => spider(link, nesting - 1));
+
+  return Promise.all(promises);
+}
+```
+
+The pattern consists in starting all the `spider()` tasks at once collecting the resulting individual promises in an array (`promises`), and then using `Promise.all()` to wait for all of them to be fullfilled. Note also that the process will fail is any of the promises reject, which is exactly what we want for this particular use case.
+
+
+| EXAMPLE: |
+| :------- |
+| You can find a runnable example in [04 &mdash; Web Crawler v3: parallel unlimite execution with promises](04-web-crawler-v3-parallel-promises). |
+
+#### Limited Parallel execution: implementing the `TaskQueue`
+In this section we will globally limit the concurrency of our web crawler download tasks by reimplementing the `TaskQueue` class we used in the previous chapter.
+
+As a reminder, the `TaskQueue` was a class extending from `EventEmitter` that would expose two instance methods:
++ `pushTask(task)` &mdash; adds a new asynchronous task to the queue of tasks to process.
++ `next()` &mdash; triggers the execution of the next set of tasks from the queue, taking into account the concurrency limit and the current number of tasks.
+
+Let's start by reimplementing the `next()` method, where we trigger the execution of tasks until we reach the concurrency limit.
+
+```javascript
+next() {
+  while (this.running < this.concurrency && this.queue.length) {
+    const task = this.queue.shift();
+    task().finally(() => {
+      this.running--;
+      this.next();
+    });
+    this.running++;
+  }
+}
+```
+
+The change is simple: as we expect `task()` to return a promise we can use the `finally()` method to make a recursive call.
+
+Now, we implement a new method `runTask()`, that will take the place of the former `pushTask()`. It will be responsible for queueing a special wrapper function and also returning a newly built `Promise`. Such `Promise` will just forward the result (fulfillment or rejection of the promise returned by `task()`).
+
+```javascript
+runTask(task) {
+  return new Promise((resolve, reject) => {
+    this.queue.push(() => {
+      return task().then(resolve, reject);
+    });
+    process.nextTick(this.next.bind(this));
+  });
+}
+```
+
+This function:
++ creates a new `Promise` using the constructor.
++ wrap the receive tasks in a function and pushes the latter to the queue. This function will be executed whenever there are free concurrency slots.
++ schedules the execution of `next()` on the next iteration of the event loop.
+
+When the pushed wrapper function is finally invoked, we execute the task received as an input, and forward its results (either fulfilment value or rejection reason) to the outer promise created in `runTask`.
 
 ##### Updating the web spider
+Now, let's apply our `TaskQueue` to the web crawler project.
+
+```javascript
+unction spiderLinks(currentUrl, content, nesting, queue) {
+  if (nesting === 0) {
+    return Promise.resolve();
+  }
+
+  const links = getPageLinks(currentUrl, content);
+  const promises = links.map(link => spiderTask(link, nesting - 1, queue));
+
+  return Promise.all(promises);
+}
+
+const spidering = new Set();
+function spiderTask(url, nesting, queue) {
+  if (spidering.has(url)) {
+    return Promise.resolve();
+  }
+  spidering.add(url);
+
+  const filename = urlToFilename(url);
+
+  return queue
+    .runTask(() => {
+      return fsPromises.readFile(filename, 'utf8')
+        .catch(err => {
+          if (err.code !== 'ENOENT') {
+            throw err;
+          }
+          return download(url, filename);
+        });
+    })
+    .then(content => spiderLinks(url, content, nesting, queue));
+}
+
+export function spider(url, nesting, concurrency) {
+  const queue = new TaskQueue(concurrency);
+  return spiderTask(url, nesting, queue);
+}
+```
+
+Note that the task we're queueing comprises just the retrieval of the contents of the URL from either local or HTTP. The `spiderLinks()` invocation has been purposely kept outside of the queue to avoid creating a deadlock if the depth of the spidering process is higher than the concurrency limit of the queue.
+
+Note also that `spiderLinks()` uses `Promise.all()`. This is OK now because is the `TaskQueue` responsibility to ensure that we are not going beyond the concurrency limit of the tasks.
+
+| EXAMPLE: |
+| :------- |
+| You can find a runnable example in [05 &mdash; Web Crawler v4: parallel execution with a `TaskQueue`](05-web-crawler-v4-task-queue-promises). |
+
+
+#### Production packages for promise-based control flows
+In production, you shouldn't rely on custom implementations of the parallel execution flows.
+
+Instead, the following packages are recommended:
++ `p-limit` &mdash; run multiple promise-based tasks in parallel, controlling the number of concurrent executions-
++ `p-queue` &mdash; full featured promise-queue with concurrency control
++ `p-map` &mdash; `map()` function supporting promises and limited concurrency.
+
 
 ### Async/Await
 
@@ -248,9 +486,23 @@ Illustrates how to create a `Promise` using its constructor.
 #### [02 &mdash; Promisification](02-promisification)
 Illustrates how create a generic function that converts a Node.js callback style function into an equivalent function returning a `Promise`.
 
+#### [03 &mdash; Web Crawler v2 with promises](03-web-crawler-v2-promises/)
+A promise-based implementation of the web crawler program that illustrates the patterns for sequential execution and iteration (with promises). In this example, the links from the given web page are downloaded in sequence.
+
+#### [04 &mdash; Web Crawler v3: parallel unlimite execution with promises](04-web-crawler-v3-parallel-promises)
+A revision of the v2 version, using promises, in which the links are downloaded in parallel.
+
+#### [05 &mdash; Web Crawler v4: parallel execution with a `TaskQueue`](05-web-crawler-v4-task-queue-promises)
+A revision of the v3 version, using promises, in which the links are downloaded in parallel, but limited to the degree of concurrency with which a `TaskQueue` is created.
+
 #### Exercise 1: [File Concatenation](./e01-file-concatenation/)
 Write the implementation of `concatFiles(...)`, a callback-style function that takes two or more paths to text files in the file system and a destination file.
 
 
+
 #### Example 4: [Hello, `TaskQueue`](./e04-hello-task-queue)
 A very simple example demonstrating the usage pattern for our `TaskQueue` class. In the example, we use the `TaskQueue` to classify a large number of numbers into even and odd.
+
+
++ Rewrite callback based exercises with promises
++ Create hello projects for the listed p-* packages
