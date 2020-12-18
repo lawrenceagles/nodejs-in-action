@@ -503,7 +503,7 @@ This function must copy the contents of every source file into the destination f
 #### Example 2: [Returning values from promises](./e02-returning-values-from-promises/)
 Write `listNestedFiles()`, a promise-based function that takes as the input the path to a directory in the local
 
-#### Example 2: [List files recursively](./e02-list-files-recursively/)
+#### Example 3: [List files recursively](./e03-list-files-recursively/)
 Write `listNestedFiles()`, a promise-based function that takes as the input the path to a directory in the local filesystem, and that asynchronously iterates over all the subdirectories to eventually return a promise that is fulfilled with the list of all the files discovered.
 
 #### Example 4: [Hello, `TaskQueue`](./e04-hello-task-queue)
