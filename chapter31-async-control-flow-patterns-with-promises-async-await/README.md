@@ -495,12 +495,16 @@ A revision of the v2 version, using promises, in which the links are downloaded 
 #### [05 &mdash; Web Crawler v4: parallel execution with a `TaskQueue`](05-web-crawler-v4-task-queue-promises)
 A revision of the v3 version, using promises, in which the links are downloaded in parallel, but limited to the degree of concurrency with which a `TaskQueue` is created.
 
-#### Exercise 1: [File Concatenation](./e01-file-concatenation/)
+#### Example 1: [File Concatenation](./e01-file-concatenation/)
 Write the implementation of `concatFiles(...)`, a promise-based function that takes two or more paths to text files in the file system and a destination file.
 
 This function must copy the contents of every source file into the destination file, respecting the order of the files as provided by the arguments list. Also, the function must be able to handle an arbitrary number of arguments.
 
+#### Example 2: [Returning values from promises](./e02-returning-values-from-promises/)
+Write `listNestedFiles()`, a promise-based function that takes as the input the path to a directory in the local
 
+#### Example 2: [List files recursively](./e02-list-files-recursively/)
+Write `listNestedFiles()`, a promise-based function that takes as the input the path to a directory in the local filesystem, and that asynchronously iterates over all the subdirectories to eventually return a promise that is fulfilled with the list of all the files discovered.
 
 #### Example 4: [Hello, `TaskQueue`](./e04-hello-task-queue)
 A very simple example demonstrating the usage pattern for our `TaskQueue` class. In the example, we use the `TaskQueue` to classify a large number of numbers into even and odd.
