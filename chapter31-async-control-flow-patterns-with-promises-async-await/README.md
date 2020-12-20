@@ -527,6 +527,10 @@ recursiveFind('myDir', 'batman')
 
 The final solution must make the search recursive, so that it looks for files in any subdirectory of the given directory, and in parallel using a `TaskQueue` so that the number of parallel tasks don't grow out of control.
 
+#### Example 6: [Recursive find with promises v2](./e06-recursive-find-promises-v2/)
+This is an alternative implementation of the recursive find that does not use events to synchronize the result.
+
 + Rewrite callback based exercises with promises
 + Create hello projects for the listed p-* packages
 + hello reduce, apply in sequential iteration
++ Rewrite the recursiveFind limiting the concurrency of both scanDir and findInFile (only if it's not easier with async await).
