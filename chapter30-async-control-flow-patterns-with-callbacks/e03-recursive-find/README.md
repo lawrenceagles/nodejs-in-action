@@ -1,12 +1,12 @@
  Part 4: Node.js avanced patterns and techniques
 ## Chapter 30 &mdash; Async Control Flow Patterns with Callbacks
 ### Exercise 3 &mdash; Recursive find
-Write `recursiveFind()`, a callback-stule function that takes a path to a directory in the local filesystem and a keyword as per the following signature:
+Write `recursiveFind()`, a callback-style function that takes a path to a directory in the local filesystem and a keyword as per the following signature:
 ```javascript
 function recursiveFind(dir, keyword, cb)
 ```
 
-The function must find all the text files within the given directory that contain the given keyword in the file contents. The list of matching files should be returned using the callback when the search is completed. If not matching file is found, the callback must be invoked with an empty array.
+The function must find all the text files within the given directory that contain the given keyword in the file contents. The list of matching files should be returned using the callback when the search is completed. If no matching file is found, the callback must be invoked with an empty array.
 
 As an example test case, if you have the files `foo.txt` and `bar.txt` and `baz.txt` in `myDir` and the keyword `batman` is contained in the files `foo.txt`, and `baz.txt` making the call:
 

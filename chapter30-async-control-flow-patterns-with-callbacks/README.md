@@ -852,7 +852,7 @@ This function must copy the contents of every source file into the destination f
 Write `listNestedFiles()`, a callback-style function that takes as the input the path to a directory in the local filesystem, and that asynchronously iterates over all the subdirectories to eventually return a list of all the files discovered.
 
 #### Exercise 3: [Recursive find](./e03-recursive-find/)
-Write `recursiveFind()`, a callback-stule function that takes a path to a directory in the local filesystem and a keyword as per the following signature:
+Write `recursiveFind()`, a callback-style function that takes a path to a directory in the local filesystem and a keyword as per the following signature:
 ```javascript
 function recursiveFind(dir, keyword, cb)
 ```
@@ -870,3 +870,4 @@ The final solution must make the search recursive, so that it looks for files in
 
 #### Example 4: [Hello, `TaskQueue`](./e04-hello-task-queue)
 A very simple example demonstrating the usage pattern for our `TaskQueue` class. In the example, we use the `TaskQueue` to classify a large number of numbers into even and odd.
+
