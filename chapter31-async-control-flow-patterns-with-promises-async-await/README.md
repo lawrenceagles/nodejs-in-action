@@ -506,9 +506,10 @@ Write `listNestedFiles()`, a promise-based function that takes as the input the 
 #### Example 3: [List files recursively](./e03-list-files-recursively/)
 Write `listNestedFiles()`, a promise-based function that takes as the input the path to a directory in the local filesystem, and that asynchronously iterates over all the subdirectories to eventually return a promise that is fulfilled with the list of all the files discovered.
 
-#### Example 4: [Hello, `TaskQueue`](./e04-hello-task-queue)
-A very simple example demonstrating the usage pattern for our `TaskQueue` class. In the example, we use the `TaskQueue` to classify a large number of numbers into even and odd.
+#### Example 4: [Hello, `TaskQueue` with promises](./e04-hello-task-queue-promises)
+A very simple example demonstrating the usage pattern for our `TaskQueue`, promise-based class. In the example, we use the `TaskQueue` to classify a large number of numbers into even and odd.
 
 
 + Rewrite callback based exercises with promises
 + Create hello projects for the listed p-* packages
++ hello reduce, apply in sequential iteration
