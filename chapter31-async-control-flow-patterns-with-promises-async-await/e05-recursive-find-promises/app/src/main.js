@@ -5,19 +5,17 @@ import path from 'path';
 function recursiveFind(dir, keyword) {
   const findQueue = new TaskQueue(5);
   const hits = [];
-  const promises = [];
-  scanDir(dir, keyword, hits, findQueue, promises);
+  scanDir(dir, keyword, hits, findQueue);
   return new Promise(resolve => {
     findQueue.on('empty', () => resolve(hits));
   });
 }
 
-function scanDir(dir, keyword, hits, queue, promises) {
+function scanDir(dir, keyword, hits, queue) {
   return fsPromises.readdir(dir)
     .then(dirEntries => {
       dirEntries.forEach(dirEntry => {
-        const p = queue.runTask(() => findInFileTask(path.join(dir, dirEntry), keyword, hits, queue, promises));
-        promises.push(p);
+        queue.runTask(() => findInFileTask(path.join(dir, dirEntry), keyword, hits, queue));
       });
     });
 }
@@ -41,7 +39,6 @@ function findKeywordInFileContents(file, keyword, hits) {
       return;
     });
 }
-
 
 
 recursiveFind('sample_dir', 'bar')
