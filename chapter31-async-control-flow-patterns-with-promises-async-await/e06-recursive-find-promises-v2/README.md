@@ -1,6 +1,6 @@
 # Part 4: Node.js avanced patterns and techniques
 ## Chapter 31 &mdash; Asynchronous Control Flow Patterns with Promises and Async/Await
-### Recursive find with promises v2]
+### Example 6: Recursive find with promises v2
 This is an alternative implementation of the recursive find that does not use events to synchronize the result.
 
 #### Solution

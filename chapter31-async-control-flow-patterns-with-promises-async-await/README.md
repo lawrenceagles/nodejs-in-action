@@ -1,10 +1,12 @@
 # Part 4: Node.js avanced patterns and techniques
 ## Chapter 31 &mdash; Asynchronous Control Flow Patterns with Promises and Async/Await
-> TBD
+> using promises and async/await to write asychronous code that is more concise, cleaner, and easier to read and maintain.
 
-### Contents (TBD)
+### Contents
 + How promises work and how to use them effectively to implement the main control flow constructs.
 + The async/await syntax, which is the main tool for dealing with asynchronous code in Node.js.
++ Patterns for serial and parallel execution flow: Producers and Consumers
++ Anti-patterns: `return vs. return await`, and `await` with `Array.forEach()`
 
 ### Intro
 The previous chapter demonstrated how needlessly complicated and error-prone are the code constructs used to implement even the simplest scenarios such as the serial execution flow.
@@ -126,7 +128,7 @@ Apart from the constructor, the `Promise` object also features several important
 + `Promise.resolve(obj)` &mdash; creates a new `Promise` from another `Promise`, *thenable* or value. If a `Promise` is passed, then that `Promise` is returned as it is. If a *thenable* is provided, then it's converted to a `Promise`. If a value is provided, then the `Promise` will be fulfilled with that value.
 + `Promise.reject(err)` &mdash; creates a `Promise` that rejects with `err` as the reason.
 + `Promise.all(iterable)` &mdash; creates a `Promise` that fulfills with an array of fulfillment values when every item in the input iterable object (typically an array) fulfills. If any of the promises returned by `Promise.all()` rejects, then the `Promise` returned by `Promise.all()` will reject with the first rejection reason. Each item in the iterable argument can be a `Promise`, a *thenable* or a value.
-+ `Promise.allSettles(iterable)` &mdash; waits for all the input promises to fulfill or reject, and then returns an array of objects containing the fulfillment value or the rejection reason for each input `Promise`. Each output object has a `status` property which can be either `'fulfilled'` or `'rejected'` and a `value` property containing the fulfillment value or error reason. The difference with `Promise.all()` is that `Promise.allSettled()` will wait for each and every promise to either fulfill or reject, instead of immediately rejecting when one of the promises rejects.
++ `Promise.allSettled(iterable)` &mdash; waits for all the input promises to fulfill or reject, and then returns an array of objects containing the fulfillment value or the rejection reason for each input `Promise`. Each output object has a `status` property which can be either `'fulfilled'` or `'rejected'` and a `value` property containing the fulfillment value or error reason. The difference with `Promise.all()` is that `Promise.allSettled()` will wait for each and every promise to either fulfill or reject, instead of immediately rejecting when one of the promises rejects.
 + `Promise.race(iterable)` &mdash; This method returns a `Promise` that is equivalent to the first `Promise` in the iterable that settles.
 
 The following instance methods of the `Promise` class are also relevant:
@@ -469,14 +471,397 @@ Instead, the following packages are recommended:
 
 
 ### Async/Await
+While promises represent a *quantum leap* ahead of callbacks, they're still tricky to use. You have to invoke `then()` and create functions for each of the tasks in the promise chain.
 
-### The problem with infinite recursion
+That's why ECMAScript standard introduced the *async functions* and the *await* expression is what is commonly known as *async/await*.
 
-### Summary
+This will be the recommended construct for dealing with asynchronous code both in Node.js and JavaScript. However, *async/await* does not replace all that we've learned on promises.
+
+#### Async functions and the await expression
+An async function is a special type of function in which it's possible to use the keyword `await` to *pause* the execution on a given promise until it resolves.
+
+Let's consider the previously defined function `delay(...)` which created a promise that were resolved after the given number of milliseconds. The following code snippet illustrates the *async/await* construct:
+
+```javascript
+
+function delay(millis) {
+  return new Promise(resolve => {
+    setTimeout(() => resolve(new Date()), millis);
+  });
+}
+
+async function playingWithDelays() {
+  console.log(`Delaying...`, new Date());
+
+  const dateAfterOneSecond = await delay(1000);
+  console.log(dateAfterOneSecond);
+
+  const dateAfterThreeSeconds = await delay(3000);
+  console.log(dateAfterThreeSeconds);
+
+  return 'done';
+}
+```
+
+Note that the code of the *async function* looks like it contains no asynchronous operation. However, the function runs asynchronously. At each `await` expression, the execution of the function is put on hold, its state saved, and the control returned to the event loop. Once the promise awaited is settled, the control is given back to the async function, which will receive the fulfillment value of the `Promise`.
+
+| NOTE: |
+| :---- |
+| The `await` expression can await a value other than a `Promise`. When that happens, the behavior is similar to awaiting a value that it is first passed to `Promise.resolve(value)`. |
+
+Our newly defined async function can be invoked using:
+
+```javascript
+playingWithDelays()
+  .then(result => console.log(`After 4 seconds: ${ result }`));
+```
+
+That is, an async function always returns a promise. In the previous case, as we were returning a value from the async function, everything behaves as if we were effectively returning `Promise.resolve('done')`.
+
+> Invoking an *async* function is instantaneous like invoking a promise-based function is, or invoking then is.
+
+| EXAMPLE: |
+| :------- |
+| You can find a runnable example in [06 &mdash; Hello, *async/await*](06-hello-async-await). |
+
+
+#### Error handling with async/await
+One of the biggest gains of the *async/await* construct is the ability to normalize the behavior of the *try..catch* block to make it work seamlessly with both *synchronous throws* and *asynchronous promise rejections*.
+
+Let's consider the following example in which we define a function that rejects afer a given number of milliseconds.
+
+```javascript
+function delayError(millis) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => reject(new Error(`Error after ${ millis } ms`)), millis);
+  });
+}
+```
+
+That will become the source of an asynchronous error in our example.
+
+Now let's consider an async function that can throw an error synchronously (when receiving true as argument), or *await* a promise that will reject.
+
+```javascript
+async function playingWithErrors(throwSyncError) {
+  try {
+    if (throwSyncError) {
+      throw new Error('This is a synchronous error');
+    }
+    await delayError(1000);
+  } catch (err) {
+    console.error(`ERROR: ${ err.message }`);
+  } finally {
+    console.log(`Done!`);
+  }
+}
+```
+
+> The function above demonstrates that *try..catch* works for both synchronous and asynchronous *throws* inside async function.
+
+| EXAMPLE: |
+| :------- |
+| You can find a runnable example in [07 &mdash; Error handling with async/await](07-error-handling-async-await). |
+
+##### The `return` vs. `return await` trap
+One common antipattern when dealing with errors with *async/await* is returning a `Promise` that rejects to the caller and expecting the error to be caught by the local *try...catch* block of the function returning the `Promise`.
+
+The idea is better illustrated with an example:
+
+```javascript
+async function errorNotCaught() {
+  try {
+    return delayError(1000);
+  } catch (err) {
+    console.error(`ERROR: caught by the async function: ${ err.message }`);
+  }
+}
+
+errorNotCaught()
+  .catch(err => console.error(`ERROR: caught by the caller: ${ err.message }`));
+```
+
+When running above code, the error will be processed by the `.catch()` method because the invoked function returns before the promise is rejected.
+
+If we intend to catch the error locally in the function, we need to include an `await` before returning the promise:
+
+```javascript
+async function errorCaught() {
+  try {
+    return await delayError(1000);
+  } catch (err) {
+    console.error(`ERROR: caught by the async function: ${ err.message }`);
+  }
+}
+
+errorCaught()
+  .catch(err => console.error(`ERROR: caught by the caller: ${ err.message }`));
+```
+
+That ensures that the error is not sent to the caller.
+
+| EXAMPLE: |
+| :------- |
+| You can find a runnable example in [08 &mdash; The `return` vs. `return await` issue](08-return-vs-return-await-issue). |
+
+##### Antipattern - using *async/await* with `Array.forEach`/`Array.map` for serial execution
+There is a common antipattern whereby developers will try to use `Array.forEach()` or `Array.map()` to implement a sequential asynchronous iteration with *async/await* which won't work as expected.
+
+Code snippets like the following will be affected:
+
+```javascript
+links.forEach(async function iteration(link) {
+  await spider(link, nesting - 1);
+});
+```
+
+In the body of `iteration(...)` we're await for the promise returned by `spider()`, but `Array.forEach()` is silently ignoring the promise returned by iteration, and therefore, the tasks **will not** be executed in series, but rather in parallel, with unlimited concurrency, in the same event loop.
+
+
+
+
+#### Parallel execution
+There are two ways to run a set of tasks in parallel using *async/await*:
++ using the `await` expression
++ using `Promise.all()`
+
+The method relying on `Promise.all()` is the recommended (and optimal) one to use.
+
+Consider the following implementation of the `spiderLinks(...)` function of our web crawler that starts all the `spider(...)` tasks at once:
+
+```javascript
+async function spiderLinks(currentUrl, content, nesting) {
+  if (nesting === 0) {
+    return;
+  }
+  const links = getPageLinks(currentUrl, content);
+  const promises = links.map(link => spider(link, nesting - 1));
+  for (const promise of promises) {
+    await promise
+  }
+}
+```
+
+Typically, you'd rather do:
+
+```javascript
+async function spiderLinks(currentUrl, content, nesting) {
+  if (nesting === 0) {
+    return;
+  }
+  const links = getPageLinks(currentUrl, content);
+  const promises = links.map(link => spider(link, nesting - 1));
+  const results = await Promise.all(promises);
+}
+```
+
+As it will let us get notified of an error as soon as one of the promises fail.
+
+#### Limited Parallel execution
+To implement a limited parallel execution pattern with *async/await* we can either reuse the `TaskQueue` class as is, or refactor it internally to use *async/await* constructs.
+
+Both are trivial exercises that and represent very little change in our *web crawler* implementations.
+
+[TBD]
+
+In this section we will explore another pattern for limited parallel execution based on the *producer/consumer* approach using *async/await*.
+
+The general idea is the following:
++ On one side we have an unknown set of *producers* adding tasks to a queue
++ On the other side we have a predefined set of *consumers*, responsible for extracting and executing the tasks from the queue, one at a time.
+
+![Producer Consumer Pattern for limited parallel execution](./images/producer_consumer_limited_parallel_execution.png)
+
+As seen in the image, the number of consumers will determine the concurrency with which the tasks will be executed. The challenge in this case will be to put the consumers to *sleep* when the queue is empty and *wake them up* again when there are new tasks to run.
+
+Let's see how to implement this task queue, starting with the class constructor:
+
+```javascript
+export class TaskQueuePC {
+
+  constructor (concurrency) {
+    this.taskQueue = [];
+    this.consumerQueue = [];
+
+    for (let i = 0; i < concurrency; i++) {
+      this.consumer();
+    }
+  }
+...
+```
+
+Note that we now have two queues: one to hold our tasks and the other to hold our sleeping consumers. Right after that we spawn as many consumers as concurrency we need to attain.
+
+Now, let's see what a consumer looks like:
+
+```javascript
+async consumer() {
+  while (true) {
+    try {
+      const task = await this.getNextTask();
+      await task();
+    } catch (err) {
+      console.error(err);
+    }
+  }
+}
+```
+
+This is an infinite *while loop*. At each iteration, we try to retrieve a new task from the queue using `getNextTask()`. Note that this won't consume CPU cycles when there is nothing to process, because the current consumer will be put to sleep if the queue is empty. If there are tasks in the queue, the consumer will get this task and execute it. Note also that if an error is found we just log it and go ahead, as it is customary with queues.
+
+Now let's take a look at the implementation of `getNextTask()`:
+
+```javascript
+async getNextTask() {
+  return new Promise(resolve => {
+    if (this.taskQueue.length !== 0) {
+      return resolve(this.taskQueue.shift());
+    }
+    this.consumerQueue.push(resolve);
+  });
+}
+```
+
+This method returns a new promise that resolves with the first task in the queue if the queue is not empty. If the queue is empty, we postpone the resolution of the promise by queueing the `resolve` callback into the `consumerQeueue`. This is what will put the promise, and the consumer that is awaiting the promise to sleep.
+
+Finally, we implement the `runTask(...)` that corresponds to the *producer* side of the algorithm:
+
+```javascript
+runTask(task) {
+  return new Promise((resolve, reject) => {
+    const taskWrapper = () => {
+      const taskPromise = task();
+      taskPromise.then(resolve, reject);
+      return taskPromise;
+    };
+
+    if (this.consumerQueue.length !== 0) {
+      const consumer = this.consumerQueue.shift();
+      consumer(taskWrapper);
+    } else {
+      this.taskQueue.push(taskWrapper);
+    }
+  });
+}
+```
+
+First, we create a `taskWrapper` function that when executed, has the responsibility for running the input task and forwarding the status of the promise returned by `task()` to the outer promise returned by `runTask()`.
+Next, if the `consumerQueue` is not empty, it means that there is at least one consumer that is asleep, waiting for new tasks to run.
+We then extract the first consumer from the queue and invoke it immediately by passing our `taskWrapper`. If instead, all the consumers are already busy, we push the `taskWrapper` into the `taskQueue`.
+
+| NOTE: |
+| :---- |
+| The consumers from the queue are essentially the `resolve` callback of the `Promise` returned by `getNextTask()`. |
+
+| EXAMPLE: |
+| :------- |
+| You can find the implementation of the `TaskQueuePC` along with the illustration of how to use it in the *web crawler* in [09 &mdash; Limited parallel execution with producers/consumers pattern](09-task-queue-producers-consumers). |
+
+### The problem with infinite recursive promise resolution chains
+This section will deal with an advance topic about memory leaks cause by infinite `Promise` resolution chains. This bug affects the actual *Promises/A+* specification standard, and therefore, no compliant implementation is immune.
+
+Let's consider the following code, which defines a simple infinite operation using promises:
+
+```javascript
+function leakingLoop() {
+  return delay(1)
+    .then(() => {
+      console.log(`Tick ${ Date.now() }`);
+      return leakingLoop();
+    });
+}
+```
+
+The promise returned by `leakingLoop()` never resolves, because it depends on the next invocation. This situation creates a chain of promises that never settle. and it will cause a memory leak.
+
+The only solution consists in breaking the chain of `Promise` resolution:
+
+```javascript
+function nonLeakingLoop() {
+  return delay(1)
+    .then(() => {
+      console.log(`Tick ${ Date.now() }`);
+      leakingLoop();
+    });
+}
+```
+
+However, this solution changes the behavior of the original implementation. For example, this new function won't propagate eventual errors produced deeply within the recursion.
+
+An alternative solution consists in wrapping the recursive function with a `Promise` constructor:
+
+```javascript
+function nonLeakingLoopWithErrors() {
+  return new Promise((resolve, reject) => {
+    (function internalLoop() {
+      delay(1)
+        .then(() => {
+          console.log(`Tick ${ Date.now() }`);
+          internalLoop();
+        })
+        .catch(err => reject(err));
+    })();
+  });
+}
+```
+
+In this case, we don't have a link between the promises created at the various stages of the recursion, and therefore there will be no memory leak. However, the promise returned by `nonLeakingLoopWithErrors()` will reject if any asynchronous operation fails, no matter at what depth in the recursion.
+
+Another alternative implementation to solve the memory leak would consist of changing the recursive call into a while loop:
+
+```javascript
+async function nonLeakingLoopAsync() {
+  while (true) {
+    await delay(1);
+    console.log(`Tick ${ Date.now() }`);
+  }
+}
+```
+
+This function behaves as the original one, in the sense that if an error is thrown deep in the recursion, that would be propagated to the caller.
+
+| NOTE: |
+| :---- |
+| The *async/await* solution will also create a leak if instead of a while loop we would have a recursive call. |
+
+> When building an infinite promise chain based on recursion, check if there are the conditions for creating a memory leak. If that is the case, apply one of the devised solutions.
+
+| EXAMPLE: |
+| :------- |
+| You can test these solutions in [10 &mdash; Memory leaks with infinite promise chains](10-promises-memory-leak). |
+
+Note that it is quite common in Node.js programming to find these type of situations: encoding/decoding of streams of data, processing of live cryptocurrency market data, monitoring of IoT sensors, etc.
 
 
 ### You know you've mastered this chapter when...
-+ You understand the difficulties of asynchronous code and CPS programming:
++ You're aware that a `Promise` is and object that wraps the eventual result (or error reason) of an asynchronous oepration, and are familiar with the different *states* of a promise: *pending*, *fulfilled*, *rejected*, and *settled*.
++ You are comfortable using `promise.then(onFulfilled, onRejected)`, and understand the basics of it:
+  + `then(...)` returns another promise *synchronously*
+  + If the callbacks `onFulfilled` or `onRejected` return a value, the promise returned by `then()` will:
+    + fulfill with `x` if `x` is a value
+    + fulfill with the fulfillment value of `x` is `x` is a promise
+    + reject with the eventual rejection reason of `x` if x is a promise
++ You're comfortable creating chains of promises with `then()`.
++ You've learnt about *duck typing* and how it is used by JavaScript promise implementations to define *thenables*.
++ You're comfortable using the `Promise` API:
+  + `new Promise((resolve, reject) => { ... })`
+  + `Promise.resolve(obj)`
+  + `Promise.reject(err)`
+  + `Promise.all(iterable)`
+  + `Promise.allSettled(iterable)`
+  + `Promise.race(iterable)`
+  + `promise.then(onFulfilled, [onRejected])`
+  + `promise.catch(onRejected)`
+  + `promise.finally(onFinally)`
++ You're aware of the trick of using `Promise.resolve()` to create an *empty promise* that can be used as a starting point for chaining sequence of asynchronous calls.
++ You know what *promisification* entails, and are aware of the `util.promisify` function.
++ You've learned how to use *promises* and *async/await* syntax to write asynchronous code that is more concise, cleaner and easier to read than the callback-based counterpart.
++ You know to write serial and parallel code using *promises* and *async/await* syntax.
++ You're aware that *async/await* greatly simplify and normalizes error management in JavaScript as synchronous and asynchronous errors can be caught with *try..catch* blocks.
++ You're familiar with promise chaining, promisification, and the *Producer/Consumer* pattern.
++ You're aware of the common antipattern of trying to use `await` with `Array.forEach()` or `Array.map()` to serialize asynchronous operations, and know that you have to use *for...of* instead.
++ You're aware that you need to use `return await` when you want to handle asynchronous errors locally.
+
 
 ### Code, Exercises and mini-projects
 
@@ -494,6 +879,21 @@ A revision of the v2 version, using promises, in which the links are downloaded 
 
 #### [05 &mdash; Web Crawler v4: parallel execution with a `TaskQueue`](05-web-crawler-v4-task-queue-promises)
 A revision of the v3 version, using promises, in which the links are downloaded in parallel, but limited to the degree of concurrency with which a `TaskQueue` is created.
+
+#### [06 &mdash; Hello, *async/await*](06-hello-async-await)
+Illustrates the use of the async/await construct on the simplest of examples.
+
+#### [07 &mdash; Error handling with async/await](07-error-handling-async-await)
+Illustrates how error handling works with *async/await* construct.
+
+#### [08 &mdash; The `return` vs. `return await` issue](08-return-vs-return-await-issue)
+Illustrates a common antipattern when dealing with errors in *async/await* code, in which a *try...catch* block is useless because the async function returns a `Promise` before it has been settled. As a result, the error must be caught by the caller code. If we intend to catch the error locally (and not in the caller code), `return await` should be used instead.
+
+#### [09 &mdash; Limited parallel execution with producers/consumers pattern](09-task-queue-producers-consumers)
+Illustrates how to implement limited parallel execution using a Task Queue implementation that follows the *Producers/Consumers* pattern. The *Task Queue* is then used to implement our *web crawler* with concurrency control.
+
+#### [10 &mdash; Memory leaks with infinite promise chains](10-promises-memory-leak)
+Illustrates how an infinite, recursion based, promise chain creates a memory leak, and illustrates how you can fix it by breaking the promise chain.
 
 #### Example 1: [File Concatenation](./e01-file-concatenation/)
 Write the implementation of `concatFiles(...)`, a promise-based function that takes two or more paths to text files in the file system and a destination file.
@@ -530,7 +930,17 @@ The final solution must make the search recursive, so that it looks for files in
 #### Example 6: [Recursive find with promises v2](./e06-recursive-find-promises-v2/)
 This is an alternative implementation of the recursive find that does not use events to synchronize the result.
 
-+ Rewrite callback based exercises with promises
+#### Exercise 7: [Dissecting `Promise.all()`](e07-dissecting-promise-all)
+Implement your own version of `Promise.all()` leveraging promises, *async/await* or a combination of the two. The function must be functionally equivalent to its original counterpart.
+
+#### Exercise 8: [TaskQueue with *async/await*](e08-task-queue-async-await)
+Migrate the `TaskQueue` class internals from promises to *async/await* where possible. Note that you might not be able to use that construct everywhere.
+
+
 + Create hello projects for the listed p-* packages
 + hello reduce, apply in sequential iteration
 + Rewrite the recursiveFind limiting the concurrency of both scanDir and findInFile (only if it's not easier with async await).
+
+09 - web crawler with TaskQueuePC
+
+investigate top-level await
