@@ -334,9 +334,36 @@ const promise = tasks.reduce((prev, task) => {
 }, Promise.resolve());
 ```
 
+This is much more concise, and less prone to errors as seen below:
+
+```javascript
+const tasks = [ /* ... */]
+
+const reducedPromise = tasks.reduce((prevPromiseResult, currentTask) => {
+  return prevPromiseResult.then(() => {
+    return currentTask();
+  });
+}, Promise.resolve());
+reducedPromise.then(() => console.log(`Sequential iteration done!!!`));
+
+/* Same with a loop */
+function asyncSequentialIterationLoop() {
+  let promise = Promise.resolve();
+  for (const task of tasks) {
+    promise = promise.then(() => task());
+  }
+  return promise;
+}
+
+const resultingPromise = asyncSequentialIterationLoop()
+  .then(() => console.log(`Sequential iteration done with a loop`));
+```
+
+
 | EXAMPLE: |
 | :------- |
 | You can find a runnable example in [03 &mdash; Web Crawler v2 with promises](03-web-crawler-v2-promises/). |
+| You can also find an example illustrating how to use `Array.reduce()` for sequential iteration in [Hello, reduce for sequential iteration](e14-hello-reduce-series). |
 
 #### Parallel execution
 The unlimited parallel execution flow becomes trivial with promises as you can use `Promise.all(iterablePromises)` to create a promise that fulfills only when all the promises received as input are fulfilled.
@@ -662,7 +689,9 @@ To implement a limited parallel execution pattern with *async/await* we can eith
 
 Both are trivial exercises that and represent very little change in our *web crawler* implementations.
 
-[TBD]
+| EXAMPLE: |
+| :------- |
+| You can find the implementation of `TaskQueue` using *async/await* syntax in [TaskQueue with *async/await*](e08-task-queue-async-await). |
 
 In this section we will explore another pattern for limited parallel execution based on the *producer/consumer* approach using *async/await*.
 
@@ -936,11 +965,59 @@ Implement your own version of `Promise.all()` leveraging promises, *async/await*
 #### Exercise 8: [TaskQueue with *async/await*](e08-task-queue-async-await)
 Migrate the `TaskQueue` class internals from promises to *async/await* where possible. Note that you might not be able to use that construct everywhere.
 
+#### Exercise 9: [TaskQueuePC with promises](e09-task-queue-pc-promises)
+Update the `TaskQueuePC` class internal methods so that they use just promises, removing any us of the *async/await* syntax. Hint: the infinite loop must become an asynchronous recursion, so beware of the *recursive promise resolution memory leak*.
 
-+ Create hello projects for the listed p-* packages
-+ hello reduce, apply in sequential iteration
-+ Rewrite the recursiveFind limiting the concurrency of both scanDir and findInFile (only if it's not easier with async await).
+#### Exercise 10: [An asynchronous `map()`](e10-async-map) (not done yet)
+Implement a parallel asynchronous version of `Array.map()` that supports promises and a concurrency limit. The function should not directly leverage `TaskQueue` or `TaskQueuePC` classes, but it can use the underlying patterns on which those are based.
 
-09 - web crawler with TaskQueuePC
+The function, which will be defined with the signature `mapAsync(iterable, callback, concurrency)` will accept the following inputs:
++ `iterable` &mdash; a generic iterable, such as an array
++ `callback` &mdash; a function that accepts as input each item of the iterable (exactly as the original `Array.map()`) and that returns a `Promise` or a simple value.
++ `concurrency` &mdash; which defines how many items in the iterable can be processed by callback in parallel at each given time
+
+#### Example 11: [Hello, `p-limit`](e11-hello-p-limit)
+Illustrates the basics of the [`p-limit`](https://www.npmjs.com/package/p-limit) package that lets you run multiple promise-based tasks with limited concurrency.
+
+#### Example 12: [Hello, `p-throttle`](e12-hello-p-throttle)
+Illustrates the basics of the [`p-throttle`](https://www.npmjs.com/package/p-throttle) package that lets you control that functions are called only under certain given rates (e.g. only twice a second).
+
+#### Example 13: [Hello, `p-queue`](e13-hello-p-queue)
+Illustrates the basics of the [`p-queue`](https://www.npmjs.com/package/p-queue) package that provides a robust implementation of a promise queue with concurrency limit features.
+
+#### Example 14: [Hello, reduce for sequential iteration](e14-hello-reduce-series)
+Illustrates the how to use `Array.reduce()` as a simpler, alternative implementation of the sequential iteration pattern.
+
+#### Example 15: [File Concatenation with *async/await*](./e15-file-concatenation-async-await/)
+Write the implementation of `concatFiles(...)`, a promise-based function that takes two or more paths to text files in the file system and a destination file using *async/await* syntax.
+
+This function must copy the contents of every source file into the destination file, respecting the order of the files as provided by the arguments list. Also, the function must be able to handle an arbitrary number of arguments.
+
+#### Example 16: [List files recursively with *async/await*](./e16-list-files-recursively-async-await/)
+Write `listNestedFiles()`, a promise-based function that takes as the input the path to a directory in the local filesystem, and that asynchronously iterates over all the subdirectories to eventually return a promise that is fulfilled with the list of all the files discovered, using *async/await*.
+
+#### Example 17: [Recursive find with *async/await*](./e17-recursive-find-async-await/)
+Write `recursiveFind()`, a promise-based function using *async/await* syntax that takes a path to a directory in the local filesystem and a keyword as per the following signature:
+```javascript
+async function recursiveFind(dir, keyword)
+```
+
+The function must find all the text files within the given directory that contain the given keyword in the file contents. The list of matching files should be returned as the *fulfillment* value of the promise when the search is completed. If no matching file is found, the fulfillment value should be an empty array.
+
+As an example test case, if you have the files `foo.txt` and `bar.txt` and `baz.txt` in `myDir` and the keyword `batman` is contained in the files `foo.txt`, and `baz.txt` making the call:
+
+```javascript
+recursiveFind('myDir', 'batman')
+  .then(console.log);
+// should print ['foo.txt', 'baz.txt']
+```
+
+The final solution must make the search recursive, so that it looks for files in any subdirectory of the given directory, and in parallel using a `TaskQueue` so that the number of parallel tasks don't grow out of control.
+
+#### Example 18: [Recursive find with *async/await*, version 2](./e17-recursive-find-async-await-v2/)
+A second attempt to implement `recursiveFind()` using *async/await* syntax, controlling that both the directory scan and the reading of the files don't grow out of control.
 
 investigate top-level await
+
++ make a 2nd read of the chapter, taking notes and doing additional exercises as needed.
++ grokking the taskQueuePC: why the consumer gets stalled!
