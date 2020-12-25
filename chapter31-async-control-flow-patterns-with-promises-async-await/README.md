@@ -1043,5 +1043,8 @@ A second attempt to implement `recursiveFind()` using *async/await* syntax, cont
 #### Example 19: [Promise `return` basics](e19-promise-return-basics)
 Illustrates some basic stuff about promise chaining related to how `return` works.
 
+#### [Example 20: Chaining promise callbacks](e20-chaining-promise-callbacks)
+A workbench for grokking several related scenarios related to chaining promise callbacks. Special interest is paid to expressions like `funcReturningPromise().then(resolve, reject)`.
+
 + grokking the taskQueuePC: why the consumer gets stalled!
 + Fix example18... it should be clear when to use return, and why not, etc.
