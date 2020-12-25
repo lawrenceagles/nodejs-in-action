@@ -97,6 +97,10 @@ Not only that, the `onFulfilled()` and `onRejected()` callbacks will be invoked 
 
 Finally, if an exception is thrown in the `onFulfilled()` or `onRejected()` handlers, the `Promise` returned by the `then()` method will automatically reject with the exception that was thrown as the *rejection reason*. As a result, exceptions will propagate automatically across the chain and the `throw` statement becomes usable (as opposed to what happens with *CPS*, on which only synchronous code could throw).
 
+| EXAMPLE: |
+| :------- |
+| For additional info on promise chaining, `then()` callbacks, returning values in them, etc., please review [Promise `return` basics](e19-promise-return-basics). |
+
 #### Promises/A+ and *thenables*
 Before promises were standardized, there were many incompatible implementations. The JavaScript community led the efforts to come up with the *Promises/A+* specification. This specification details the behavior of the `then()` method. Today, the majority of `Promise` implementations use this standards, including the native `Promise` object of JavaScript and Node.js but you have to be aware that if you are dealing with old code using a non-core library, you might make sure that library complies with the *Promises/A+* specification if you want to mix core and non-core promises in a chain with `then()`.
 
@@ -861,6 +865,22 @@ This function behaves as the original one, in the sense that if an error is thro
 
 Note that it is quite common in Node.js programming to find these type of situations: encoding/decoding of streams of data, processing of live cryptocurrency market data, monitoring of IoT sensors, etc.
 
+#### Top-level await
+The `await` keyword may be used in the top level (outside of async functions) within ECMAScript modules.
+
+```javascript
+// five.js module: no need to wrap in async function
+export const five = await Promise.resolve(5);
+
+// main.js: main program
+import { five } from './lib/five.js';
+
+console.log(five); // => 5
+```
+
+| EXAMPLE: |
+| :------- |
+| You can find a runnable example in [11 &mdash; Top-level await](11-hello-top-level-await). |
 
 ### You know you've mastered this chapter when...
 + You're aware that a `Promise` is and object that wraps the eventual result (or error reason) of an asynchronous oepration, and are familiar with the different *states* of a promise: *pending*, *fulfilled*, *rejected*, and *settled*.
@@ -923,6 +943,9 @@ Illustrates how to implement limited parallel execution using a Task Queue imple
 
 #### [10 &mdash; Memory leaks with infinite promise chains](10-promises-memory-leak)
 Illustrates how an infinite, recursion based, promise chain creates a memory leak, and illustrates how you can fix it by breaking the promise chain.
+
+#### [11 &mdash; Top-level await](11-hello-top-level-await)
+Illustrates how to use the *top-level await* capability, which allows you to use `await` in *ESM* outside of async functions.]
 
 #### Example 1: [File Concatenation](./e01-file-concatenation/)
 Write the implementation of `concatFiles(...)`, a promise-based function that takes two or more paths to text files in the file system and a destination file.
@@ -1014,10 +1037,11 @@ recursiveFind('myDir', 'batman')
 
 The final solution must make the search recursive, so that it looks for files in any subdirectory of the given directory, and in parallel using a `TaskQueue` so that the number of parallel tasks don't grow out of control.
 
-#### Example 18: [Recursive find with *async/await*, version 2](./e17-recursive-find-async-await-v2/)
+#### Example 18: [Recursive find with *async/await*, version 2](./e18-recursive-find-async-await-v2/)
 A second attempt to implement `recursiveFind()` using *async/await* syntax, controlling that both the directory scan and the reading of the files don't grow out of control.
 
-investigate top-level await
+#### Example 19: [Promise `return` basics](e19-promise-return-basics)
+Illustrates some basic stuff about promise chaining related to how `return` works.
 
-+ make a 2nd read of the chapter, taking notes and doing additional exercises as needed.
 + grokking the taskQueuePC: why the consumer gets stalled!
++ Fix example18... it should be clear when to use return, and why not, etc.

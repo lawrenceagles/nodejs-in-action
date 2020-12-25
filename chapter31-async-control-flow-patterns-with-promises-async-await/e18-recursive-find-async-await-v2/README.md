@@ -1,6 +1,7 @@
 # Part 4: Node.js avanced patterns and techniques
 ## Chapter 31 &mdash; Asynchronous Control Flow Patterns with Promises and Async/Await
-### Example 17: [Recursive find with *async/await*](./e17-recursive-find-async-await/)
+### Example 18: Recursive find with *async/await*
+
 Write `recursiveFind()`, a promise-based function using *async/await* syntax that takes a path to a directory in the local filesystem and a keyword as per the following signature:
 ```javascript
 async function recursiveFind(dir, keyword)
