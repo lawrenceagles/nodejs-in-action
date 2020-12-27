@@ -39,6 +39,7 @@ export class TaskQueuePC {
   }
 
   runTask(task) {
+    console.log(`INFO (runTask): workers=${ this.consumerQueue.length }; tasks=${ this.taskQueue.length }`);
     return new Promise((resolve, reject) => {
       const taskWrapper = () => {
         const taskPromise = task();

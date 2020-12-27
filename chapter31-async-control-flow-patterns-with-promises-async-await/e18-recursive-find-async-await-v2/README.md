@@ -18,3 +18,8 @@ recursiveFind('myDir', 'batman')
 ```
 
 The final solution must make the search recursive, so that it looks for files in any subdirectory of the given directory, and in parallel using a `TaskQueue` so that the number of parallel tasks don't grow out of control.
+
+### Solution
+The major problem has to do with limiting the concurrency when there is a recursive call in place. If the boundaries for the limit are not set properly, the promise won't be settled and the program will just end gracefully without doing any real processing.
+
+There are several scenarios implemented, but long story short, it's really tricky to limit concurrent parallel execution when recursion is involved, as you will have promises depending on other promise from a subsequent execution that might never get settled because the concurrency limit imposed will never let it run.

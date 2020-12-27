@@ -485,6 +485,10 @@ export function spider(url, nesting, concurrency) {
 
 Note that the task we're queueing comprises just the retrieval of the contents of the URL from either local or HTTP. The `spiderLinks()` invocation has been purposely kept outside of the queue to avoid creating a deadlock if the depth of the spidering process is higher than the concurrency limit of the queue.
 
+| NOTE: |
+| :---- |
+| You should pay special attention to scenarios involving limited parallel execution and recursion. In those scenarios, you might have a recursive call that depends on a promise that might never get settled if there are no *consumers/workers* available to execute the task. This will create an unrecoverable deadlock in your code. See [`p-limit` with recursion](e23-p-limit-with-recursion/README.md) for further explanation. |
+
 Note also that `spiderLinks()` uses `Promise.all()`. This is OK now because is the `TaskQueue` responsibility to ensure that we are not going beyond the concurrency limit of the tasks.
 
 | EXAMPLE: |
@@ -648,9 +652,6 @@ links.forEach(async function iteration(link) {
 
 In the body of `iteration(...)` we're await for the promise returned by `spider()`, but `Array.forEach()` is silently ignoring the promise returned by iteration, and therefore, the tasks **will not** be executed in series, but rather in parallel, with unlimited concurrency, in the same event loop.
 
-
-
-
 #### Parallel execution
 There are two ways to run a set of tasks in parallel using *async/await*:
 + using the `await` expression
@@ -789,6 +790,11 @@ We then extract the first consumer from the queue and invoke it immediately by p
 | EXAMPLE: |
 | :------- |
 | You can find the implementation of the `TaskQueuePC` along with the illustration of how to use it in the *web crawler* in [09 &mdash; Limited parallel execution with producers/consumers pattern](09-task-queue-producers-consumers). |
+
+
+| NOTE: |
+| :---- |
+| You should pay special attention to scenarios involving limited parallel execution and recursion. In those scenarios, you might have a recursive call that depends on a promise that might never get settled if there are no *consumers/workers* available to execute the task. This will create an unrecoverable deadlock in your code. See [`p-limit` with recursion](e23-p-limit-with-recursion/README.md) for further explanation. |
 
 ### The problem with infinite recursive promise resolution chains
 This section will deal with an advance topic about memory leaks cause by infinite `Promise` resolution chains. This bug affects the actual *Promises/A+* specification standard, and therefore, no compliant implementation is immune.
@@ -1046,9 +1052,12 @@ Illustrates some basic stuff about promise chaining related to how `return` work
 #### Example 20: [Chaining promise callbacks](e20-chaining-promise-callbacks)
 A workbench for grokking several related scenarios related to chaining promise callbacks. Special interest is paid to expressions like `funcReturningPromise().then(resolve, reject)`.
 
-#### Example 21: [Sleeping tasks with promises](e31-sleeping-tasks-with-promises)
-a workbench for grokking scenarios related to *pausing* execution using promises
+#### Example 21: [Sleeping tasks with promises](e21-sleeping-tasks-with-promises)
+a workbench for grokking scenarios related to *pausing* execution using promises.
 
-+ grokking the taskQueuePC: why the consumer gets stalled!
-+ recursion and promises!
-+ Fix example18... it should be clear when to use return, and why not, etc.
+### Example 22: [Recursion with promises](e22-recursion-with-promises)
+a workbench for grokking scenarios that involve recursion with promises.
+
+### Example 23: [`p-limit` with recursion](e23-p-limit-with-recursion)
+a workbench for grokking scenarios that involve recursion with promises, when using limited parallel execution.
+
