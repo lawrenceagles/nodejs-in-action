@@ -242,14 +242,187 @@ And on the client side, we first *gzip* the file and then encrypt it.
 The main advantage is evident, with just a few lines of code we have been able inject new capabilities into an existing pipeline.
 
 ### Getting started with streams
+Streams are virtually everywhere in Node.js: file-system management, HTTP modules, crypto, compression utilities, ...
 
 #### Anatomy of streams
+Every *stream* in Node.js is an implementation of one of the following four base abstract classes defined in the `stream` core module:
++ `Readable`
++ `Writable`
++ `Duplex`
++ `Transform`
+
+In turn, each `stream` class inherit from `EventEmitter` and produce several types of events including:
++ `'end'` &mdash; when a `Readable` stream has finished reading
++ `'finish'` &mdash; when a `Writable` stream has finished writing
++ `'error'` &mdash; when an unexpected situation is found
+
+Streams in Node.js support two operating modes:
++ binary mode &mdash; to stream data in form of chunks, such as buffers or strings
++ object mode &mdash; to stream data as a sequence of discrete objects
+
+While the first mode will be mostly used for I/O, the second one will open a handful of possibilities to structure an application as processing units in a functional fashion.
 
 #### Readable streams
+A `Readable` stream represents a source of data.
 
-##### Reading from a stream
+Data can be received from a `Readable` stream using two approaches: *non-flowing* (or *paused*) and *flowing*.
 
-##### Implementing Readable
+##### Reading from a stream: *non-flowing* mode
+The non-flowing or paused mode is the default pattern for reading from a `Readable` stream.
+
+It consists in attaching a listener to the stream for the `'readable'` event, which signals the availability of new data to read. Then in a loop, we read the data continuously until the internal buffer is emptied.
+
+This can be done using the `read()` method, which synchronously reads from the internal buffer and returns a `Buffer` object representing the chunk of data:
+
+```javascript
+readable.read([size])
+```
+
+To illustrate this approach, let's create an example that reads from the standard input and echoes everything to the standard output.
+
+| NOTE: |
+| :---- |
+| `process.stdin` is a stream representing the standard input. |
+
+```javascript
+process.stdin
+  .on('readable', () => {
+    let chunk;
+    console.log(`INFO: new data available`);
+    while ((chunk = process.stdin.read()) !== null) {
+      console.log(`INFO: chunk read (${ chunk.length } bytes): '${ chunk.toString() }'`);
+    }
+  })
+  .on('end', () => console.log('INFO: end of stream'));
+```
+
+In the example, we use the `read()` method which is a synchronous operation that pulls a data chunk from the internal buffers of the `Readable` stream. The returned chunk is by default a `Buffer` object if the stream is working in binary mode (which is the default).
+
+The `read(...)` method returns `null` when there is no more data available in the internal buffers. In cush case, we have to wait for another `'readable'` event to be fired, or wait for the `'end'` event that signals the end of the stream.
+
+The `read(...)` method allows you to specify the amount of data to be read.
+
+In a `Readable` stream working in binary mode, you can read strings instead of buffers by calling `setEncoding(encoding)` which you can set to `'utf8'`. This is the recommended approach when streaming UTF-8 text data, as it will correctly handle multibyte characters.
+
+You can call `setEncoding(...)` as many times as needed on a `Readable` stream. The encoding will be switched dynamically on the next available chunk.
+
+| NOTE: |
+| :---- |
+| Streams are inherently binary; encoding is just a view over the binary data emitted by the stream. |
+
+| EXAMPLE: |
+| :------- |
+| See [06 &mdash; Reading from stdin as a stream](06-read-stdin) for a runnable example. |
+
+##### Reading from a stream: *flowing* mode
+An alternative way to read from a stream is the *flowing* mode which consists in attaching a listener to the `'data'` event. When using this mode, the data is not pulled using `read()`, but instead, it is pushed to the data listener as soon as it arrived.
+
+```javascript
+process.stdin
+  .on('data', chunk => {
+    console.log(`INFO: new data available`);
+    console.log(`INFO: chunk read (${ chunk.length } bytes): '${ chunk.toString() }'`);
+  })
+  .on('end', () => console.log('INFO: end of stream'));
+```
+
+This mode offers less flexibility to control the flow of data compared to the *non-flowing* mode.
+
+To enable the flowing mode you can:
++ attach a listener to the `'data'` event
++ explicitly invoke the `resume()` method
+
+You can also temporarily stop the stream from emitting `'data'` events invoking the `pause()` method on the stream. Calling `pause()` will switch the stream to the default *non-flowing* mode.
+
+| EXAMPLE: |
+| :------- |
+| Please review [07 &mdash; Reading from stdin as a stream using the *flowing mode*](07-read-stdin-flowing-mode) for a runnable example. |
+
+##### Async iterators
+*Readable streams* are also async iterators. We'll explore those in greater detail on a later chapter, but for now, just consider that the previous example can be implemented as the following:
+
+```javascript
+async function main() {
+  for await (const chunk of process.stdin) {
+    console.log(`INFO: new data available`);
+    console.log(`INFO: chunk read (${ chunk.length } bytes): '${ chunk.toString() }'`);
+  }
+  console.log('INFO: end of stream');
+}
+
+main()
+  .then(() => console.log(`processing of readable stream completed`));
+```
+
+That is, it is possible to consume an entire *readable stream* using promises.
+
+| EXAMPLE: |
+| :------- |
+| Please see [08 &mdash; Reading from stdin as *async iterators*](08-read-stdin-async-iterator) for a runnable example. |
+
+##### Implementing Readable streams
+This section deals with how to implement a new *readable stream*. To do this, it is necessary to create a new class inheriting from `Readable`. The class must provide an implementation of the `_read()` method with signature:
+
+```javascript
+readable._read(size)
+```
+
+The `Readable` base class will call the `_read(...)` method, which in turn will fill the internal buffer using `push` (`readable.push(chunk)`).
+
+| NOTE: |
+| :---- |
+| `read(...)` is the method called by `Readable` consumers when retrieving data from a *readable stream. By contrast, `_read(...)` is the method invoked by the `Readable` base class to fill the *readable stream* internal buffer. Filling the buffer is a `_read(...)` responsibility and it is done invoking `push(...)`. |
+
+Consider the following implementation of a *readable* stream, that exposes a `RandomStream` class that generate random strings.
+
+```javascript
+import { Readable } from 'stream';
+import Chance from 'chance';
+
+const chance = new Chance();
+
+export class RandomStream extends Readable {
+  constructor(options) {
+    super(options);
+    this.emittedBytes = 0;
+  }
+
+  _read(size) {
+    const chunk = chance.string({ length: size });
+    this.push(chunk, 'utf8');
+    this.emittedBytes += chunk.length;
+    if (chance.bool({ likelihood: 5 })) {
+      this.push(null);
+    }
+  }
+}
+```
+
+At the top of the file we load our dependencies.
+
+| NOTE: |
+| :---- |
+| `chance` is an npm utility module to generate random value of different classes (number, strings, sentences....). |
+
+Then we define our constructor, that calls `super(...)` to invoke the constructor of the parent class so that the underlying `Readable` stream is properly initialized.
+
+The `Readable` constructor allows the following options:
++ `encoding` &mdash; used to convert buffers into strings (defaults to `null`).
++ `objectMode` &mdash; used to flag if the stream is a binary stream (default) or an object stream (`objectMode=true`).
++ `highWaterMark` &mdash; the upper limit for the amount of data (in bytes) stored in the internal buffer, after which no more reading from the source should be done (defaults to 16KB).
+
+In the `_read()` method we do the following:
+1. Invoke `chance.string(...)` to generate a string of the requested length.
+2. Fill the internal buffer using `this.push()`. As we're pushing strings, we set the encoding to `'utf8'`.
+3. Terminates the stream randomly, with a likelihood of 5%, by pushing a `null` into the internal buffer.
+
+| NOTE: |
+| :---- |
+| The `size` parameter in `_read()` is an advisory parameter. It's good to honor it if present, as it means the caller is requesting that amount of data. However, the caller might not use it. |
+
+| EXAMPLE: |
+| :------- |
+| Please see [09 &mdash; `RandomStream`: a random string generator as a stream](09-random-stream) for a runnable example of how to create a custom readable stream. |
 
 #### Writable streams
 
@@ -308,6 +481,18 @@ An application consisting of a client and server components, on which the client
 
 #### [05 &mdash; GZIP client/server with an encryption layer](05-gzip-encryption-client-server)
 an enhancement on [04 &mdash; GZIP client/server with streams](../04-gzip-client-server) which adds an extra layer of encryption to demonstrate the power of streams composability.
+
+#### [06 &mdash; Reading from stdin as a stream](06-read-stdin)
+Illustrates how to read from a `Readable` stream using the default non-flowing mode that consists in attaching a listener to the `'readable'` event.
+
+#### [07 &mdash; Reading from stdin as a stream using the *flowing mode*](07-read-stdin-flowing-mode)
+Illustrates how to read from a `Readable` stream using the flowing mode (as opposed to the default *non-flowing* mode seen on [06 &mdash; Reading from stdin as a stream](../06-read-stdin)) that consists in attaching a listener to the `'data'` event.
+
+#### [08 &mdash; Reading from stdin as *async iterators*](08-read-stdin-async-iterator)
+Illustrates how to read from a `Readable` stream using the async iterator pattern. This lets you consume an entire *readable stream* using promises.
+
+#### [09 &mdash; `RandomStream`: a random string generator as a stream](09-random-stream)
+Illustrates how to implement a custom *readable* stream by inheriting from `Readable`. The example creates a stream `RandomStream` that produces random strings, and then we consume from `RandomStream` using the *non-flowing* and *flowing* mode.
 
 #### Example 1: [File Concatenation](./e01-file-concatenation/)
 Write the implementation of `concatFiles(...)`, a promise-based function that takes two or more paths to text files in the file system and a destination file.
