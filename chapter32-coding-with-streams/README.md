@@ -424,15 +424,267 @@ In the `_read()` method we do the following:
 | :------- |
 | Please see [09 &mdash; `RandomStream`: a random string generator as a stream](09-random-stream) for a runnable example of how to create a custom readable stream. |
 
+###### Simplified construction
+
+For simple custom streams, there is an option that doesn't require creating a custom class inheriting from `Readable`.
+
+This simplified option only requires you to invoke `new Readable(options)` and pass a method named `read()` in the set of options, with the same semantic as the `_read(...)` method when inheriting from `Readable`.
+
+The following snippet rewrites our `RandomStream` using the simplified construction approach:
+
+```javascript
+import { Readable } from 'stream';
+import Chance from 'chance';
+
+const chance = new Chance();
+let emittedBytes = 0;
+
+const randomStream = new Readable({
+  read(size) {
+    const chunk = chance.string({ length: size });
+    this.push(chunk, 'utf8');
+    emittedBytes += chunk.length;
+    if (chance.bool({ likelihood: 5 })) {
+      this.push(null);
+    }
+  }
+});
+```
+
+This is a good option when you don't need to manage a complicated state within your stream.
+
+| EXAMPLE: |
+| :------- |
+| See [10 &mdash; `RandomStream`: a random string generator as a stream, simplified construction](10-random-stream-simplified-construction) for a runnable example. |
+
+###### Readable streams from iterables
+
+It is possible to create `Readable` stream instances from arrays or other iterable objects (such as generators, iterators and async iterators) using the `Readable.from()` helper.
+
+Consider the following example:
+
+```javascript
+import { Readable } from 'stream';
+
+const mountains = [
+  { name: 'Everest', height: 8848 },
+  { name: 'K2', height: 8611 },
+  { name: 'Kangchenjunga', height: 8586 },
+  { name: 'Lhotse', height: 8516 },
+  { name: 'Makalu', height: 8481 }
+];
+
+const mountainStream = Readable.from(mountains);
+
+mountainStream
+  .on('data', (mountain) => {
+    console.log(`${ mountain.name.padStart(14) }\t${ mountain.height }m`);
+  })
+  .on('end', () => console.log(`INFO: mountainStream exhausted!`));
+```
+
+Note that we didn't have to explicitly set the stream mode to `objectMode`. By default, `Readable.from()` will set `objectMode` to true unless you explicitly disabled it.
+
+Note that `Readable.from()` debunks a little bit the advantages of using streams, as it requires the source array to be materialized, before it can be consumed. It should be use only for small arrays for which you can lay on top of them the *stream* interface for some reason.
+
+
+| NOTE: |
+| :---- |
+| You can pass additional options to `Readable.from()` as a second argument to the function. |
+
+| EXAMPLE: |
+| :------- |
+| See [11 &mdash; Readable from iterable](11-readable-from-iterable) for a runnable example. |
+
 #### Writable streams
+
+A `Writable` stream represents a data destination (e.g file, database table, socket, standard output, etc.).
 
 ##### Writing to a stream
 
+Pushing some data down a `Writable` stream comeds down to use the `write(...)` method:
+
+```javascript
+writable.write(chunk, [encoding], [callback])
+```
+
++ `encoding` &mdash; (optional) for string chunks, lets you specify the string encoding and will be ignored if the chunk is a buffer.
++ `callback` &mdash; (optional) function that will be invoked when the chunk is flushed into the underlying resource.
+
+To signal that no more data will be written to the stream, you have to use the `end(...)` method:
+
+```javascript
+writable.end([chunk], [encoding], [callback])
+```
+
+The method allows you to provide a final `chunk` of data. The other arguments play the same role as in `write(...)`.
+
+Consider the following example, that creates a small HTTP server than returns a random sequence of strings when contacted:
+
+```javascript
+import { createServer } from 'http';
+import Chance from 'chance';
+
+const chance = new Chance();
+
+const server = createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  while (chance.bool({ likelihood: 95 })) {
+    res.write(`${ chance.string() }\n`);
+  }
+  res.end('\n\n');
+  res.on('finish', () => console.log(`INFO: All data sent!`));
+});
+
+server.listen(5000, () => console.log(`INFO: listening on http://localhost:5000`));
+```
+
+Note that in the example, we're writing in to the `res` object, which is an instance of `http.ServerResponse`, which is in turn a `Writable` stream.
+
+1. We use `writeHead(...)` to send the HTTP status code and headers. Note that this method is not a part of the `Writable` interface, but a helper method specific to the HTTP protocol.
+2. We start a loop that will terminate with a likelihood of 95% (that is `chance.bool({ likelihood: 95 }))` will return true 95% of the time.
+3. We write random strings into the stream using the stream interface `readable.write(...)`
+4. Once the loop is done, we send a final chunk using `readable.end()`.
+5. We register a listener for the `'finish'` event on the stream, that will be fired when all the data has been flushed into the underlying socket.
+
+| EXAMPLE: |
+| :------- |
+| See [12 &mdash; Writable random http server](12-writable-random-http-server) for a runnable example. |
+
 ##### Backpressure
+
+Node.js streams can suffer from bottlenecks, where data is generated faster than the stream can consume it. While this is a perfectly natural situation from the consumer perspective, it can lead to undesired effects:
+
+![Backpressure](images/backpressure.png)
+
+
+The mechanism to cope with this problem involves buffering the incoming data; however, if the stream doesn't give any feedback to the writer, you may find yourself in a situation where more and more data is accumulated in the internal buffer, leading to high levels of memory usage and eventual data loss.
+
+To prevent this from happening, `writable.write(...)` will return false when the internal buffer exceeds the `highWaterMark` limit (remember that this property sets the limit of the internal buffer size of the stream). Beyond that point, the `write(...)` method will start returning false, indicating that the application should stop writing. When the buffer is emptied, the `'drain'` event will be emitted to signal that it is safe to write again. This mechanism is called *backpressure*.
+
+Note that *backpressure* is an advisory mechanism, and we could ignore the signal and continue writing, making the buffer grow indefinitely. That is, the stream won't be blocked when the `highWaterMark` threshold is reached, but it is highly recommended to be aware of this *backpressure protocol*.
+
+| NOTE: |
+| :---- |
+| The situation described above might also affect `Readable` streams. In those, the `push(...)` method will return false when backpressure is building up. Note however, that is a responsibility of stream implementers to deal with that problem, and therefore, it is less frequent than in `Writable` streams. |
+
+Consider the following example, in which we modify the example [12 &mdash; Writable random http server](12-writable-random-http-server) to take into account the backpressure of the `Writable` stream.
+
+```javascript
+const server = createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+
+  function generateMore() {
+    while (chance.bool({ likelihood: 95 })) {
+      const randomChunk = chance.string({ length: 16 * 1024 - 1 });
+      const shouldContinue = res.write(`${ randomChunk }\n`);
+      if (!shouldContinue) {
+        console.log(`WARNING: backpressure building up on the stream!`);
+        return res.once('drain', generateMore);
+      }
+    }
+    res.end(`\n\n`);
+  }
+  generateMore();
+  res.on('finish', () => console.log(`INFO: All data sent!`));
+});
+```
+
+Note how we now check the result of `res.write(...)` to understand whether backpressure is building up or not. When this happens, we exit the function and schedule another cycle of writes when the `'drain'` event is triggered, as it signals that it is safe again to write in the stream.
+
+| EXAMPLE: |
+| :------- |
+| See [13 &mdash; Writable random http server, with backpressure support](13-writable-backpressure-random-http-server) for a runnable example. |
 
 ##### Implementing Writable
 
+This section deals with the implementation of a new custom *writable* stream by defining a class that inherits from `Writable`, and providing an implementation for the `_write()` method.
+
+We will illustrate how to do it by building a *writable stream* that receives objects in the format:
+
+```javascript
+{
+  path: <path to a file>,
+  content: <string or buffer>
+}
+```
+
+The *writable stream* will be responsible for save the `content` received at the given `path`. Note that this stream has to work in *object mode*.
+
+```javascript
+import { Writable } from 'stream';
+import { promises as fs } from 'fs';
+import { dirname } from 'path';
+import mkdirp from 'mkdirp';
+
+
+export class ToFileStream extends Writable {
+  constructor(options) {
+    super({ ...options, objectMode: true });
+  }
+
+  _write(chunk, encoding, cb) {
+    mkdirp(dirname(chunk.path))
+      .then(() => fs.writeFile(chunk.path, chunk.content))
+      .then(() => cb())
+      .catch(cb);
+  }
+}
+```
+
+First of all we invoke the parent class' constructor with all the receive options, and also making sure that `objectMode` is set to true, as this is required for this stream.
+
+A few other notable `options` accepted by `Writable` are:
++ `highWaterMark` &mdash; which controls the backpressure limit, and it is set at 16 KB.
++ `decodeStrings` &mdash; which enables the automatic decoding of strings into binary buffers before passing them to `_write()`. This defaults to `true` and it is ignored when the stream is working in *object mode*.
+
+Then, we create an implementation of `_write()` with the expected signature, which includes the `chunk` (which in our case will be an object), the `encoding` which makes sense only for binary streams, and the callback that should be invoked when writing has completed. Note that it is not necessary to pass the result of the operation, but we're sending the error.
+
+The following code snippet illustrates how to *write* to this custom *writable*:
+
+```javascript
+import { join } from 'path';
+import { ToFileStream } from './lib/to-file-stream.js';
+
+const toFileStream = new ToFileStream();
+
+toFileStream.write({ path: join('sample_files', 'file1.txt'), content: 'Hello' });
+toFileStream.write({ path: join('sample_files', 'file2.txt'), content: 'to' });
+toFileStream.write({ path: join('sample_files', 'dir1', 'file3.txt'), content: 'Jason Isaacs' });
+
+// end() signals that no more data will be written to the stream
+toFileStream.end(() => console.log(`INFO: All files created`));
+```
+| EXAMPLE: |
+| :------- |
+| See [14 &mdash; Writable stream custom implementation that saves files on the given location](14-writable-to-file-stream) for a runnable example. |
+
+##### Simplified construction
+
+`Writable` also provides a simplified construction mechanism that can be used for streams that do not require a complex state management logic.
+
+The following snippet illustrates how the example [14 &mdash; Writable stream custom implementation that saves files on the given location](14-writable-to-file-stream) can be slightly modified to use the simplified construction approach.
+
+```javascript
+const toFileStream = new Writable({
+  objectMode: true,
+  write(chunk, encoding, cb) {
+    mkdirp(dirname(chunk.path))
+      .then(() => fs.writeFile(chunk.path, chunk.content))
+      .then(() => cb())
+      .catch(cb);
+  }
+});
+```
+
+Note that in this approach, we pass the implementation of the `_write()` method as part of the `options` object with which we instantiate the `Writable`.
+
+| EXAMPLE: |
+| :------- |
+| See [15 &mdash; Writable stream custom implementation that saves files on the given location, simplified construction](15-writable-to-file-stream-simplified-construction) for a runnable example. |
+
 #### Duplex streams
+214
 
 #### Transform streams
 
@@ -494,8 +746,31 @@ Illustrates how to read from a `Readable` stream using the async iterator patter
 #### [09 &mdash; `RandomStream`: a random string generator as a stream](09-random-stream)
 Illustrates how to implement a custom *readable* stream by inheriting from `Readable`. The example creates a stream `RandomStream` that produces random strings, and then we consume from `RandomStream` using the *non-flowing* and *flowing* mode.
 
+#### [10 &mdash; `RandomStream`: a random string generator as a stream, simplified construction](10-random-stream-simplified-construction)
+Illustrates how to implement a custom *readable* stream by using the fimplified construction approach. The example creates a stream `RandomStream` that produces random strings, and then we consume from `RandomStream` using the *non-flowing* and *flowing* mode.
+
+#### [11 &mdash; Readable from iterable](11-readable-from-iterable)
+Illustrates how to create a `Readable` from an iterable using `Readable.from()` and how the resulting stream behaves as if we would have implemented the *readable stream* ourselves.
+
+#### [12 &mdash; Writable random http server](12-writable-random-http-server)
+Illustrates how to work with a `Writable` stream by creating a small HTTP server that outputs a random sequence of strings when contacted.
+
+#### [13 &mdash; Writable random http server, with backpressure support](13-writable-backpressure-random-http-server)
+An enhancement over [12 &mdash; Writable random http server](12-writable-random-http-server) to illustrate how to deal with backpressure in a `Writable` stream.
+
+#### [14 &mdash; Writable stream custom implementation that saves files on the given location](14-writable-to-file-stream)
+Illustrates how to create a custom *writable* stream by inheriting from `Writable` and implementing the `_write(...)` method. In the example, the created custom stream is responsible for creating files with the provided contents and location.
+
+#### [15 &mdash; Writable stream custom implementation that saves files on the given location, simplified construction](15-writable-to-file-stream-simplified-construction)
+Illustrates how use the simplified construction approach to create a custom *writable* stream. In the example, the created custom stream is responsible for creating files with the provided contents and location.
+
+
 #### Example 1: [File Concatenation](./e01-file-concatenation/)
 Write the implementation of `concatFiles(...)`, a promise-based function that takes two or more paths to text files in the file system and a destination file.
 
 This function must copy the contents of every source file into the destination file, respecting the order of the files as provided by the arguments list. Also, the function must be able to handle an arbitrary number of arguments.
 
+[ ] Review stream related examples in this project
+[ ] Review stream related examples in other books
+[ ] List files recursively as a Readable stream
+[ ] Grok the internals of the simplified construction... how is the write() method seen? Is it a good option for strategies?
