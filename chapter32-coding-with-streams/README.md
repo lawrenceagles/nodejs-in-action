@@ -1042,9 +1042,80 @@ upload.end();
 | See [21 &mdash; Late piping using `PassThrough` stream to upload a file, using an adapter](21-pass-through-upload-late-piping-adapter) for a runnable example, on which the `upload()` function is adapted. Then the *adapted* function is used to push data on demand to the stream, which gives us the opportunity to send the data we want and when we want. |
 
 #### Lazy streams
-226
+Functions like `createReadStream(...)` will open a file descriptor every time a new file is created, even if you're not reading from it. This might create a problem when you have programs that create a large number of streams at the same time.
 
-#### Connecting streams using pipelines
+| NOTE: |
+| :---- |
+| Node.js platform will notify you of such event with an `EMFILE, too many open files` error. |
+
+In other cases, creating a stream instance may also be an expensive operation because of network resources being created, database connections opened, etc.
+
+In those scenarios you might want to dely the expensive initialization until you actually need to consume data from the stream. It is possible to use a library like [`lazystream`](https://www.npmjs.com/package/lazystream). The library allows you to effectively create proxies for the actual stream instances, where the proxied instance is not created until some piece of code is actually starting to consume data from the proxy.
+
+The following code snippet allows you to create a lazy readable stream for the special Unix file `/dev/urandom`:
+
+```javascript
+import lazyStream from 'lazystream';
+import fs from 'fs';
+
+const lazyURandom = new lazyStream.Readable(options => {
+  return fs.createReadStream('/dev/urandom');
+});
+```
+
+In the previous example, 'lazystream` is used to create a lazy `Readable` stream for `/dev/urandom`. Behind the scenes, `lazystream` is implemented using a `PassThrough` stream that only when its `_read()` method is invoked for the first time, creates the proxied instance by invoking a factory function, and pipes the generated stream into the `PassThrough` itself.
+
+| EXAMPLE: |
+| :------- |
+| See [22 &mdash; Lazy stream example for `/dev/urandom`](22-lazy-stream-urandom)
+An example that illustrates how to create a lazy *readable stream* for the special Unix file `/dev/urandom` using the package [`lazystream`](https://www.npmjs.com/package/lazystream). |
+
+#### Connecting streams using pipes
+
+The concept of Unix pipes was invented by Douglas McIlroy. Effectively, pipes enable the output of a given program to be connected to the input of the next using the `|` character, which is known as the *pipe operator* as in:
+
+```bash
+# will print Hello Jason
+echo Hello World | sed s/World/Jason/g
+```
+
+In a similar way, Node.js streams can be connected using the `pipe()` method of the `Readable` stream which has the following signature:
+
+```javascript
+readable.pipe(writable, [options])
+```
+
+The `pipe(...)` method takes the data that is emitted from the *readable stream* and pumps it into the provided *writable stream*. Also, the *writable stream* is ended automatically when the *readable stream* emits and `'end'` event, unless we specifiy `{end: false}` as options. The method returns the *writable stream* passed as the first argumento, so that we can create chained invocations as we have already seen (provided that the stream is also `Readable`).
+
+Piping two streams together will create *suction* &mdash; the data will flow automatically from the *readable* to the *writable* stream without calling `read()` or `write()`, and without having to control the backpressure.
+
+In the following code example, we create an application that takes a
+
+The following code sample uses our previously defined `replace-stream.js` module from [16 &mdash; Transform stream that replaces occurrences of a given string](16-transform-replace-string) to read some text as a stream from the stdin, apply a replace transformation and push the data to stdout.
+
+```javascript
+import { ReplaceStream } from './lib/replace-stream.js';
+
+process.stdin
+  .pipe(new ReplaceStream(process.argv[2], process.argv[3]))
+  .pipe(process.stdout);
+```
+
+Note that the resulting application can interoperate with Unix pipes naturally:
+
+```bash
+$ echo hello, world! | npm start world 'to Jason Isaacs'
+hello, to Jason Isaacs
+```
+
+This illustrates that streams are a universal interface.
+
+
+| EXAMPLE: |
+| :------- |
+| See [23 &mdash; Connecting streams with pipes to replace text](23-pipes-replace-stream)
+Illustrates how to connect streams using pipes to read some text from *stdin*, replace some text according to some rules received as arguments through the command line and then pipe it to *stdout*. |
+
 
 ##### Pipes and error handling
 
@@ -1114,7 +1185,7 @@ Illustrates how to implement a `Transform` stream that replaces the ocurrences o
 #### [17 &mdash; Transform stream that replaces occurrences of a given string, using simplified construction](17-transform-replace-string-simplified-construction)
 Illustrates how to implement a `Transform` stream that replaces the ocurrences of a given string for other. Note that the algorithm to do so is not as evident as the one needed to replace a string in a buffer, as the string may come in different chunks when data is being streamed. The instantiation of the stream is done through simplified construction.
 
-#### 18 &mdash; Transform filter reduce example to calculate profits
+#### [18 &mdash; Transform filter reduce example to calculate profits](18-transform-filter-reduce-profit)
 Illustrates how to implement a `Transform` stream that performs filter and reduce to calculate the profits associated to a given country.
 
 #### [19 &mdash; Observability via a `PassThrough` stream](19-pass-through-observability)
@@ -1125,6 +1196,12 @@ Illustrates how to implement late piping with a `PassThrough` stream to solve sc
 
 #### [21 &mdash; Late piping using `PassThrough` stream to upload a file, using an adapter](21-pass-through-upload-late-piping-adapter)
 An alternative implementation for [20 &mdash; Late piping using `PassThrough` stream to upload a file](20-pass-through-upload-late-piping) on which we create a function that returns a writable stream and use it to push data to the existing `upload()` API.
+
+#### [22 &mdash; Lazy stream example for `/dev/urandom`](22-lazy-stream-urandom)
+An example that illustrates how to create a lazy *readable stream* for the special Unix file `/dev/urandom` using the package [`lazystream`](https://www.npmjs.com/package/lazystream).
+
+#### [23 &mdash; Connecting streams with pipes to replace text](23-pipes-replace-stream)
+Illustrates how to connect streams using pipes to read some text from *stdin*, replace some text according to some rules received as arguments through the command line and then pipe it to *stdout*.
 
 #### Example 1: [File Concatenation](./e01-file-concatenation/)
 Write the implementation of `concatFiles(...)`, a promise-based function that takes two or more paths to text files in the file system and a destination file.
@@ -1138,3 +1215,4 @@ This function must copy the contents of every source file into the destination f
 [ ] find in files using filter and aggregation patterns?
 [ ] Grok how to structure process as pipelines (e.g. filter, aggregation, logging...)
 [ ] Implement wordcount/line count with a Passthrough
+[ ] Investigate `archiver` as an example for which a lazystreamer could be used.
