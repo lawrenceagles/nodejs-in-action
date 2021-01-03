@@ -1118,12 +1118,554 @@ Illustrates how to connect streams using pipes to read some text from *stdin*, r
 
 
 ##### Pipes and error handling
+The error events are not propagated automatically through the pipeline when using `pipe()`.
 
-##### Better error handling with
+For example, if we have:
+
+```javascript
+stream1
+  .pipe(stream2)
+  .on('error', () => { /* handle error */ });
+```
+
+The `'error'` event listener will only catch the errors coming from `stream2`. Therefore, we will need to do the followin to catch errors from both streams:
+
+```javascript
+stream1
+  .on('error', () => { /* handle errors for stream1 */ })
+  .pipe(stream2)
+  .on('error', () => { /* handle errors for stream2 */ });
+```
+
+This debunks the simplicity and readability of stream processing. And the fact that in the event of error, the failing stream is only unpiped from the pipeline and not properly destroyed, makes the situation even worse.
+
+A possible solution for the leak would be:
+
+```javascript
+function handleError(err) {
+  console.error(`ERROR: ${ err.message }`);
+  stream1.destroy();
+  stream2.destroy();
+}
+
+stream1
+  .on('error', handleError)
+  .pipe(stream2)
+  .on('error', handleError);
+```
+
+##### Better error handling with `pipeline()`
+
+In order to avoid the ugly, and error-prone approach to error management when using streams, it is recommended to use the `pipeline()` helper function from the `streams` core package.
+
+The signature of the function is the following:
+
+```javascript
+pipeline(stream1, stream2, stream3, ..., cb)
+```
+
+The helper function pipes every stream passed in the arguments list to the next one. Also, for each stream, it will also register a proper error and close listeners.
+
+Thus, when using `pipeline()` all the streams will be properly destroyed when the pipeline completes successfully or when it's interruped by an error. The last argument is a callback that will be invoked when the stream finishes. If it finishes with an error, the callback will be invoked with the given error as the first argument.
+
+In order to illustrate how this works, let's build a simple app that implements a pipeline that:
++ Reads a Gzip data stream from *stdin*
++ Decompresses the data
++ Makes all the text uppercase
++ Gzips the resulting data
++ Sends the data back to *stdout*
+
+```javascript
+import { createGzip, createGunzip } from 'zlib';
+import { Transform, pipeline } from 'stream';
+
+
+const uppercasify = new Transform({
+  transform(chunk, encoding, cb) {
+    this.push(chunk.toString().toUpperCase());
+    cb();
+  }
+});
+
+pipeline(
+  process.stdin,
+  createGunzip(),
+  uppercasify,
+  createGzip(),
+  process.stdout,
+  err => {
+    if (err) {
+      console.error(`ERROR: ${ err.message }`);
+      process.exit(1);
+    }
+  }
+);
+```
+
+In the example, we build a simple `Transform` stream to make the text uppercase, and then we use the `pipeline(...)` helper function to orchestrate the different actions. We pass a callback as a last parameter to the function to handle the error.
+
+> The `pipeline()` function can be promisified using `util.promisify()`.
+
+| EXAMPLE: |
+| :------- |
+| See [24 &mdash; Error handling with `pipeline()`](24-pipeline-err-handling) for a runnable example. |
 
 ### Asynchronous control flow patterns
+This second part of the chapter will deal with more involved stream patterns like control flow and advanced piping patterns.
+
+It is clear that streams can be useful not only to handle I/O, but also as an elegant programming pattern to process any kind of processing that can structured as a series of stages.
+
+In this subsection, we'll see how streams can be used to implement flows.
+
+#### Sequential execution
+By default, streams handle the data in sequence, and chunk/object ordering is preserved.
+
+For example, the `Transform` stream will never be invoked with the next chunk of data until the previous invocation completes by calling the `callback()` function.
+
+This property of streams can be exploited to turn streams into an elegant alternative to the traditional control flow patterns.
+
+As an illustration of this idea, we'll create a function that concatenates a set of files received as input, in the order in which they are received.
+
+```javascript
+import { createWriteStream, createReadStream } from 'fs';
+import { Readable, Transform } from 'stream';
+
+export function concatFiles(dest, files) {
+  return new Promise((resolve, reject) => {
+    const destStream = createWriteStream(dest);
+    Readable.from(files)
+      .pipe(new Transform({
+        objectMode: true,
+        transform(filename, encoding, done) {
+          const src = createReadStream(filename);
+          src.pipe(destStream, { end: false });
+          src.on('error', done);
+          src.on('end', done);
+        }
+      }))
+      .on('error', reject)
+      .on('finish', () => {
+        destStream.end();
+        resolve();
+      });
+  });
+}
+```
+
+The preceding code implements a sequential iteration over the `files` array by transfoming it into a stream.
+The details are as follows:
+1. First, we create a *writable stream* where we will send all the concatenated chunks. Then, we use `Readable.from()` to create a `Readable` from the files array we receive as arguments. When a readable stream is created that way it is set in object mode and will emit filenames &mdash; every chunk will correspond to a filename, with the order being honored.
+2. Next we create a custom `Transform` stream to handle each file in the sequence. The stream is created in object mode, and the logic consists in creating a *readable stream* for each file we receive. Then we will pipe each chunk stream from that file into the `destStream`. Note that we make sure not to close `destStream` when the input stream is finished by using `{ end: false }`.
+3. When the contents of a source file have been piped into `destStream`, we invoke the `done` callback to communicate the completion of the current file. This will trigger the arrival of the next chunk, and therefore, the processing of the subsequent file.
+4. When all files have been processed, the `'finish'` event is triggered. We register a listener that will finalize the `destStream` (using `.end()`), and we invoke the `resolve()` callback of the promise, which will then signal the completion of the concatenation.
+
+The consumer of this module will be completely unaware that the logic has been implemented with streams:
+
+```javascript
+import { concatFiles } from './lib/concat-files.js';
+
+async function main() {
+  try {
+    await concatFiles(process.argv[2], process.argv.slice(3));
+  } catch (err) {
+    console.error(`ERROR: ${ err.message }`);
+    process.exit(1);
+  }
+
+  console.log(`INFO: successfully concatenated files!`);
+}
+
+
+main()
+  .then(() => console.log(`INFO: done!`));
+```
+
+| EXAMPLE: |
+| :------- |
+| See [25 &mdash; Sequential execution flow with streams: concat files](25-streams-sequential-flow-concat-files) for a runnable example. |
+
+This is a very efficient solution that will let us concatenate files without materializing the contents. But the interesting part of the example is that we have been been able to orchestrate a sequential processing of tasks using only streams.
+
+> Use a stream, or combination of streams, to easily iterate over a set of asynchronous tasks in sequence.
+
+#### Unordered parallel execution
+In some scenarios, processing each data chunk in sequence can be a bottleneck, provided that there is no relationship between each chunk of data (which frequently happens for object streams, but rarely for binary streams).
+
+##### Implementing an unordered parallel stream
+Let's create a module that defines a generic `Transform` stream that executes a given transformation function in parallel.
+
+```javascript
+import { Transform } from 'stream';
+
+export class ParallelStream extends Transform {
+  constructor(userTransform, options) {
+    super({ objectMode: true, ...options });
+    this.userTransform = userTransform;
+    this.running = 0;
+    this.terminateCb = null;
+  }
+
+  _transform(chunk, encoding, done) {
+    this.running++;
+    this.userTransform(chunk, encoding, this.push.bind(this), this._onComplete.bind(this));
+    done();
+  }
+
+  _flush(done) {
+    if (this.running > 0) {
+      this.terminateCb = done;
+    } else {
+      done();
+    }
+  }
+
+  _onComplete(err) {
+    this.running--;
+    if (err) {
+      return this.emit('error', err);
+    }
+    if (this.running === 0) {
+      this.terminateCb && this.terminateCb();
+    }
+  }
+}
+```
+
++ The constructor accepts a `userTransform` argument &mdash; this must be a function provided by the user with the custom transformation. We then invoked the underlying constructor making the `objectMode: true` the default.
+
++ In the `_transform()` method we execute the `userTransform()` function and then increment the count of running tasks. The `userTransform()` is given the `chunk`, the `enconding`, the underlying `push` function, and the underlying `_onComplete()` function (we'll see how to use them later on). Finally, we notify the `Transform` stream that the current transformation step is complete by invoking `done()`. Note that we're enabling the parallel processing by not waiting on the user transformation to complete. By contrast, we'll get notified about when it has been effectively completed by passing the user transformation the custom `_onComplete` method.
+
++ The `_flush()` method is invoked just before the stream terminates. As we have to make sure that all the parallel tasks have completed before completing the global operation, we put the triggering of the `'finish'` event on hold by not calling `done()` immediately. Instead, we will delegate this action to `on_complete()` by assigning a reference to this `done()` function to the instance variable `terminateCb`.
+
++ The `_onComplete()` method will be called by the user transform every time that an async task completes. In the logic of the method, we check whether there are any task running, and if there are none, invoke `this.terminateCb()` which will ultimately call `done()`, which will cause the stream to end and will release `'finish'` that was put on hold in the `_flush()` method.
+
+As an example of how to use the `ParallelStream` module, let's build a URL status monitoring application that will take a newline separated list of URLs and will make sure that all those properly respond.
+
+```javascript
+import { pipeline } from 'stream';
+import { createReadStream, createWriteStream } from 'fs';
+import split from 'split';
+import superagent from 'superagent';
+import { ParallelStream } from './lib/parallel-stream.js';
+
+pipeline(
+  createReadStream(process.argv[2]),
+  split(),
+  new ParallelStream(
+    async (url, encoding, push, done) => {
+      if (!url) {
+        return done;
+      }
+      try {
+        await superagent.head(url, { timeout: 5 * 1000 })
+        push(`${ url } is up\n`);
+      } catch (err) {
+        push(`${ url } is down\n`);
+      }
+      done();
+    }
+  ),
+  createWriteStream('results.txt'),
+  (err) => {
+    if (err) {
+      console.error(`ERROR: ${ err.message }`);
+      process.exit(1);
+    }
+    console.log(`INFO: All URLs have been checked!`);
+  }
+);
+```
+
+As we can see, the code looks very neat and concise &mdash; all the processing logic is contained within a single pipeline that leverages the recently created `ParallelStream` module.
+
+A few relevant notes from the implementation:
+
++ The contents of the input file containing the URLs to check are piped with the `split` module that ensures that each line is emitted in a different chunk.
+
++ The `userTransform()` function is specified in the constructor of the `ParallelStream`. Note that the function receives the `chunk` (the URL to check), the `encoding`, the `push()` function that must be used to downstream information to the subsequent stream, and the `done()` callback we have to use once the individual chunk has been processed. Recall that `done()`is mapped to the `_onComplete()` method from the `ParallelStream`.
+
++ The results a are piped to a fs backed, writable stream `results.txt`.
+
++ We specify the pipeline callback to report if an error has been found.
+
+| EXAMPLE: |
+| :------- |
+| See [26 &mdash; Unordered parallel execution with streams](26-unordered-parallel-stream) for a runnable example. |
+
+#### Unordered limited parallel execution
+As we know, unlimited parallel execution is typically a bad idea as the degree of concurrency might get out of control affecting the stability of the application.
+
+We can refactor our previous `ParallelStream` so that we can control the degree of concurrency:
+
+```javascript
+import { Transform } from 'stream';
+
+export class ParallelStream extends Transform {
+  constructor(concurrency, userTransform, options) {
+    super({ objectMode: true, ...options });
+    this.concurrency = concurrency;
+    this.userTransform = userTransform;
+    this.running = 0;
+    this.continueCb = null;
+    this.terminateCb = null;
+  }
+
+  _transform(chunk, encoding, done) {
+    this.running++;
+    this.userTransform(chunk, encoding, this.push.bind(this), this._onComplete.bind(this));
+    if (this.running < this.concurrency) {
+      done();
+    } else {
+      this.continueCb = done;
+    }
+  }
+
+  _flush(done) {
+    if (this.running > 0) {
+      this.terminateCb = done;
+    } else {
+      done();
+    }
+  }
+
+  _onComplete(err) {
+    this.running--;
+    if (err) {
+      return this.emit('error', err);
+    }
+    const tmpCb = this.continueCb;
+    this.continueCb = null;
+    tmpCb && tmpCb();
+    if (this.running === 0) {
+      this.terminateCb && this.terminateCb();
+    }
+  }
+}
+```
+
+The relevant changes are:
+
++ In the `constructor()`, we accept an extra `concurrency` parameter that will be used to control how many execution slots are available. Also, we create a couple of instance variables to keep track of any pending `_transform()` methods that could not be executed because there were no execution slots available, and another one for the callback of the `_flush()` method, which we call `terminateCb`.
+
++ In the `_transform()` method, we check whether the number of *active tasks* controlled by `this.running` are over the limit established by `concurrency`. If they are, we will postpone the signal to process the next chunk in `this.continueCb`. Otherwise, we will process the next chunk right away.
+
++ In the `_onComplete()` method (which will be called by the `userTransform` function once a chunk has been processed) we invoke any pending chunks that were put on hold because there were no free execution slots.
+
+In the consumer side, the only thing we need to do is pass the desired concurrency level:
+
+```javascript
+...
+pipeline(
+  createReadStream(process.argv[2]),
+  split(),
+  new ParallelStream(2, /* up to 2 parallel async operations */
+...
+```
+
+> To conditionally invoke a function use the construct `this.fn && this.fn()`
+
+| EXAMPLE: |
+| :------- |
+| See [27 &mdash; Limited unordered parallel execution with streams](27-limited-unordered-parallel-stream). |
+
+#### Ordered parallel execution
+We've seen that the `ParallelStream` and `LimitedParallelStream` implementation may shuffle the order of the results with respect to the order on which the chunks are emitted from the input readable stream.
+
+If we want to preserve the order, while running the transformations in parallel, we will need to create a buffer on which we could reorder the results while they are being emitted to give the impression they have been executed in sequence.
+
+The NPM module [parallel-transform](https://www.npmjs.com/package/parallel-transform).
+
+```javascript
+import { pipeline } from 'stream';
+import { createReadStream, createWriteStream } from 'fs';
+import split from 'split';
+import superagent from 'superagent';
+import parallelTransform from 'parallel-transform';
+
+pipeline(
+  createReadStream(process.argv[2]),
+  split(),
+  parallelTransform(2,
+    async function (url, done) {
+      if (!url) {
+        return done;
+      }
+      console.log(`INFO: processing ${ url }`);
+      try {
+        await superagent.head(url, { timeout: 5 * 1000 });
+        this.push(`${ url } is up\n`);
+      } catch (err) {
+        this.push(`${ url } is down\n`);
+      }
+      done();
+    }
+  ),
+  createWriteStream('results.txt'),
+  (err) => {
+    if (err) {
+      console.error(`ERROR: ${ err.message }`);
+      process.exit(1);
+    }
+    console.log(`INFO: All URLs have been checked!`);
+  }
+);
+```
+
+| EXAMPLE: |
+| :------- |
+| See [28 &mdash; Limited ordered parallel execution with streams](28-ordered-parallel-stream) for a runnable example. Note however that the resulting code **does not preserve** the ordering! |
 
 ### Piping patterns
+
+At this point, it should be evident that streams make a great tool to structure applications in a clean and reusable way.
+
+In this section we will bring this idea eveb further by introducing several patterns that let us modularize and reuse entire pipelines.
+
+#### Combining streams
+
+Consider the following diagram:
+
+![Combining Streams](images/combining_streams.png)
+
+This is what we want to achieve:
++ when we write into the combined stream, we want to write into the first stream of the pipeline
++ when we read from the combined stream, we are actually reading from the last stream of the pipeline
++ it has to capture and propagate all the errors that are emitted from any stream of the underlying pipeline. We already saw that the error management can be mitigated with `pipeline()`. But that function will not help much with the construction of the *combined stream* because of the fact that `pipeline()` will return only the last stream of the pipeline, so that we would only get the last `Readable` component and not the first `Writable` component. That happens with `pipe()` too.
+
+| EXAMPLE: |
+| :------- |
+| See [29 &mdash; `pipe()` and `pipeline()` return test](29-pipe-pipeline-return-test) for an example illustrating that `pipe()` and `pipeline()` only return the last component of the pipeline. |
+
+
+A combined stream is usually a `Duplex` stream, which is built by connecting the first stream to its `Writable` side and the last stream to its `Readable` side.
+
+| NOTE: |
+| :---- |
+| Consider the modules [`duplexer2`](https://www.npmjs.com/package/duplexer2) and [`duplexify`](https://www.npmjs.com/package/duplexify) to create a `Duplex` stream out of two different streams. |
+
+A combined stream will have the current advantages:
++ We can redistribute it as a blackbox that hides its internal pipeline.
++ We will provide simplified error managemement, as we won't have to attach an error listener to the individual streams but just to the combined stream.
+
+Note that combining streams is quite a common scenario, so if we don't have any particular need, we might want to reuse an existing library such as [`pumpify`](https://www.npmjs.com/package/pumpify).
+
+Using this library, creating a combined stream will be as simple as:
+
+```javascript
+const combinedStream = pumpify(streamA, streamB, streamC);
+```
+
+##### Implementing a combined stream
+This section will illustrate how to implement a *custom* combined stream.
+
+We will create:
++ one combined stream the compresses and encrypts data
++ one combined stream that decrypts and decompresses data
+
+Using [`pumpify`](https://www.npmjs.com/package/pumpify) it is extremely easy:
+
+```javascript
+import { createGzip, createGunzip } from 'zlib';
+import { createCipheriv, createDecipheriv, scryptSync } from 'crypto';
+import pumpify from 'pumpify';
+
+function createKey(password) {
+  return scryptSync(password, 'salt', 24);
+}
+
+export function createCompressAndEncrypt(password, iv) {
+  const key = createKey(password);
+  const combinedStream = pumpify(createGzip(), createCipheriv('aes192', key, iv));
+  combinedStream.iv = iv;
+
+  return combinedStream;
+}
+
+export function createDecryptAndDecompress(password, iv) {
+  const key = createKey(password);
+  return pumpify(createDecipheriv('aes192', key, iv), createGunzip());
+}
+```
+
+Then we can use them as if they were single streams within our pipeline, for example to archive:
+
+```javascript
+import { createReadStream, createWriteStream } from 'fs';
+import { pipeline } from 'stream';
+import { randomBytes } from 'crypto';
+import { createCompressAndEncrypt } from './lib/combined-streams.js';
+
+const [ ,, password, source ] = process.argv;
+const iv = randomBytes(16);
+const destination = `${ source }.gz.enc`;
+
+pipeline(
+  createReadStream(source),
+  createCompressAndEncrypt(password, iv),
+  createWriteStream(destination),
+  (err) => {
+    if (err) {
+      console.error(`ERROR: ${ err.message }`);
+      process.exit(1);
+    }
+    console.log(`INFO: archive: ${ destination } created; iv='${ iv.toString('hex') }`);
+  }
+);
+```
+
+And to *unarchive*:
+
+```javascript
+import { createReadStream, createWriteStream } from 'fs';
+import { pipeline } from 'stream';
+import { createDecryptAndDecompress } from './lib/combined-streams.js';
+
+
+const [ ,, password, source, ivHex ] = process.argv;
+const destination = `${ source }.unenc`;
+
+const iv = Buffer.from(ivHex, 'hex');
+
+pipeline(
+  createReadStream(source),
+  createDecryptAndDecompress(password, iv),
+  createWriteStream(destination),
+  (err) => {
+    if (err) {
+      console.error(`ERROR: ${ err.message }`);
+      process.exit(1);
+    }
+    console.log(`INFO: unarchive: ${ destination } created; iv='${ iv.toString('hex') }`);
+  }
+);
+```
+
+> The relevant part is how the consumer part is not longer aware of the complexities of the *combined streams* we have created. They have just been included in custom pipelines as if they were regular streams.
+
+
+| EXAMPLE: |
+| :------- |
+| See [30 &mdash; Combining streams](30-combining-streams) for a runnable application. |
+
+#### Forking streams
+250
+
+##### Implementing a multiple
+
+#### Merging streams
+
+##### Merging text
+
+#### Multiplexing and demultiplexing
+
+##### Building a remote logger
+
+##### Multiplexing and demultiplexing
+
+
+
+
+
 
 ### Summary
 
@@ -1203,6 +1745,27 @@ An example that illustrates how to create a lazy *readable stream* for the speci
 #### [23 &mdash; Connecting streams with pipes to replace text](23-pipes-replace-stream)
 Illustrates how to connect streams using pipes to read some text from *stdin*, replace some text according to some rules received as arguments through the command line and then pipe it to *stdout*.
 
+#### [24 &mdash; Error handling with `pipeline()`](24-pipeline-err-handling)
+Illustrates how to perform error handling the `pipeline()` helper function. In the example, a simple app that reads a GZip file from *stdin*, decompresses it, makes all the text uppercase, gzips it back and send it to *stdout* is created.
+
+#### [25 &mdash; Sequential execution flow with streams: concat files](25-streams-sequential-flow-concat-files)
+Demonstrates how to use streams to implement a sequential execution flow. The example concatenates a set of files in the order they are received.
+
+#### [26 &mdash; Unordered parallel execution with streams](26-unordered-parallel-stream)
+Illustrates how to perform an unordered parallel execution with streams. In the example, we define a `ParallelStream` module and a program that uses it to check that a set of URLs found in a file are up.
+
+#### [27 &mdash; Limited unordered parallel execution with streams](27-limited-unordered-parallel-stream)
+Illustrates how to perform a limited unordered parallel execution with streams that controls that the concurrency does not get out of control. In the example, we define a `LimitedParallelStream` module and a program that uses it to check that a set of URLs found in a file are up.
+
+### [28 &mdash; Limited ordered parallel execution with streams](28-ordered-parallel-stream)
+Illustrates how to perform a limited ordered parallel execution with streams using the NPM package [parallel-transform](https://www.npmjs.com/package/parallel-transform). In the example, we leverage that module to build a program that checks that a set of URLs found in a file are up. Note that this example **does not** work as expected, as the ordering is not preserved.
+
+#### [29 &mdash; `pipe()` and `pipeline()` return test](29-pipe-pipeline-return-test)
+Illustrates that both `pipe()` and `pipeline()` return only the last stream of the pipeline.
+
+#### [30 &mdash; Combining streams](30-combining-streams)
+Illustrates how to combine streams using [`pumpify`](https://www.npmjs.com/package/pumpify) to create two combined streams: one the compresses and encrypts data, and one the decrypts and compresses data. Then, the combined streams are used as if they were a single, `Duplex` stream.
+
 #### Example 1: [File Concatenation](./e01-file-concatenation/)
 Write the implementation of `concatFiles(...)`, a promise-based function that takes two or more paths to text files in the file system and a destination file.
 
@@ -1216,3 +1779,9 @@ This function must copy the contents of every source file into the destination f
 [ ] Grok how to structure process as pipelines (e.g. filter, aggregation, logging...)
 [ ] Implement wordcount/line count with a Passthrough
 [ ] Investigate `archiver` as an example for which a lazystreamer could be used.
+[ ] Example 24, with promisify
+[ ] Investigate what happens when merging options such as in { objectMode: true, ...options }, is it overwritten correctly?
+[ ] Repeat exercise 26 with a normal Transform stream. What is the difference?
+[ ] Summarize the expectations of `flush`,  `end()`, etc.
+[ ] Investigate why in exercise 28 the results are not ordered (do simple examples on parallel-stream maybe). The difference with the book sample is that request-promise is used instead of request-promise...
+[ ] Modify exercise 30, so that the initialization vector is emitted by the archive stream (the first 16 bytes emitted by the stream should be consumed before starting processing)
