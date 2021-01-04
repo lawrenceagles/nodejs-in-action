@@ -1,12 +1,13 @@
 # Part 4: Node.js avanced patterns and techniques
 ## Chapter 32 &mdash; Coding with streams
-> 188
+> streams and common use cases
 
 ### Contents
-+ Understand why streams are so important in Node.js
-+ The async/await syntax, which is the main tool for dealing with asynchronous code in Node.js.
-+ Patterns for serial and parallel execution flow: Producers and Consumers
-+ Anti-patterns: `return vs. return await`, and `await` with `Array.forEach()`
++ Node.js streams basics
++ Types of streams
++ Advanced techniques: late-piping, lazy streams, managing backpressure
++ Advanced execution control flow patterns with streams
++ Piping patterns: Reusability amd interoperability using streams
 
 ### Intro
 This chapter aims to provide a complete understanding of Node.js streams &mdash; one of the best and most misunderstood topic of Node.js.
@@ -298,7 +299,7 @@ process.stdin
 
 In the example, we use the `read()` method which is a synchronous operation that pulls a data chunk from the internal buffers of the `Readable` stream. The returned chunk is by default a `Buffer` object if the stream is working in binary mode (which is the default).
 
-The `read(...)` method returns `null` when there is no more data available in the internal buffers. In cush case, we have to wait for another `'readable'` event to be fired, or wait for the `'end'` event that signals the end of the stream.
+The `read(...)` method returns `null` when there is no more data available in the internal buffers. In such case, we have to wait for another `'readable'` event to be fired, or wait for the `'end'` event that signals the end of the stream.
 
 The `read(...)` method allows you to specify the amount of data to be read.
 
@@ -502,7 +503,7 @@ A `Writable` stream represents a data destination (e.g file, database table, soc
 
 ##### Writing to a stream
 
-Pushing some data down a `Writable` stream comeds down to use the `write(...)` method:
+Pushing some data down a `Writable` stream comes down to use the `write(...)` method:
 
 ```javascript
 writable.write(chunk, [encoding], [callback])
@@ -826,7 +827,7 @@ The approach is clear:
 + Find all the records that have 'Spain' as `country`
 + In the process, accumulate the `profit` value
 
-To relieve us fromt the tedious process of parsing the CSV file we will use the [csv-parse](https://www.npmjs.com/package/csv-parse) module.
+To relieve us from the tedious process of parsing the CSV file we will use the [csv-parse](https://www.npmjs.com/package/csv-parse) module.
 
 The implementation is extremely simple, and consists in creating a couple of small and focused `Transform` streams that perform the filter and aggregation respectively:
 
@@ -958,7 +959,7 @@ In such cases, we can use a `PassThrough` stream to solve the problem.
 
 Let's see this with an example:
 
-Consider that we have to use an API that give us the following API to upload a file to a data storage service, like AWS S3/Azure Blob Storage:
+Consider that we have to use the following API to upload a file to a data storage service, like AWS S3/Azure Blob Storage:
 
 ```javascript
 function upload(filename, contentStream) { /* ... */ }
@@ -1648,31 +1649,328 @@ pipeline(
 | See [30 &mdash; Combining streams](30-combining-streams) for a runnable application. |
 
 #### Forking streams
-250
+Forking streams consist in piping a single `Readable` stream into multiple `Writable` streams as seen on the diagram below.
 
-##### Implementing a multiple
+![Forking streams](images/forking_streams.png)
+
+This is useful in the following scenarios:
++ when you want to *fan-out* the same information to different destinations
++ when you want to split the data based on same criteria
++ when you want to apply different transformations to the same data
+
+
+##### Implementing forked streams
+
+Let's create a small application that outputs the *sha1* and *md5* of a given file.
+
+```javascript
+import { createReadStream, createWriteStream } from 'fs';
+import { createHash } from 'crypto';
+
+const filename = process.argv[2] ?? 'package.json';
+const sha1Stream = createHash('sha1').setEncoding('hex');
+const md5Stream = createHash('md5').setEncoding('hex');
+const inputStream = createReadStream(filename);
+
+inputStream
+  .pipe(sha1Stream)
+  .pipe(createWriteStream(`sample_files/${ filename }.sha1`));
+
+inputStream
+  .pipe(md5Stream)
+  .pipe(createWriteStream(`sample_files/${ filename }.md5`));
+```
+
+As seen above, the `inputStream` is piped into both `sha1Stream` and `md5Stream`, so that both will receive the same data chunks.
+
+| EXAMPLE: |
+| :------- |
+| See [31 &mdash; Forking streams](31-forking-streams) for a runnable example. |
+
+Note that:
++ Boths streams will be ended automatically when `inputStream` ends, unless we specify `{ end: false }` when invoking `pipe()`.
++ We must be careful when performing side-effect operations on the input data, as that would affect every stream we're sending data to.
++ Backpressure will work out of the box &mdash; the flow coming from `inputStream` will go as fast as the slowest branch of the fork. As a consequence, if a destination *pauses* the source stream for some reason, all the other destinations will also wait. If a destination stops indefinitely because of a problem, the entire pipeline will be blocked.
++ If we pipe to an additional stream after we've started consuming the data at the source (what's known as async piping), the new stream will only receive new chunks of data. In those cases, we cas use a `PassThrough` stream as a placeholder to collect all the data from the moment we start consuming the stream. Then, the `PassThrough` can be read at any future time without the risk of losing any data. Consider however that this approach might generate backpressure that will affect the whole pipeline as discussed above.
 
 #### Merging streams
+Merging is the opposite of forking &mdash; it involves piping a set of `Readable` streams into a single `Writable` stream:
 
-##### Merging text
+![Merging streams](images/merging_streams.png)
+
+Merging multiple streams into one is a simple operation that just require us to pay attento to the way we handle the `'end'` event, as by default, the destination stream will be finishes ad soon as one the source streams end, which is not typically what we want. Thus, in most of the case we will need to use `{end: false}` when creating the pipeline.
+
+##### Implementing merged streams
+
+As a simple example of how to merge streams, consider the following example that takes an arbitrary number of files and merges the lines of every file into the destination.
+
+```javascript
+import { createReadStream, createWriteStream } from 'fs';
+import split from 'split';
+
+const dest = process.argv[2];
+const sources = process.argv.slice(3);
+
+const destStream = createWriteStream(dest);
+
+let endCount = 0;
+for (const source of sources) {
+  const sourceStream = createReadStream(source, { highWaterMark: 16 });
+  sourceStream.on('end', () => {
+    if (++endCount === sources.length) {
+      destStream.end();
+      console.log(`INFO: ${ dest } successfully created`);
+    }
+  });
+  sourceStream
+    .pipe(split((line) => line + '\n'))
+    .pipe(destStream, { end: false });
+}
+```
+
+In the code above, we created a `Readable` stream for every source file. Then for each source stream we attach a listener for the `'end'` event which will terminate the destination stream when all the files have been read completely.
+
+As the watermark has been set extremely low on purpose, you will find lines randomly intermingled from all the source files, which might or might not be desirable in all scenarios.
+
+| EXAMPLE: |
+| :------- |
+| See [32 &mdash; Merging streams](32-merging-streams) for a runnable example. |
+
+There is a variation of the pattern that allows us to merge streams in order. The npm package [`multistream`](https://www.npmjs.com/package/multistream) will help in that use case.
+
 
 #### Multiplexing and demultiplexing
+There is a particular variation of the merge stream pattern in which what we want to do is use a shared channel to deliver the data of a set of streams.
 
-##### Building a remote logger
+The situation can be better understood in the following diagram:
 
-##### Multiplexing and demultiplexing
+![Multiplexing and demultiplexing streams](images/muxing_and_demuxing.png)
+
+The operation of combining multiple streams (sometimes called channels) to allow transmission over a single stream is called **multiplexing**. The opposite operation, that is, reconstructing the original streams from the data received from a shared stream, is called **demultiplexing**.
+
+We will illustrate how you can use a shared stream to transmit multiple, logically separated streams, that can be separated again at the other end of the shared stream.
+
+##### Implementing multiplexing and demultiplexing
+
+In order to illustrate how you can use a shared stream to transmit multiple, logically separated streams, that can be separated again at the other end of the shared stream, we will build a remote logger application.
+
+We will create a small program that starts a *child process* that redirects both its *stdout* and *stderr* to a remote server, which in turn, will save those two streams in two separate files.
+
+Thus, the shared stream will be a TCP connection, while the two streams that are multiplexed and demultiplexed on the other end will be the *stdout* and *stderr*.
+
+The strategy we will use to multiplex the stream information into the shared channel will be a simple *packet switching* technique, consisting in wrapping the chunks of data into packets that contain some extra information we can then leverage for *demuxing*.
+
+The following figure depicts the minimalist approach we will take, simple enough for this scenario:
+
+![Packet Switching](images/packet_switching.png)
+
+Those extra 5 bytes per chunk will allow us to differentiate the data of each stream and help with the demuxing and processing of chunks.
+
+Let's start building the client side of the application.
+
+```javascript
+import { fork } from 'child_process';
+import { connect } from 'net';
+
+function multiplexChannels(sources, destination) {
+  let openChannels = sources.length;
+  for (let i = 0; i < sources.length; i++) {
+    sources[i]
+      .on('readable', () => {
+        let chunk;
+        while ((chunk = this.read()) !== null) {
+          const outBuff = Buffer.alloc(1 + 4 + chunk.length);
+          outBuff.writeUInt8(i, 0);
+          outBuff.writeUInt32BE(chunk.length, 1);
+          chunk.copy(outBuff, 5);
+          console.log(`INFO: multiplexChannels: sending packet to channel: ${ i }`);
+          destination.write(outBuff);
+        }
+      })
+      .on('end', () => {
+        if (--openChannels === 0) {
+          destination.end();
+        }
+      });
+  }
+}
+
+const socket = connect(5000, () => {
+  const child = fork(process.argv[2], process.argv.slice(3), { silent: true });
+  multiplexChannels([child.stdout, child.stderr], socket);
+});
+```
+
+The `multiplexChannels()` function take is the source streams to be multiplexed, and the destination channel, and performs the following logic:
+1. For each source stream, it registers a listener for the `'readable'` event, to read the data in non-flowing mode.
+2. We wrap each chunk according to our *packet switching strategy*. We write the channel id as a bye (`UInt8`) and the length as a `UInt32BE` and then append the actual data.
+3. When the packet is reay, we write it into the `destination` stream.
+4. We register a listener for the `'end'` event, so that we can properly terminate the destination stream when all the source streams have ended.
+
+Then, the main logic consists in:
+1. Create a new TCP client connection to the address `localhost:5000`.
+2. Start the child process using the first argument as the path, and the rest of the arguments for the child process. We use `{ silent: true }` to make the process do not inherit *stdout* and *stderr*.
+3. We multiplex the *stdout* and *stderr* from the child process into the recently created connection.
+
+The server side is also quite simple:
+
+```javascript
+import { createWriteStream } from 'fs';
+import { createServer } from 'net';
+
+function demultiplexChannel(source, destinations) {
+  let currentChannel = null;
+  let currentLength = null;
+
+  source
+    .on('readable', () => {
+      let chunk;
+      if (currentChannel === null) {
+        chunk = source.read(1);
+        currentChannel = chunk?.readUInt8(0);
+      }
+      if (currentLength === null) {
+        chunk = source.read(4);
+        currentLength = chunk?.readUInt32BE(0);
+        if (currentLength === null) {
+          return null;
+        }
+      }
+
+      chunk = source.read(currentLength);
+      if (chunk === null) {
+        return null;
+      }
+
+      console.log(`INFO: demultiplexChannel: received packet from ${ currentChannel }`);
+      destinations[currentChannel].write(chunk);
+      currentChannel = null;
+      currentLength = null;
+    })
+    .on('end', () => {
+      destinations.forEach(destination => destination.end());
+      console.log(`INFO: demultiplexChannel: source channel closed`);
+    });
+}
+
+const server = createServer(socket => {
+  const stdoutStream = createWriteStream('sample_files/stdout.log');
+  const stderrStream = createWriteStream('sample_files/stderr.log');
+  demultiplexChannel(socket, [stdoutStream, stderrStream]);
+});
+
+server.listen(5000, () => console.log(`INFO: server: server started on localhost:5000`));
+```
+The first thing is to demultiplex the chunks read from the stream:
+1. We read from the stream in non-flowing mode
+2. If we have not read yet the channelID, we read it by having a look at the first bute from the stream, and then we transform it into a number.
+3. We do the same thing for the subsequent 4 bytes that give us the length of the chunk. If we don't have enough information to read the length from the internal buffer, `this.read()` will return `null`. In that case, we interrupt the parsing and retry at the next readable event.
+4. Then we extract the data from the chunk. Again, if the first read returns null meaning there is not enough data in the internal buffer we will return null and retry at the next `'readable'` event.
+5. Finally, we register a listener for the '`end`' event to properly terminate the buffer when the source channel ends.
+
+Then, we just start the TCP server, and create a couple of *writable* streams to collect in file the information demultiplexed.
+
+The last piece of the puzzle consists in creating an application that generates some information to be streamed.
+
+```javascript
+console.log(`out1`);
+console.log(`out2`);
+console.log(`err1`);
+console.log(`out3`);
+console.log(`err2`);
+```
+
+When running the client part, we will create a child process that will invoke that program and generate those *stdout* and *stderr* lines that will end up being collected by the server and written to the file system.
+
+| EXAMPLE: |
+| :------- |
+| See [33 &mdash; Multiplexing and demultiplexing streams](33-multiplexing-and-demultiplexing-streams) for a runnable example. |
+
+##### Multiplexing and demultiplexing object streams
+
+The same rules applied to the previous section will work for object streams. In reality, it will be simpler as the packet switching will just consists in setting the channel ID property, without the need to keep track of the length of each multiplexed record.
+
+Another pattern involving only demultiplexing is routing the data coming from source depending on a given condition. That would be implemented with an *if...else* statement for streams.
+
+![Demuxing objects](images/demuxing_objects.png)
 
 
-
-
-
-
-### Summary
+| NOTE: |
+| :---- |
+| You can review [`ternary-stream`](https://www.npmjs.com/package/ternary-stream) for a package which allows us to do so. |
 
 
 ### You know you've mastered this chapter when...
 
-+ You're aware that a `Promise` is and object that wraps the eventual result (or error reason) of an asynchronous oepration, and are familiar with the different *states* of a promise: *pending*, *fulfilled*, *rejected*, and *settled*.
++ You understand the motivations and importance of streaming in terms of time and spatial efficiency, when compared to buffering.
+
++ You're aware of how powerful composibility with stream is, as you can connect the different processing stages of a big process into manageable and focused pieces and orchestrate them into a pipeline.
+
++ You're familiar with the four base types of streams:
+  + `Readable` &mdash; represents a source of data
+  + `Writable` &mdash; represents a data destination
+  + `Duplex` &mdash; a stream that is both *readable* and *writable*, and therefore represents both a data source and a destination.
+    + `Transform` &mdash; a special kind `Duplex` stream specifically designed to address data transformations.
+    + `PassThrough` &mdash; a special type of `Transform` stream that outputs very data chunk it receives without applying any transformation.
+
++ You're familiar with the different events emitted by streams:
+| Event   | Applies to... | Description |
+| :----   | :------------ | :---------- |
+| `'end'` | `Readable`    | signal that a `Readable` stream has finished reading. |
+| `'readable'` | `Readable` | when using *non-flowing* mode, indicates the availability of data to be read. |
+| `'data'` | `Readable` | when using *flowing* mode, indicates a chunk of data has been pushed to the custom listener to be processed. |
+| `'finish'` | `Writable` | indicates a stream has finished writing. |
+| `'drain'` | `Writable` | indicates that it is safe to write again to the stream after a bottleneck situation. |
+| `'error'` | ALL | an error condition was found during processing. |
+
+
++ You understand that streams support two operating modes:
+  + *binary mode* &mdash; data is streamed in forms of binary chunks (buffers or strings)
+  + *object mode* &mdash; data is streamed object by object
+
++ You're comfortable using and implementing `Readable` streams:
+  + You understand that a `Readable` stream can be read in *non-flowing* (or *paused*) mode in which you *pull* data from the stream in an imperative way (typically using a loop),
+  + You're comfortable using the `readable.read([size])` method to read a chunk of data when using the *non-flowing* mode.
+  + You're aware that the `read()` method will return `null` where there is no more data available to read.
+  + You understand that you can read strings from a binary `Readable` stream using `setEncoding()`.
+  + You are also familiar with the *flowing* mode for `Readable` streams, which consists in attaching a listener to the `'data'` event, in which data is pushed from the stream to your logic.
+
+  + You know how to implement `Readable` streams, by extending the `Readable` class and providing an implementation for `_read(size)`.
+  + You're familiar with the different options that you can initialize a `Readable` stream with: `encoding`, `objectMode`, `highWaterMark`.
+  + You're also familiar with the simplified construction of `Readable` streams, and how to create a `Readable` stream from an iterable using `Readable.from(...)`.
+
++ You're comfortable using and implementing `Writable` streams:
+  + you're familiar with the `writable.end([chunk], [encoding], [callback])` method to write chunks of data to the `Writable` streams.
+  + You know how to implement custom `Writable` streams by creating classes that inherit from `Writable` and provide an implementation for the `_write()` method.
+
++ You're familiar with backpressure management in Node.js, and the mechanisms to handle it:
+  + `writable.write(...)` returns false when the internal buffer exceeds the `highWaterMark` limit to indicate it should stop writing data. You also know how to create a custom stream using the simplified construction method.
+
++ You're comfortable using and implementing `Duplex` streams:
+  + You understand that when implementing `Duplex` streams you need to provide the methods for `_read(...)` and `_write(...)`.
+  + You're comfortable using `Transform` streams to address data transformations, and are aware that you need to implement the `_transform(chunk, encoding, cb)` method, which receives a chunk of data from the *readable* side, and lets you use `push()` to send data to the *writable* side and invoke the callback `cb` when the processing of a chunk has been completed, and `_flush()` method to have a final chance to use `push()` to send some additional data to the *writable* part before terminating.
+  + You are aware that `Transform` streams are also very useful for implementing data filtering and aggregation scenarios.
+  + You're comfortable using `PassThrough` streams to enable advanced techniques such as observability, late-piping and lazy streams.
+    + Observability &mdash; creating a `PassThrough` stream and attach some listeners to receive signals when data chunks are being processed or the process has been completed.
+    + late-piping &mdash; using a `PassThrough` as a placeholder for APIs that require a stream to be written, but the information is not readily available yet.
+    + lazy-streams &mdash; use `PassThrough` stream as technique to delay the creation of expensive resources when using streams.
+
++ You're aware of the importance of the stream interface and how it is interoperable with Unix pipes.
+
++ You understand the challenges associated to error handling when using `pipe()` because errors are not propagated automatically, and how `pipeline()` mitigates that problem.
+
++ You're familiar with the different techniques you can use to implement the following asynchronous control flow patterns using streams:
+  + sequential execution
+  + unordered parallel execution
+  + unordered limited parallel execution
+  + ordered parallel execution
+
++ You're familiar with advanced piping patterns such as:
+  + combining several streams, so they appear to be a single stream from the outside and can be reused and orchestrated in different pipelines
+  + forking streams, so that a data chunk from a data source can be sent to different destinations
+  + merging streams, so that several data sources can be sent to a single destination stream
+  + multiplexing and demultiplexing streams, where several data sources can be merged into one and then separated again in the destination
+
 
 ### Code, Exercises and mini-projects
 
@@ -1766,10 +2064,19 @@ Illustrates that both `pipe()` and `pipeline()` return only the last stream of t
 #### [30 &mdash; Combining streams](30-combining-streams)
 Illustrates how to combine streams using [`pumpify`](https://www.npmjs.com/package/pumpify) to create two combined streams: one the compresses and encrypts data, and one the decrypts and compresses data. Then, the combined streams are used as if they were a single, `Duplex` stream.
 
-#### Example 1: [File Concatenation](./e01-file-concatenation/)
-Write the implementation of `concatFiles(...)`, a promise-based function that takes two or more paths to text files in the file system and a destination file.
+#### [31 &mdash; Forking streams](31-forking-streams)
+Illustrates how to fork streams by creating a small application the outputs both the *sha1* and *md5* checksum of a given file.
 
-This function must copy the contents of every source file into the destination file, respecting the order of the files as provided by the arguments list. Also, the function must be able to handle an arbitrary number of arguments.
+#### [32 &mdash; Merging streams](32-merging-streams)
+Illustrates how to merge streams by creating a small application that takes an output path and an arbitrary number of files and merges the lines of every file into the destination.
+
+#### [33 &mdash; Multiplexing and demultiplexing streams](33-multiplexing-and-demultiplexing-streams)
+Illustrates how to perform stream multiplexing and demultiplexing with a remote logger application. In the application, the client side pipes *stdout* and *stderr* into a common channel, that is then demultiplexed on the server side and piped into two different files.
+
+#### Example 1: [Data compression efficiency](./e01-data-compression-efficiency/)
+Write a command-line script that takes a file as input and compresses it using the different algorithms available in the `zlib` module (Brotli, Deflate, Gzip). As an output, write a table that compares the algorithm's compression time and efficiency on the given file. Hint: this could be a good use case for the *fork pattern*, provided that you're aware of its performance considerations.
+
+
 
 [ ] Review stream related examples in this project
 [ ] Review stream related examples in other books
@@ -1785,3 +2092,18 @@ This function must copy the contents of every source file into the destination f
 [ ] Summarize the expectations of `flush`,  `end()`, etc.
 [ ] Investigate why in exercise 28 the results are not ordered (do simple examples on parallel-stream maybe). The difference with the book sample is that request-promise is used instead of request-promise...
 [ ] Modify exercise 30, so that the initialization vector is emitted by the archive stream (the first 16 bytes emitted by the stream should be consumed before starting processing)
+[ ] Investigate the curious case of why this.read() will only work when using named functions and not lambdas on cases such as:
+
+```javascript
+      .on('readable', function () {
+        let chunk;
+        while ((chunk = this.read()) !== null) {
+          const outBuff = Buffer.alloc(1 + 4 + chunk.length);
+          outBuff.writeUInt8(i, 0);
+          outBuff.writeUInt32BE(chunk.length, 1);
+          chunk.copy(outBuff, 5);
+          console.log(`INFO: multiplexChannels: sending packet to channel: ${ i }`);
+          destination.write(outBuff);
+        }
+      })
+```
