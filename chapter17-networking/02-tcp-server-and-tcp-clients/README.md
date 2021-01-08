@@ -1,5 +1,5 @@
 # 02-tcp-server-and-tcp-clients
-> creating a TCP server and TCP clients in Node.js 
+> creating a TCP server and TCP clients in Node.js
 
 ## Description
 This example illustrates how to set up a *TCP server* and a couple of *TCP clients* using the `net` module.
@@ -8,10 +8,10 @@ The program is implemented as a *unit test* so that assertions are included as p
 The details are as follows:
 + server:
   + API:
-    + `net.createServer` &mdash; Establish a TCP server on the given port The method acceptss a callback that receives a socket for the client connection.
+    + `net.createServer` &mdash; Establish a TCP server on the given port The method accepts a callback that receives a socket for the client connection.
     + `close()` &mdash; terminates the connections and frees up the resources associated to the server.
   + Events:
-    + `"end"` &mdash; triggered when the server has closed    
+    + `"end"` &mdash; triggered when the server has closed
     + `"error"` method will be triggered when there is a problem in the server.
 
 + client:

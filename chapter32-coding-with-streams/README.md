@@ -2082,8 +2082,11 @@ On [Kaggle](https://www.kaggle.com/), you can find a lot of interesting data set
 + What are the most dangerous areas of London?
 + What is the most common crime per area?
 + What is the least common crime?
-Hint: You can use a combination of `Transform` and `PassThrough` streams to parse and observe the dta as it is flowing. Then you can build *in-memory* aggregations for the data, which can help answering the preceding questions.
+Hint: You can use a combination of `Transform` and `PassThrough` streams to parse and observe the data as it is flowing. Then you can build *in-memory* aggregations for the data, which can help answering the preceding questions.
 Also, it is not necessary to do everything in one pipeline; you could build very specialized pipelines (e.g. one per question), and then use the fork pattern to distribute the chunks across them.
+
+#### Example 3: [File share over TCP](./e03-file-share-tcp/)
+Build a client and a server to transfer files over TCP. Extra points if you add a layer of encryption on top of that and if you can transfer multiple files at once. Hint: you can use mux/demux to receive multiple files at once.
 
 [ ] Review stream related examples in this project
 [ ] Review stream related examples in other books
@@ -2114,3 +2117,4 @@ Also, it is not necessary to do everything in one pipeline; you could build very
         }
       })
 ```
+[ ] Optional Gunzip: create a stream that can receive a filename and creates a regular Readable if it's not gzip file or a pipeline of a readable and a gunzip if it's a zip file.

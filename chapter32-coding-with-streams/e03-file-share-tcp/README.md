@@ -9,3 +9,6 @@ As this is more like a mini-project, with lots of new things that will be discov
 
 ##### Stage 1: Setting up shop
 In this first stage, the server (`receive-files-v0.js`) and client (`send-files-v0.js`) are structured, and allow sending a single file that will be written with a fixed name on the server side.
+
+##### Stage 2: Managing the filename
+In the second stage, the server (`receive-files-v1.js`) and clients (`send-files-v1.js`) are enhanced to receive and create the files with a custom filename.
