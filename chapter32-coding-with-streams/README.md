@@ -2088,6 +2088,11 @@ Also, it is not necessary to do everything in one pipeline; you could build very
 #### Example 3: [File share over TCP](./e03-file-share-tcp/)
 Build a client and a server to transfer files over TCP. Extra points if you add a layer of encryption on top of that and if you can transfer multiple files at once. Hint: you can use mux/demux to receive multiple files at once.
 
+#### Example 4: [Animations with Readable streams](./e04-animations-readable-streams)
+Did you know that you can create amazing terminal animations with just `Readable` streams? To understand what we are talking, run `curl parrot.live` in your terminal and see what happens. Hint: if you need some help with figuring out how to implement this, you can check out the actual source code by accessing its URL through your browser.
+
+#### To Do
+
 [ ] Review stream related examples in this project
 [ ] Review stream related examples in other books
 [ ] List files recursively as a Readable stream
@@ -2118,3 +2123,5 @@ Build a client and a server to transfer files over TCP. Extra points if you add 
       })
 ```
 [ ] Optional Gunzip: create a stream that can receive a filename and creates a regular Readable if it's not gzip file or a pipeline of a readable and a gunzip if it's a zip file.
+
+[ ] Investigate if it is possible fork streams with `pipeline()` instead of `pipe()`.

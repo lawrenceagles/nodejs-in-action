@@ -29,4 +29,6 @@ The aggregated sum is kept on each of the borough maps that are then sorted in d
 
 To answer this question we need to aggregate by crime, following the same approach we followed in Q2.
 
-In the first verion, we created the different `Transform` streams.
+In the first version, I created the different `Transform` streams and tested them individually.
+
+In the second version, I used the *fork pattern* so that all the questions could be written to files in parallel using the individual transformations.
