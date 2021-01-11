@@ -212,9 +212,139 @@ What we have used in this section is known as the *simple factory idiom*: defini
 
 
 ### Builder
-270
+The **Builder** pattern is a creational pattern that simplifies the creation of complex objects by providing a fluent interface, which allows you to build the object step by step.
 
-#### Implementing a URL object
+With a *builder*, you greatly improve the developer experience and overall readability of complex object creation.
+
+The general motivation for a *builder* comes from a class constructor that requires a long list of arguments, many of them complex ones, that are are required to build a complete and consistent object instance.
+
+For example, consider the following `Boat` class:
+
+```javascript
+class Boat {
+  constructor(hasMotor, motorCount, motorBrand, motorModel, hasSails,
+              sailsCount, sailsMaterial, sailsColor, hullColor, hasCabin) {
+    /* ... */
+  }
+}
+```
+
+Invoking such constructor will be both hard to read and error-prone (which argument is what?).
+
+A first step to try to fix this consists in aggregating all arguments in a single object literal:
+
+```javascript
+class Boat {
+  constructor(allParameters) {
+    /* ... */
+  }
+}
+
+const myBoat = new Boat({
+  hasMotor: true,
+  motorCount: 2,
+  motorBrand: 'Best Motor Co.',
+  motorModel: 'OM123',
+  hasSails: true,
+  sailsCount: 1,
+  sailsMaterial: 'fabric',
+  sailsColor: 'white',
+  hullColor: 'blue',
+  hasCabin: false
+});
+```
+
+This greatly improves the original approach, as now all the parameters are *labelled*. However, one drawback of this new approach is that the only way to to know what the actual inputs are is to look at the class documentation or class implementation, which is far from ideal. For example, there might be underlying rules such as: if you specify `hasMotor: true`, then you have to also specify `motorCount`, `motorBrand`, and `motorModel`.
+
+The **Builder** pattern fixes these last few flaws providing a fluent interface that is simple to read, self-documenting, and that provides guidance towards the creation of a consistent object.
+
+The following example illustrates how to create the *builder* class that implements the *builder* pattern, and how easy it is now to create the object:
+
+```javascript
+/* eslint-disable no-unused-vars */
+class BoatBuilder {
+  withMotors(count, brand, model) {
+    this.hasMotor = true;
+    this.motorCount = count;
+    this.motorBrand = brand;
+    this.motorModel = model;
+    return this;
+  }
+
+  withSails(count, material, color) {
+    this.hasSails = true;
+    this.sailsCount = count;
+    this.sailsMaterial = material;
+    this.sailsColor = color;
+    return this;
+  }
+
+  hullColor(color) {
+    this.hullColor = color;
+    return this;
+  }
+
+  withCabin() {
+    this.hasCabin = true;
+    return this;
+  }
+
+  build() {
+    return new Boat({
+      hasMotor: this.hasMotor,
+      motorCount: this.motorCount,
+      motorBrand: this.motorBrand,
+      motorModel: this.motorModel,
+      hasSails: this.hasSails,
+      sailsCount: this.sailsCount,
+      sailsMaterial: this.sailsMaterial,
+      sailsColor: this.sailsColor,
+      hullColor: this.hullColor,
+      hasCabin: this.hasCabin
+    });
+  }
+}
+
+class Boat {
+  constructor(allParameters) {
+    this.hasMotor = allParameters.hasMotor;
+    this.motorCount = allParameters.motorCount;
+    this.motorBrand = allParameters.motorBrand;
+    this.motorModel = allParameters.motorModel;
+    this.hasSails = allParameters.hasSails;
+    this.sailsCount = allParameters.sailsCount;
+    this.sailsMaterial = allParameters.sailsMaterial;
+    this.sailsColor = allParameters.sailsColor;
+    this.hullColor = allParameters.hullColor;
+    this.hasCabin = allParameters.hasCabin;
+  }
+}
+
+const myBoat = new BoatBuilder()
+  .withMotors(2, 'Best Motor Co.', 'OM123')
+  .withSails(1, 'fabric', 'white')
+  .withCabin()
+  .hullColor('blue')
+  .build();
+```
+
+As you see, we create a new class `BoatBuilder` whose responsibility is to collect all the parameters needed to create a `Boat` using helper methods. These method are typically defined for each parameter or set of related parameters.
+
+| EXAMPLE: |
+| :------- |
+| See [03 &mdash; *Builder* pattern: Complex object creation](03-builder-complex-object-creation) for a runnable example. |
+
+The general rules for implementing the *builder* pattern are:
++ The main objective is to break down a complex constructor into multiple, more readable, and more manageable steps.
++ Try to create builder methods that can set multiple parameters at once
++ Deduce and implicitly set parameters based on the values received as input by a setter method, and in general, try to encapsulate as much parameter setting related logic into the setter methods so that the consumer of the builder interface is free from doing so.
++ If necessary, it's possible to further manipulate the parameters (for example, type casting, normalization, or extra validation) before passing them to the constructor of the class built to simplify the work left to do by the builder class consumer even more.
+
+| NOTE: |
+| :---- |
+| In JavaScript, the *Builder* pattern can also be applied to invoke functions. Technically, both approaches will be just the same, but formally, when invoking functions you would typically define an `invoke()` method that triggers the call to the complex function with the parameters collected by the *builder*. |
+
+#### Implementing a URL object builder
 
 #### In the wild
 
@@ -233,11 +363,14 @@ What we have used in this section is known as the *simple factory idiom*: defini
 
 ### Code, Exercises and mini-projects
 
-### [01 &mdash; *Factory* pattern: Enforcing encapsulation with closures](01-factory-encapsulation-closure)
+#### [01 &mdash; *Factory* pattern: Enforcing encapsulation with closures](01-factory-encapsulation-closure)
 Illustrates how to use a *factory* and closures to enforce encapsulation and control object surface area.
 
-### [02 &mdash; *Factory* pattern: Simple code profiler](02-factory-code-profiler)
+#### [02 &mdash; *Factory* pattern: Simple code profiler](02-factory-code-profiler)
 Illustrates how to define a *factory* and its advantages by building a simple code profiler that gets automatically deactivated when `NODE_ENV=production`.
+
+#### [03 &mdash; *Builder* pattern: Complex object creation](03-builder-complex-object-creation)
+Illustrates how to use the *builder* pattern to enable the creation of a complex object by the provision of a fluent interface that is simple to read, self-documenting, and that provides guidance toward the creation of a consistent object.
 
 #### Example 1: [Data compression efficiency](./e01-data-compression-efficiency/)
 Write a command-line script that takes a file as input and compresses it using the different algorithms available in the `zlib` module (Brotli, Deflate, Gzip). As an output, write a table that compares the algorithm's compression time and efficiency on the given file. Hint: this could be a good use case for the *fork pattern*, provided that you're aware of its performance considerations.
