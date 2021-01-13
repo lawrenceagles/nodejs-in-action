@@ -346,12 +346,270 @@ The general rules for implementing the *builder* pattern are:
 
 #### Implementing a URL object builder
 
+This section illustrates how to use the *builder* pattern to create URL objects.
+
+The goal is to implement a `Url` class that can hold all the components of a standard URL, validate them, and format them back into string.
+
+Let's start by creating the `Url` class:
+
+```javascript
+export class Url {
+  constructor(protocol, username, password, hostname, port, pathname, search, hash) {
+    this.protocol = protocol;
+    this.username = username;
+    this.password = password;
+    this.hostname = hostname;
+    this.port = port;
+    this.pathname = pathname;
+    this.search = search;
+    this.hash = hash;
+
+    this.validate();
+  }
+
+  validate() {
+    if (!this.protocol || !this.hostname) {
+      throw new Error(`Must specify at least a protocol and a hostname`);
+    }
+  }
+
+  toString() {
+    let url = '';
+    url += `${ this.protocol }://`;
+    if (this.username && this.password) {
+      url += `${ this.username }:${ this.password }@`;
+    }
+    url += this.hostname;
+    if (this.port) {
+      url += `:this.port`;
+    }
+    if (this.pathname) {
+      url += this.pathname;
+    }
+    if (this.search) {
+      url += `?${ this.search }`;
+    }
+    if (this.hash) {
+      url += `#${ this.hash }`;
+    }
+    return url;
+  }
+}
+```
+
+It is evident that even with this simplistic implementation, instantiating a `Url` object is less than ideal and error prone:
+
+```javascript
+const site = new Url('https', null, null, 'example.com', null, null, null, null);
+```
+
+Now we address the *builder* implementation, which consists in creating a class that has setter methods for each parameter (or set of related parameters) and a `build()` method that returns an instance of the class it is building:
+
+```javascript
+import { Url } from './url.js';
+
+export class UrlBuilder {
+  setProtocol(protocol) {
+    this.protocol = protocol;
+    return this;
+  }
+
+  setAuthentication(username, password) {
+    this.username = username;
+    this.password = password;
+    return this;
+  }
+
+  setHostname(hostname) {
+    this.hostname = hostname;
+    return this;
+  }
+
+  setPort(port) {
+    this.port = port;
+    return this;
+  }
+
+  setPathname(pathname) {
+    this.pathname = pathname;
+    return this;
+  }
+
+  setSearch(search) {
+    this.search = search;
+    return this;
+  }
+
+  setHash(hash) {
+    this.hash = hash;
+    return this;
+  }
+
+  build() {
+    return new Url(this.protocol, this.username, this.password, this.hostname, this.port, this.pathname, this.search, this,this.hash);
+  }
+}
+```
+
+The benefits of using this pattern are evident:
+
+```javascript
+const site = new UrlBuilder()
+  .setProtocol('https')
+  .setHostname('example.com')
+  .build();
+console.log(`site url: `, exampleUrlUsingBuilder.toString());
+```
+
+| NOTE: |
+| :---- |
+| The *Builder* pattern can also be implemented directly into the target class, instead of creating a separate `UrlBuilder` class. However, this approach does not guarantee that the builder always provides instances that are consistent, because while building the instance, the object is *half-built*. By contrast, when separating the object and the builder in separate classes, we can be sure that every object returned by `UrlBuilder.build()` are guaranteed to be valid. |
+
+| EXAMPLE: |
+| :------- |
+| See [04 &mdash; *Builder* pattern: `Url` object builder](04-builder-url) for a runnable example. |
+
 #### In the wild
+The *Builder* pattern is quite common in Node.js and JavaScript as it provides a very elegant solution for complex object creation of complex function invocations.
+
+For example, creating new HTTP/HTTPS requests using the core module is a complicated task. Packages like [superagent](https://www.npmjs.com/package/superagent) addresses this problem through the *Builder* pattern:
+
+```javascript
+superagent
+  .post('https://example.xom/api/person')
+  .send({ name: 'John Doe', role: 'user' })
+  .set('accept', 'json')
+  .then(response => {
+    // deal with the response
+  });
+```
+
+Note however that this is a variant of the *Builder* pattern, as there is no `build()` or `invoke()` method, and that also it wasn't required to use the `new` operator with the builder. Actually, what triggers the request is the invocation of the `then()` method, which means that the superagent is not a standard promise, but rather a *thenable* in which the `then()` is enhanced to act as the trigger for the request object creation.
 
 ### Revealing Constructor
+The **Revealing Constructor** pattern is one of the patterns that originated directly from the JavaScript and Node.js community, instead that from the *GoF* patterns.
+
+It solves the following problem:
+> How can I reveal some private functionality of an object only at the time of creation?
+
+The *Revealing Constructor* pattern allows for several interesting scenarios including:
++ creating objects that can only be modified at creation time
++ creating objects whose custom behavior can be defined only at creation time
++ creating objects that can be initialized only once at creation time
+
+Let's consider the following code fragment:
+
+```javascript
+const object = new SomeClass(function executor(revealedMembers) {
+  // manipulation code
+});
+```
+
+The code above illustrates the main components of the *Revealing constru tor* pattern:
++ a **constructor** &mdash; `new SomeClass()` that takes a function as input
++ the **executor** &mdash; `function executor() {...}`, which is invoked at creation time
++ the **revealedMembers* &mdash; the subset of the object's internals that will be given to the *executor* as input.
+
+| NOTE: |
+| :---- |
+| For the pattern to work, the revealed functionality must not be accesible by the users of the object once created. This can be achieved with any of the encapsulation techniques reviewed in the section [*Factory* pattern: A mechanism to enforce encapsulation](#a-mechanism-to-enforce-encapsulation). |
+
+The *Revealing Constructor* pattern offers very strong guarantees, and for this reason it's mainly used in contexts where need foolproof encapsulation, especially with components that are heavily reused by external parties.
+
+It clearly improves reliability and simplifies code sharing with other people and teams, as it makes the object safer.
+
+#### Building an immutable buffer
+An *immutable* object is an object whose data or state becomes unmodifiable once it's been created.
+
+They have many excellent properties, as you don't need to create *defensive copies* before passing them around, as you have a strong guarantee (by definition) that they won't be modified.
+
+The state of such an object can only be performed at initialization time, and modifications of such an object are typically done by creating a new copy from an existing object.
+
+Another common use case of *immutable objects* is efficient change detection. Since every change requires a copy, and every copy corresponds to a modification, detecting a change is as simple as using the *strict equality* operator (`===`).
+
+Let's create a simple immutable version of the Node.js `Buffer` component using the *Revealing Constructor* pattern.
+
+```javascript
+const MODIFIER_NAMES = [ 'swap', 'write', 'fill'];
+
+export class ImmutableBuffer {
+  constructor(size, executor) {
+    const buffer = Buffer.alloc(size);
+    const modifiers = {};
+    for (const prop in buffer) {
+      if (typeof buffer[prop] !== 'function') {
+        continue;
+      }
+
+      if (MODIFIER_NAMES.some(m => prop.startsWith(m))) {
+        modifiers[prop] = buffer[prop].bind(buffer);
+      } else {
+        this[prop] = buffer[prop].bind(buffer);
+      }
+    }
+    executor(modifiers);
+  }
+}
+```
+
+Let's dissect the logic behind the constructor:
+1. First, we alloacte a new Node.js buffer of the specified size.
+2. Then we create an object literal `modifiers` to hold all the methods that can mutate the buffer.
+3. Then we iterate over the object's properties, skipping all the ones that are not functions.
+4. After that, we try to identify if the current property is a method that *mutates* the buffer or not. We have previously identify the those in an array named `MODIFIER_NAMES`. If the method mutates the object we bind it to the `buffer` instance and then we add it to the `modifiers` object.
+5. If the method is not a *mutator*, we bind it directly to the `InmmutableBuffer` instance, as this one will be safe to be included in its interface.
+6. We finally invoke the executor function received as input, passing it the `modifiers` object that contains all the methods that *mutate* the underlying buffer.
+
+| NOTE: |
+| :---- |
+| In practice, the `ImmutableBuffer` is acting as a *proxy* betweeen its consumers and the internal `buffer` object. Some of the methods of the `buffer` instance are exposed directly (the ones that do not mutate the underlying `buffer`) and others (the ones that *mutate* the `buffer`) are only handed out to the executor at creation time. |
+
+
+Let's see now how we can leverage the `ImmutableBuffer`:
+
+```javascript
+import { ImmutableBuffer } from './lib/immutable-buffer.js';
+
+const hello = 'Hello!';
+const immutable = new ImmutableBuffer(hello.length, ({ write }) => {
+  write(hello);
+});
+
+console.log(String.fromCharCode(immutable.readInt8(0)));
+
+try {
+  immutable.write('Hello to Jason Isaacs!');
+} catch (err) {
+  console.error('ERROR: ', err.message);
+}
+
+console.log(immutable.toString('hex'));
+```
+
+See how the constructor is given an executor function that has access to the `write(...)` method so that it can be properly initialized.
+
+See also how the *read-only* interface from the underlying `Buffer` is exposed (you can use `readInt8()` and `toString(...)`), but the object cannot be modified once created because the *mutators* (the methods that start with `write*`, `fill*` or `swap*`) had been suppressed.
+
+| EXAMPLE: |
+| :------- |
+| See [05 &mdash; *Revealing Constructor* pattern: Immutable buffer](05-revealing-constructor-immutable-buffer) for a runnable example. |
+
+
+#### In the wild
+A popular application of the *Revealing Constructor* pattern is the JavaScript `Promise` class.
+
+```javascript
+return new Promise((resolve, reject) => {
+  ...
+});
+```
+
+When we create a new promise from scratch, its constructor accepts an *executor* function that will receive the `resolve()` and `reject()` functions to mutate the internal state of the `Promise`.
+
+Once created, the `Promise` state cannot be altered anymore by any other means.
 
 ### Singleton
-
+283
 ### Wiring modules
 
 ### Summary
@@ -372,9 +630,16 @@ Illustrates how to define a *factory* and its advantages by building a simple co
 #### [03 &mdash; *Builder* pattern: Complex object creation](03-builder-complex-object-creation)
 Illustrates how to use the *builder* pattern to enable the creation of a complex object by the provision of a fluent interface that is simple to read, self-documenting, and that provides guidance toward the creation of a consistent object.
 
+#### [04 &mdash; *Builder* pattern: `Url` object builder](04-builder-url)
+Illustrates how to use the *builder* pattern to implement a `Url` class that can hold all of the components of a standard URL, validate them, and format them back into a string.
+
+#### [05 &mdash; *Revealing Constructor* pattern: Immutable buffer](05-revealing-constructor-immutable-buffer)
+Illustrates how to use the *Revealing Constructor* pattern by implementing an immutable version of the Node.js `Buffer` component.
+
 #### Example 1: [Data compression efficiency](./e01-data-compression-efficiency/)
 Write a command-line script that takes a file as input and compresses it using the different algorithms available in the `zlib` module (Brotli, Deflate, Gzip). As an output, write a table that compares the algorithm's compression time and efficiency on the given file. Hint: this could be a good use case for the *fork pattern*, provided that you're aware of its performance considerations.
 
 #### To Do
 
-[ ] TBD
+[ ] Normalize the pattern sections: all the patterns should have the same format (as in definition, example, etc.)
+[ ] Create a cheat sheet with the summary with columns, type of pattern, name, description, use case scenarios.
