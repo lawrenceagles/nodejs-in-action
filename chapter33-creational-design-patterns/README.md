@@ -609,8 +609,119 @@ When we create a new promise from scratch, its constructor accepts an *executor*
 Once created, the `Promise` state cannot be altered anymore by any other means.
 
 ### Singleton
-283
+The purpose of the **Singleton** pattern is to enforce the presence of only one instance of a class and centralize its access.
+
+There are many use cases for using *singletons* in an application:
++ For sharing stateful information
++ For optimizing resource usage
++ To synchronize access to a resource
+
+Let's consider a typical `Database` class:
+
+```javascript
+export class Database {
+  constructor(dbName, connectionDetails) {
+    ...
+  }
+}
+```
+
+These implementations usually keep a pool of database connections so that new ones are not created for each request. Also, the `Database` instance will store some stateful information that should be kept and maybe shared, like the list of pending transactions.
+
+That's why it is common to use the *Singleton* pattern here and let every component of the application use that single shared Database instance.
+
+The implementation of the *Singleton* pattern in Node.js is straightforward &mdash; you simply need to export an instance from a module:
+
+```javascript
+class Database {
+  /* ... */
+}
+
+export const dbInstance = new Database(/* ... */);
+```
+
+By simply exporting a new instance, we can assume that there will only be one instance of the `dbInstance`, as it is guaranteed by the Node.js module system.
+
+Then, the clients of the instance can get a reference by doing:
+
+```javascript
+import { dbInstance } from './lib/dbInstance.js';
+```
+
+The only caveat we should take under consideration is the path of the module: Node.js module system will cache the package using its full path as the lookup key. Therefore, if in your application there are several modules of the `dbInstance` with different versions, stored in different paths withing `node_modules`, each different path will have their own *singleton*, which might not be what we intended, and can cause unintended consequences if those *singleton* instances are used to contain stateful information.
+
+Let's dig in a bit more on this scenarion. Let's assume that `dbInstance.js` is published as a package named `mydb`:
+
+```json
+{
+  "name": "mydb",
+  "version": "2.0.0",
+  "type": "module",
+  "main": "dbInstance.js"
+}
+```
+
+Next, let's consider two packages `package-a` and `package-b`, both of which has a single file called `index.js` that imports our `dbInstance` *singleton*:
+
+```javascript
+import { dbInstance } from `mydb`;
+
+export function getDbInstance() {
+  return dbInstance;
+}
+```
+
+If `package-a` depends on version `1.0.0` of the `mydb` package, while `package-b` depends on version `2.0.0`, we will end up with the following `node_modules` directory structure:
+
+```
+app/
+`-- node_modules
+    |-- package-a
+    |   `-- node_modules
+    |       `-- mydb
+    |-- package-b
+        `-- node_modules
+            `-- mydb
+```
+
+This happens because `package-a` and `package-b` require two different incompatible versions of the `mydb` modules. In these cases, the package manager will not *hoist* the dependency to the top `node_modules` directory, and instead will install a private copy of each copy to satisfy the version incompatibility.
+
+This will definitely break the assumption about the uniqueness of the database isntance.
+
+```javascript
+import { getDbInstance as getDbFromA } from 'package-a';
+import { getDbInstance as getDbFromB } from 'package-b';
+
+const isSame = getDbFromA() === getDbFromB();
+console.log(`Is db instance in package-a the same as in package-b? ${ isSame ? 'YES' : 'NO' }`); // -> will return NO
+```
+
+| EXAMPLE: |
+| :------- |
+| See [06 &mdash; *Singleton* pattern: Exporting a class instance](06-singleton-exporting-class-instance) for a runnable example illustrating how to create a singleton. Note that the example does not address the caveats of having multiple *singleton* instances when consumers of the singleton require different versions. |
+
+| NOTE: |
+| :---- |
+| If instead of requiring incompatible versions, `package-a` and `package-b` would have required two versions of the `dbInstance` that were compatible with each other (e.g. `^2.0.1` and `^2.0.7`), then the package manager would have installed the `dbInstance` into the *top-level* `node_modules` directory so that `package-a` and `package-b` would share the same instance. This is known and *dependency hoisting*. |
+
+As a consequence, we can say that the *Singleton* pattern, as described in the *GoF* patterns does not exist in Node.js, unless we use a real *global variable* to store it, as in:
+
+```javascript
+global.dbInstance = new Database(/* ... */ );
+```
+
+This guaranteeds that the instance is the only one shared across the entire application, and not just the same package.
+
+However, most of the time we don't really need a *pure* singleton and can simply export an instance as seen in the beginning of the section.
+
+Also, it is recommended when creating packages that are going to be used by 3rd parties, to keep them stateless to avoid the issues discussed in this section.
+
+| NOTE: |
+| :---- |
+| For simplicity, in Node.js we use the term *singleton* to refer to a class instance or stateful object that is exported by a module, taking into account that it might not be a real *singleton* in the strictest terms. |
+
 ### Wiring modules
+287
 
 ### Summary
 
@@ -636,6 +747,9 @@ Illustrates how to use the *builder* pattern to implement a `Url` class that can
 #### [05 &mdash; *Revealing Constructor* pattern: Immutable buffer](05-revealing-constructor-immutable-buffer)
 Illustrates how to use the *Revealing Constructor* pattern by implementing an immutable version of the Node.js `Buffer` component.
 
+#### [06 &mdash; *Singleton* pattern: Exporting a class instance](06-singleton-exporting-class-instance)
+Illustrates how to implement the *Singleton* pattern by exporting a class instance.
+
 #### Example 1: [Data compression efficiency](./e01-data-compression-efficiency/)
 Write a command-line script that takes a file as input and compresses it using the different algorithms available in the `zlib` module (Brotli, Deflate, Gzip). As an output, write a table that compares the algorithm's compression time and efficiency on the given file. Hint: this could be a good use case for the *fork pattern*, provided that you're aware of its performance considerations.
 
@@ -643,3 +757,5 @@ Write a command-line script that takes a file as input and compresses it using t
 
 [ ] Normalize the pattern sections: all the patterns should have the same format (as in definition, example, etc.)
 [ ] Create a cheat sheet with the summary with columns, type of pattern, name, description, use case scenarios.
+[ ] Create an example to illustrate the problem of having different *singletons* when packages require incompatible versions and investigate the new capabilities of NPM with `peerDependencies` to see if it fixes it.
+[ ] Illustrate with an example how to have a pure singleton using global (that might come in handy for extreme cases such as the context.)
