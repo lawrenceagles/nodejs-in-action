@@ -721,7 +721,111 @@ Also, it is recommended when creating packages that are going to be used by 3rd 
 | For simplicity, in Node.js we use the term *singleton* to refer to a class instance or stateful object that is exported by a module, taking into account that it might not be a real *singleton* in the strictest terms. |
 
 ### Wiring modules
-287
+Every application is the result of the aggregation of several components and, as the application grows, the way we connect these components becomes the key factor for the maintaiability and success of the project.
+
+When a component *A* needs component *B* to fulfill a given functionality, we say that "*A* is **dependent** on *B*", or conversely that "*B is a **dependency** of A*".
+
+Let's assume the scenario of writing an API for a blogging system that uses a database to store its data. We can have a generic module implementing the database connection `db.js` and a blog module that exposes the main functionality to create and retrieve blog posts from the database `blog.js`.
+
+![Dependencies](images/dependencies.png)
+
+This section explains how this dependency can be modeled using two different approaches: *Singleton dependencies* and *Dependency Injection*.
+
+#### Singleton dependencies
+This is the simplest way to wire modules together, and consists in leveraging Node.js' module system. As seen before, stateful dependencies wired in this way are *de facto singletons* as the module system will cache the module and provide the cache instace to any module that imports it.
+
+Let's implement the simple blogging system described above, with the dependencies handled through the *singleton dependencies* approach.
+
+We start with the `db.js` module, in which we use [SQLite](https://sqlite.org/index.html) as the backing database to store our posts. To interact with *SQLite* we use the module [`sqlite3`](https://www.npmjs.com/package/sqlite3).
+
+```javascript
+import { dirname, join } from 'path';
+import { fileUrlToPath } from 'url';
+import sqlite3 from 'sqlite3';
+
+const __dirname = dirname(fileUrlToPath(import.meta.url));
+export const db = new sqlite3.Database(
+  join(__dirname, 'data.sqlite')
+);
+```
+
+In `db.js` we export the `db` object returned from creating a new *SQLite* database, which is backed by the file `data.sqlite`.
+
+| NOTE: |
+| :---- |
+| Note that we had to use a trick to reconstruct the `__dirname` value which is not present when using *ES modules*. The trick consists in getting a reference to the current file URL using the special object `import.meta`.  Specifically, `import.meta.url` will return a reference to the current module path in the format `file:///path/to/current_module.js` which can then be used to reconstruct `__filename` and `__dirname`. |
+
+Now, we can implement the `blog.js` module, which exposes the API the create and retrieve blog posts, as well as to initialize the database.
+
+```javascript
+import { promisify } from 'util';
+import { db } from './db.js';
+
+const dbRun = promisify(db.run.bind(db));
+const dbAll = promisify(db.all.bind(db));
+
+export class Blog {
+  initialize() {
+    const initQuery = `
+      CREATE TABLE IF NOT EXISTS posts (
+        id TEXT PRIMARY KEY,
+        title TEXT NOT NULL,
+        content TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `;
+    return dbRun(initQuery);
+  }
+
+  createPost(id, title, content, createdAt) {
+    return dbRun(`INSERT INTO posts VALUES (?, ?, ?, ?)`, id, title, content, createdAt);
+  }
+
+  getAllPosts() {
+    return dbAll(`SELECT * FROM posts ORDER BY created_at DESC`);
+  }
+}
+```
+
+The last part will be creating the main program that tries out the functionality of the blog module:
+
+```javascript
+import { Blog } from './lib/blog.js';
+
+async function main() {
+  const blog = new Blog();
+  await blog.initialize();
+  const posts = await blog.getAllPosts();
+  if (posts.length === 0) {
+    console.log(`No posts available. Run 'npm run import-posts' to load some sample posts`);
+  }
+
+  for (const post of posts) {
+    console.log(post.title);
+    console.log('-'.repeat(post.title.length));
+    console.log(`Published on ${ new Date(post.created_at).toISOString() }`);
+    console.log(post.content);
+  }
+}
+
+main()
+  .catch(error => {
+    console.log(`ERROR: main: ${ error.message }`);
+  });
+```
+
+This preceding module program is very simple: retrieves all the posts and the loop over them and display the data for every post.
+
+| EXAMPLE: |
+| :------- |
+| See [07 &mdash; Wiring modules: *Singleton dependencies* pattern](07-wiring-modules-singleton-dependencies) for a runnable example. |
+
+Using a *singleton* is the most simple, immediate, and readable solution to pass stateful dependencies around.
+
+These limitations of this option become apparent if we want to mock our database during our tests, or switch current database backing system for another one. Those problems can be mitigated using far from elegant solution (intercepting imports of the database, fiddling with the module system, etc.).
+
+#### Dependency injection
+290
 
 ### Summary
 
@@ -749,6 +853,9 @@ Illustrates how to use the *Revealing Constructor* pattern by implementing an im
 
 #### [06 &mdash; *Singleton* pattern: Exporting a class instance](06-singleton-exporting-class-instance)
 Illustrates how to implement the *Singleton* pattern by exporting a class instance.
+
+#### [07 &mdash; Wiring modules: *Singleton dependencies* pattern](07-wiring-modules-singleton-dependencies)
+Illustrates how to wire modules in an application using the *singleton dependencies* pattern. In the example, we create an API for a blogging system that uses a database to store its data.
 
 #### Example 1: [Data compression efficiency](./e01-data-compression-efficiency/)
 Write a command-line script that takes a file as input and compresses it using the different algorithms available in the `zlib` module (Brotli, Deflate, Gzip). As an output, write a table that compares the algorithm's compression time and efficiency on the given file. Hint: this could be a good use case for the *fork pattern*, provided that you're aware of its performance considerations.
