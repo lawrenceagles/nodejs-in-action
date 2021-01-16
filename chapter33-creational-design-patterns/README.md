@@ -1,9 +1,14 @@
 # Part 4: Node.js avanced patterns and techniques
 ## Chapter 33 &mdash; Creational Design Patterns
-> TBD
+> Design patterns related to the creation of objects
 
 ### Contents
-+ TBD
++ Introduce the set of traditional design patterns for creating objects
++ The **Factory** pattern
++ The **Builder** pattern
++ The **Revealing Constructor** pattern
++ The **Singleton** pattern: caveats
++ Wiring modules using *singleton dependencies* and **Dependency Injection**
 
 ### Intro
 This chapter deals with a class of design pattern called *creational*. As the name suggests, these patterns address problems related to the creation of objects.
@@ -21,11 +26,11 @@ We'll see that in some cases, the traditional implementation of the *GoF* patter
 As a last note, the chapter will describe in detail the traditional patterns, but will also describe some *less traditional* design patterns born within JavaScript ecosystem itself.
 
 We'll tackle:
-+ *Factory* pattern &mdash; allows us to encapsulate the creation of an object within a function.
-+ *Revealing Constructor* pattern &mdash; allows us to expose private object properties and methods only during the object's creation.
-+ *Builder* pattern &mdash; simplifies the creation of complex objects.
-+ *Singleton* pattern &mdash; TBD
-+ *Dependency Injection* &mdash; helps us with the wiring of the modules of an application
++ **Factory** pattern &mdash; allows us to encapsulate the creation of an object within a function.
++ **Revealing Constructor** pattern &mdash; allows us to expose private object properties and methods only during the object's creation.
++ **Builder** pattern &mdash; simplifies the creation of complex objects.
++ **Singleton** pattern &mdash; which enfornces the presence of only one instance of a class and centralizes its access
++ **Dependency Injection** &mdash; helps us with the wiring of the modules of an application
 
 ### Factory
 The **Factory** patterns allows you to encapsulate the creation of an object within a function.
@@ -39,7 +44,7 @@ It main advantages are:
 #### Decoupling object creation and implementation
 In JavaScript, the functional paradigm is often preferred to a purely object-oriented design for its simplicity, usability and small surface area. This is one of the reasons why the *factory* pattern in JavaScript is so frequently used.
 
-> A *factory* allows you to separate the creation of an object from its implementation.
+> A **factory** allows you to separate the creation of an object from its implementation.
 
 Essentially, a factory wraps the creation of a new instance, giving us more flexibility and control in the way we create them. Inside the factory, we can choose to create a new instance of the class using `new`, leverage closures to dynamically build a stateful object literal, or even return a different object type based on a condition.
 
@@ -78,7 +83,7 @@ Note that the consumer code will be totally unaffected by the change, while if w
 #### A mechanism to enforce encapsulation
 Thanks to closures, a *factory* can also be used as an encapsulation mechanism &mdash; access to the internal details of a component will be controlled, as component interaction will only happen through its public interface, isolating the external code from the changes in the implementation details of the component.
 
-> Encapsulation is one of the fundamental principles of object-oriented design, along with polymorphism and abstraction.
+> *Encapsulation* is one of the fundamental principles of object-oriented design, along with *polymorphism* and *abstraction*.
 
 Let's learn how to do that with a simple example:
 
@@ -212,7 +217,7 @@ What we have used in this section is known as the *simple factory idiom*: defini
 
 
 ### Builder
-The **Builder** pattern is a creational pattern that simplifies the creation of complex objects by providing a fluent interface, which allows you to build the object step by step.
+> The **Builder** pattern is a creational pattern that simplifies the creation of complex objects by providing a fluent interface, which allows you to build the object step by step.
 
 With a *builder*, you greatly improve the developer experience and overall readability of complex object creation.
 
@@ -497,6 +502,8 @@ The *Revealing Constructor* pattern allows for several interesting scenarios inc
 + creating objects whose custom behavior can be defined only at creation time
 + creating objects that can be initialized only once at creation time
 
+> The **Revealing Constructor** pattern allows you to expose certain private functionality of an object to the consumer only at the time of creation, making them completely inaccessible once the object is created.
+
 Let's consider the following code fragment:
 
 ```javascript
@@ -508,7 +515,7 @@ const object = new SomeClass(function executor(revealedMembers) {
 The code above illustrates the main components of the *Revealing constru tor* pattern:
 + a **constructor** &mdash; `new SomeClass()` that takes a function as input
 + the **executor** &mdash; `function executor() {...}`, which is invoked at creation time
-+ the **revealedMembers* &mdash; the subset of the object's internals that will be given to the *executor* as input.
++ the **revealedMembers** &mdash; the subset of the object's internals that will be given to the *executor* as input.
 
 | NOTE: |
 | :---- |
@@ -609,7 +616,8 @@ When we create a new promise from scratch, its constructor accepts an *executor*
 Once created, the `Promise` state cannot be altered anymore by any other means.
 
 ### Singleton
-The purpose of the **Singleton** pattern is to enforce the presence of only one instance of a class and centralize its access.
+
+> The **Singleton** pattern enforces the presence of only one instance of a class and centralize access to it.
 
 There are many use cases for using *singletons* in an application:
 + For sharing stateful information
@@ -734,6 +742,8 @@ This section explains how this dependency can be modeled using two different app
 #### Singleton dependencies
 This is the simplest way to wire modules together, and consists in leveraging Node.js' module system. As seen before, stateful dependencies wired in this way are *de facto singletons* as the module system will cache the module and provide the cache instace to any module that imports it.
 
+> The **Singleton dependencies** pattern leverages the module system to provide the depencies of a module as *Singletons*, which ensures the correct wiring even for stateful dependencies.
+
 Let's implement the simple blogging system described above, with the dependencies handled through the *singleton dependencies* approach.
 
 We start with the `db.js` module, in which we use [SQLite](https://sqlite.org/index.html) as the backing database to store our posts. To interact with *SQLite* we use the module [`sqlite3`](https://www.npmjs.com/package/sqlite3).
@@ -825,13 +835,170 @@ Using a *singleton* is the most simple, immediate, and readable solution to pass
 These limitations of this option become apparent if we want to mock our database during our tests, or switch current database backing system for another one. Those problems can be mitigated using far from elegant solution (intercepting imports of the database, fiddling with the module system, etc.).
 
 #### Dependency injection
-290
+While the Node.js module system and the *singleton dependencies* pattern are great tools for organizing and wiring together the components of an application, they introduce very tight *coupling* between components.
 
-### Summary
+To illustrate that coupling, simply think in our previous scenario: `blog.js` cannot work without the `database.js` module, and it cannot use a different database module if necessary either. The **Dependency Injection** pattern help address that coupling.
+
+> **Dependency Injection** is a pattern in which the dependencies of a component are *provided as inputs* by an external entity, often referred to as the **injector**.
+
+The *injector* initializes the different components and ties their dependencies together. It can be a simple initialization script or a more sophisticated *global container* that maps all the dependencies and centralizes the wiring of all the modules of the system.
+
+The main advantage of this approach is improved decoupling, especially for modules depending on stateful instances.
+
+When using *DI*, each dependency, instead of being hardcoded into the module, is received from the outside. In practice, it means that the dependent module can be configured to use any compatible dependency, and therefore, the module itself can be reused in different contexts with minimal effort.
+
+![Dependency Injection](images/dependency_injection.png)
+
+The diagram above illustrates what the *Dependency Injection* pattern provides:
++ a *Service* expects a dependency with a predetermined interface.
++ an *Injector* retrieves a creates an actual concrete instance that implements such an interface, and passes it (*injects it*) into the *Service*. That is, the *Injector* is responsible for providing an instance that fulfills the dependency fro the service.
+
+To demonstrate this pattern, let's rework our simple blogging system using *DI* to wire its modules.
+
+Let's start with our `blog.js` module:
+
+```javascript
+import { promisify } from 'util';
+
+export class Blog {
+  constructor(db) {
+    this.db = db;
+    this.dbRun = promisify(db.run.bind(db));
+    this.dbAll = promisify(db.all.bind(db));
+  }
+
+  initialize() {
+    const initQuery = `
+      CREATE TABLE IF NOT EXISTS posts (
+        id TEXT PRIMARY KEY,
+        title TEXT NOT NULL,
+        content TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `;
+    return this.dbRun(initQuery);
+  }
+
+  createPost(id, title, content, createdAt) {
+    return this.dbRun(`INSERT INTO posts VALUES (?, ?, ?, ?)`, id, title, content, createdAt);
+  }
+
+  getAllPosts() {
+    return this.dbAll(`SELECT * FROM posts ORDER BY created_at DESC`);
+  }
+}
+```
+
+Note that we're no longer importing the `db.js` module, but instead, receives the `db` object as input in its constructor.
+
+In the `db` module we just need to get rid of the *Singleton dependencies* pattern to come up with an implementation that is more reusable and configurable.
+
+```javascript
+import sqlite3 from 'sqlite3';
+
+export function createDb(dbfile) {
+  return new sqlite3.Database(dbfile);
+}
+```
+
+Note that the new implementation simply provides a *factory function* called `createDb()` which allows you to create new instances of the database at runtime. It also allows you to pass the path to the database file at creation time so that we can create indedependent instances that can write to different files if needed.
+
+The last part of the *DI* pattern is the *injector*, which we will implement in the `main.js` file:
+
+```javascript
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+import { Blog } from './lib/blog.js';
+import { createDb } from './lib/db.js';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+async function main() {
+  const db = createDb(join(__dirname, 'data.sqlite'));
+  const blog = new Blog(db);
+
+  await blog.initialize();
+  const posts = await blog.getAllPosts();
+  if (posts.length === 0) {
+    console.log(`No posts available. Run 'npm run import-posts' to load some sample posts`);
+  }
+
+  for (const post of posts) {
+    console.log(post.title);
+    console.log('-'.repeat(post.title.length));
+    console.log(`Published on ${ new Date(post.created_at).toISOString() }`);
+    console.log(post.content);
+  }
+}
+
+main()
+  .catch(error => {
+    console.log(`ERROR: main: ${ error.message }`);
+  });
+```
+
+The only change is the first two lines of the `main(...)` function that act as the *injector*:
++ We create the database dependency `db` using the factory function `createdDb()`.
++ We explicitly *inject* the database instance when we instantiate the `Blog` class.
+
+| EXAMPLE: |
+| :------- |
+| See [08 &mdash; Wiring modules: *Dependency Injection* pattern](08-wiring-modules-dependency-injection) for a runnable example. |
+
+As a result, `blog.js` is totally decoupled from the actual database implementation, making it more composable and easy to test in isolation.
+
+| NOTE: |
+| :---- |
+| The example above illustrates how to inject the dependencies through the constructor arguments, which is known as **constructor injection**. Dependencies can also be passed when invoking a function or method (**function injection**) or injected explicitly by assigning the relevant properties of an object (**property injection**). |
+
+The major disadvantage of the *Dependency Injection* pattern is that it makes the application more difficult to understand, as dependencies are not resolved at coding time. This is especially evident in large applications with a large and complex dependency graph. Another disadvantage is that we have to make sure that the dependencies are ready and available when we inject them into the dependent objects, and before we invoke any of the methods of the dependent object that uses *DI*.
+
+Building the dependency graph of the entire application by hand, making sure that we do it in the right order might become a very complex task when the number of modules to wire becomes too high.
+
+Another pattern related to *DI* is the **Inversion of Control** pattern.
+
+> The **Inversion of Control** pattern allows you to shift the responsibility of wiring the modules of an application to a third party entity.
+
+This entity can be a **service locator**, that is, a component which will serve a dependency through a method invocation (as in `serviceLocator.get('db')`) or a **dependency injection container** (a system that injects the dependencies into a component based on some metadata specified in code or a configuration file).
+
+These techniques derail a bit from the Node.js way of doing things, but some packages such as [`inversify`](https://www.npmjs.com/package/inversify) (TypeScript) and [`awilix`](https://www.npmjs.com/package/awilix) are worth mentioning.
+
+| NOTE: |
+| :---- |
+| You can find more on these components in Martin Fowler's blog: [Invesion of Control COntainers and the Dependency Injection pattern](https://martinfowler.com/articles/injection.html). |
+
 
 ### You know you've mastered this chapter when...
++ You can define what is a *pattern* and understand the roots of the object-oriented patterns from *GoF*.
++ You understand that the *Factory* pattern lets you encapsulate the creation of an object within a function, and are comfortable describing its advantages.
 
-+ TBD
++ You are comfortable using the *Factory* method both to separate the creation of a class from its implementation and also to encapsulate private properties of an object.
++ You understand that *Factory* is a very versatile and easy to implement pattern that works very well with the hybrid (half object-oriented/half functional) nature of the JavaScript language.
+
++ You're comfortable describing the *Builder* pattern, are aware of its benefits when creating complex objects, or invoking complex functions and know the rules to implement it.
+
++ You're also comfortable discussing the *Revealing Constructor* pattern, and understand why it was originated in JavaScript.
++ You're comfortable understanding the *Revealing Constructor* pattern, which provides strong guarantees in a language that is relaxed by nature.
++ You're aware of the different components involved in the *Revealing Constructor* &mdash; the *constructor*, the *executor* and the *revealed members*.
++ You are aware that the *Revealing Constructor* will let you create immutable objects in JavaScript.
+
++ You are comfortable describing the *Singleton* pattern, and understand that it is very easy to implement in JavaScript. You are also aware of the caveats when using modules with incompatible versions, as you might end up having multiple *singleton instances* (one per version) in your application.
+
++ You're aware that patterns such as *Factory* and *Singleton* have different significance in JavaScript than the one they have in the object-oriented design.
++ You understand that implementing the *Singleton* in JavaScript requires no effort, but you're aware of the caveats that might be found when using modules.
+
++ You understand the two main techniques to wire components together in a Node.js application: *Singleton dependencies* and *Dependency Injection*. You know that *Singleton dependencies* provide the simplest approach, but bring challenges in terms of module coupling, while *Dependency Injection* provides loose coupling and reusability but brings complexity.
+
+### Patterns Cheat Sheet
+
+| Type | Pattern | Definition | Example | Additional info |
+|:---- | :------ | :--------- | :------ | :-------------- |
+| Creational | **Factory** | Allows you to separate the creation of an object from its implementation | `const db = createDb(dbName)` | As it decouples the creation of the object from the implementation, lets you create an object whose class is actually determined at runtime.<br>Also, using the *Factory* pattern reduces the exposed surface area when compared to exposing the class, thus providing better encapsulation and information hiding. <br>Protects consumer code against changes on the classes it leverages. |
+| Creational | **Builder** | Simplifies the creation (or invocation) of complex objects (or functions) by providing a fluent interface which which allows you to build (or invoke) the object (or function) step by step. | `const db = new Db().setName(dbName).build()` |Greatly simplifies *DX*, as the fluent interface is simple to read and self-documenting.<br>The implementation consists in encapsulating parameter setting related login into setter methods. |
+| Creational | **Revealing Constructor** | Expose certain private functionality of an object to the consumer only at the time of creation, making them completely inaccessible once the object is created. | `const db = new Database((dbConfig) => {...})` | The pattern consists in defining a constructor which accepts as argument a function that will receive the private properties that will be accessible during creation.<br>This pattern provides strong guarantees regarding encapsulation and information hiding. |
+| Creational | **Singleton** | Enforces the presence of only once instance of a class and centralizes access to it. | `export const db = new Database(dbName)` |This pattern are great for sharing stateful information and synchronizing access to a resources.<br>You must be aware that multiple incompatible versions of a module might end up creating multiple *singleton instances* (one per incompatible version). |
+| Dependency Wiring | **Singleton dependencies** | Leverages the module system to provide the dependencies ofa  module as *Singletons*, which ensures the correct wiring even for stateful dependencies. | `import { db } from 'db.js'` | Very simple to implement, but creates tight coupling between a module and its dependencies. |
+| Dependency Wiring | **Dependency Injection** | The dependencies of a component are *provided as inputs* by an external entity. | `const blog = new Blog(db)` | Provides loose coupling between components at the cost of more complex implementation and dependency graph management. |
 
 
 ### Code, Exercises and mini-projects
@@ -857,12 +1024,21 @@ Illustrates how to implement the *Singleton* pattern by exporting a class instan
 #### [07 &mdash; Wiring modules: *Singleton dependencies* pattern](07-wiring-modules-singleton-dependencies)
 Illustrates how to wire modules in an application using the *singleton dependencies* pattern. In the example, we create an API for a blogging system that uses a database to store its data.
 
-#### Example 1: [Data compression efficiency](./e01-data-compression-efficiency/)
-Write a command-line script that takes a file as input and compresses it using the different algorithms available in the `zlib` module (Brotli, Deflate, Gzip). As an output, write a table that compares the algorithm's compression time and efficiency on the given file. Hint: this could be a good use case for the *fork pattern*, provided that you're aware of its performance considerations.
+#### [08 &mdash; Wiring modules: *Dependency Injection* pattern](08-wiring-modules-dependency-injection)
+Illustrates how to wire modules in an application using the *Dependency Injection* pattern. In the example, we create an API for a blogging system that uses a database to store its data.
+
+#### Exercise 1: [Color Console Factory](./e01-color-console-factory/)
+Create a class called `ColorConsole` that has just one empty method called `log()`. Then, create three subclasses: `RedConsole`, `BlueConsole`, and `GreenConsole`. The `log()` method of every `ColorConsole` subclass will accept a string as input and will print that string to the console using the color that gives the name to the class.
+
+Then create a factory function that takes color as input such as `red`, and returns the related `ColorConsole` subclass. Finally, write a small command-line script to try the new console color factory. Hint: use [this](https://stackoverflow.com/questions/9781218/how-to-change-node-jss-console-font-color/41407246#41407246) to understand how to change colors in the console.
+
 
 #### To Do
 
 [ ] Normalize the pattern sections: all the patterns should have the same format (as in definition, example, etc.)
+
 [ ] Create a cheat sheet with the summary with columns, type of pattern, name, description, use case scenarios.
+
 [ ] Create an example to illustrate the problem of having different *singletons* when packages require incompatible versions and investigate the new capabilities of NPM with `peerDependencies` to see if it fixes it.
+
 [ ] Illustrate with an example how to have a pure singleton using global (that might come in handy for extreme cases such as the context.)
